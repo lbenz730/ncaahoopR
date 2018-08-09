@@ -52,6 +52,23 @@ For more information about how these win-probability charts are fit, check out t
 * [Model Methodology](https://sports.sites.yale.edu/ncaa-basketball-win-probability-model)
 * [Game Excitement Index](https://sports.sites.yale.edu/game-excitement-index-part-ii)
 
+## Datasets
+
+```dict``` A dataframe for converting between team names from various sites.
+ 
+ * ```NCAA```: the name of the team, as listed on the NCAA website
+ * ```ESPN```: the name of the team, as listed on the ESPN URLs
+ * ```ESPN_PBP```: the name of the team, as listed on the ESPN Play-By-Play logs
+ * ```Warren_Nolan```: the name of the team, as listed on WarrenNolan.com
+ * ```Trank```: the name of the team, as listed on barttorvik.com
+ * ```name_247```: the name of the team, as listed on 247Sports.com
+
+```ids``` A dataframe for converting between team names from various sites.
+ 
+ * ```team```: the name of the team to be suplied to function in ncaahoopR package
+ * ```id```: team id; used in ESPN URLs
+ * ```link```: link; used in ESPN URLs
+
 ## Examples
 _Single Game Assist Network_
 ![Assist Single](figures/oklahoma.png)

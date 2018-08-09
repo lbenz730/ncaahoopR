@@ -3,7 +3,7 @@
 \docType{data}
 \name{ids}
 \alias{ids}
-\title{All the available soccer leagues and tournaments with ESPN scoreboard urls}
+\title{A data frame with ESPN team names to be used in the ncaahoopR package.}
 \format{A data frame with ESPN team names to be used in the ncaahoopR package.
 \describe{
  \item{team}{the name of the team to be suplied to function in ncaahoopR package}
@@ -14,7 +14,7 @@
 ids
 }
 \description{
-All the available soccer leagues and tournaments with ESPN scoreboard urls
+A data frame with ESPN team names to be used in the ncaahoopR package.
 }
 \details{
 Simply look for the spelling of your deired team in the team column

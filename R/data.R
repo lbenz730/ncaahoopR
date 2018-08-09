@@ -1,4 +1,4 @@
-#' All the available soccer leagues and tournaments with ESPN scoreboard urls
+#' A data frame with ESPN team names to be used in the ncaahoopR package.
 #'
 #' @docType data
 #' @format A data frame with ESPN team names to be used in the ncaahoopR package.
@@ -16,7 +16,7 @@
 #'
 "ids"
 
-#' All the available soccer leagues and tournaments with ESPN scoreboard urls
+#' A data frame with team names from various college basketball sites
 #'
 #' @docType data
 #' @format A data frame with team names from various college basketball sites

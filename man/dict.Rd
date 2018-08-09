@@ -3,7 +3,7 @@
 \docType{data}
 \name{dict}
 \alias{dict}
-\title{All the available soccer leagues and tournaments with ESPN scoreboard urls}
+\title{A data frame with team names from various college basketball sites}
 \format{A data frame with team names from various college basketball sites
 \describe{
  \item{NCAA}{the name of the team, as listed on the NCAA website}
@@ -17,7 +17,7 @@
 dict
 }
 \description{
-All the available soccer leagues and tournaments with ESPN scoreboard urls
+A data frame with team names from various college basketball sites
 }
 \details{
 Convert between team names in various systems
