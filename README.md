@@ -1,5 +1,5 @@
 # ncaahoopR
-`ncaahoopR` is an R package for working with NCAA Men's Basketball Play-by-Play Data. It not only scrapes play by play data 
+`ncaahoopR` is an R package for working with NCAA Basketball Play-by-Play Data. It not only scrapes play by play data 
 and returns it to the user in a tidy, but also allows the user to explore the data with assist networks and in game win-probability charts.
 
 __Note:__ `ncaahoopR` scrapes data from ESPN. Since ESPN is currently updating many college basketball pages, such as schedules and rosters,
