@@ -24,6 +24,8 @@
 
 assist_net <- function(team, node_col, season, rmv_bench, tree, three_weights, message = NA) {
   text_team <- dict$ESPN_PBP[dict$ESPN == team]
+  text_team <- text_team[!is.na(text_team)]
+
   ### Read Play-by-Play File
   if(season[1] == "2018-19") {
     x <- get_pbp(team)
