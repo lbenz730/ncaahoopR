@@ -40,7 +40,7 @@ Usage: ```assist_net(team, node_col, season, rmv_bench, tree, three_weights, mes
 * ```Message``` (default = ```NA```) Option for custom message to replace graph title when using a subset of the season (e.g. conference play).
 
 ### Win-Probability Charts
-_Plots win probability chart for given game. _
+__Plots win probability chart for given game. __
 Usage:```wp_chart(gameID, home_color, away_color, show_legend = T)```
 * ```gameID``` ESPN gameID for the desired win probability chart.
 * ```home_col``` Chart color for home team.
@@ -56,8 +56,8 @@ Season Long Assist Network
 ![Assist All](figures/yale.png)
 ```assist_net("Yale", "royalblue4", "2017-18", rmv_bench = T, tree = F, three_weights = T)```
 
-_NOTE:_ The use ```season = "2017-18"``` would be replaced with the current season. Backdated charts are currently not avaiable.
+__NOTE:__ The use ```season = "2017-18"``` would be replaced with the current season. Backdated charts are currently not avaiable.
 
-_Win Probability Chart---2018 NCAA Championship Game_
+__Win Probability Chart---2018 NCAA Championship Game__
 ![2018 NCAA Championship Game](figures/wp_chart.png)
 ```wp_chart(401025888, "navy", "goldenrod1")```
