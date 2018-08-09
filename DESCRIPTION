@@ -6,6 +6,7 @@ Description: An R package for working with NCAA Men's Basketball Play-by-Play Da
     This package allows users to scrape play-by-play data into a tidy format, create
     assist networks games of their choosing, and examine in-game win probability charts.
 Depends: R (>= 3.4.0),
+         dplyr,
          igraph,
          XML
 License: MIT + file
