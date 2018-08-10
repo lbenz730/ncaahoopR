@@ -282,7 +282,7 @@ get_pbp_game <- function(gameIDs) {
       pbp_all <- rbind(pbp_all, pbp)
     }
   }
-  return(pbp)
+  return(pbp_all)
 }
 
 ################################  Get Schedule #################################
