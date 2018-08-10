@@ -70,11 +70,11 @@ For more information about how these win-probability charts are fit, check out t
  * ```link```: link; used in ESPN URLs
 
 ## Examples
-_Single Game Assist Network_
+__Single Game Assist Network__
 ![Assist Single](figures/oklahoma.png)
 ```assist_net("Oklahoma", "firebrick4", 400989185, rmv_bench = T, tree = F, three_weights = T)```
 
-Season Long Assist Network
+__Season Long Assist Network__
 ![Assist All](figures/yale.png)
 ```assist_net("Yale", "royalblue4", "2017-18", rmv_bench = T, tree = F, three_weights = T)```
 
