@@ -299,10 +299,19 @@ get_schedule <- function(team) {
   schedule <- XML::readHTMLTable(url)[[1]][-1,]
   names(schedule) <- c("date", "opponent", "result", "record")
   schedule <- schedule[!is.na(schedule$opponent),]
+  schedule$location <- ifelse(grepl("[*]", schedule$opponent), "N",
+                              ifelse(grepl("^vs", schedule$opponent), "H", "A"))
   schedule$opponent <- gsub("^vs", "", schedule$opponent)
   schedule$opponent <- gsub("[@#*()]", "", schedule$opponent)
   schedule$opponent <- gsub("[0-9]*", "", schedule$opponent)
   schedule$opponent <- gsub("^ ", "", schedule$opponent)
+  scores <- unlist(sapply(gsub("[A-z]*", "", schedule$result), strsplit, "-"))
+  schedule$team_score <- as.numeric(scores[seq(1, length(scores), 2)])
+  schedule$opp_score <- as.numeric(scores[seq(2, length(scores), 2)])
+  index <- grepl("L", schedule$result)
+  tmp <- schedule$team_score[index]
+  schedule$team_score[index] <- schedule$opp_score[index]
+  schedule$opp_score[index] <- tmp
   schedule$day <- as.numeric(gsub("[^0-9]*", "", schedule$date))
   schedule$month <- substring(schedule$date, 6, 8)
   schedule$month[schedule$month == "Nov"] <- 11
@@ -310,11 +319,14 @@ get_schedule <- function(team) {
   schedule$month[schedule$month == "Jan"] <- 1
   schedule$month[schedule$month == "Feb"] <- 2
   schedule$month[schedule$month == "Mar"] <- 3
+  schedule$month[schedule$month == "Apr"] <- 4
   schedule$month <- as.numeric(schedule$month)
-  schedule$year <- ifelse(schedule$month <= 3, 18, 17)
+  schedule$year <- ifelse(schedule$month <= 4, 18, 17)
   schedule$date <- paste(schedule$month, schedule$day, schedule$year, sep = "/")
   schedule$game_id <- get_game_IDs(team)
-  return(schedule[,c("date", "opponent", "game_id")])
+  schedule$date <- as.Date(schedule$date, "%m/%d/%y")
+  return(schedule[,c("game_id", "date", "opponent", "location",
+                     "team_score", "opp_score", "record" )])
 }
 
 ######################### Get Game IDs ########################################
