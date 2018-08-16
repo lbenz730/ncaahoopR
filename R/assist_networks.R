@@ -20,6 +20,7 @@
 #'  \item{"auth_scores"} - Player Authority Scores in network
 #'  \item{"ast_freq"} - Player percentage of team's assists
 #'  \item{"shot_freq"} - Player percenatge of scoring on team's assisted baskets
+#'  }
 #' @export
 
 assist_net <- function(team, node_col, season, rmv_bench, tree, three_weights, message = NA) {

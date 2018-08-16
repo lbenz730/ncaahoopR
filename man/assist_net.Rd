@@ -25,6 +25,17 @@ If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weig
 
 \item{message}{User supplied plot title to overwrite default plot title, if desired. Default = NA.}
 }
+\value{
+List with network statistics
+\itemize{
+ \item{"clust_coeff"} - Network Clustering Coefficient
+ \item{"page_ranks"} - Player Page Ranks in network
+ \item{"hub_scores"} - Player Hub Scores in network
+ \item{"auth_scores"} - Player Authority Scores in network
+ \item{"ast_freq"} - Player percentage of team's assists
+ \item{"shot_freq"} - Player percenatge of scoring on team's assisted baskets
+ }
+}
 \description{
 Renders assist network for game or entire season
 }
