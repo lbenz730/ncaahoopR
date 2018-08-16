@@ -154,6 +154,10 @@ get_pbp <- function(team) {
     }
   }
 
+  if(!exists("pbp_season")) {
+    pbp_all <- NULL
+  }
+
   return(pbp_season)
 }
 
@@ -282,6 +286,11 @@ get_pbp_game <- function(gameIDs) {
       pbp_all <- rbind(pbp_all, pbp)
     }
   }
+
+  if(!exists("pbp_all")) {
+    pbp_all <- NULL
+  }
+
   return(pbp_all)
 }
 
@@ -391,6 +400,5 @@ get_date <- function(gameID) {
 is.nit <- function(gameID) {
   url <- paste("http://www.espn.com/mens-college-basketball/playbyplay?gameId=", gameID, sep = "")
   y <- scan(url, what = "", sep = "\n")
-  return(any(grepl("NIT", y)))
+  return(sum(grepl("NIT", y)) > 1)
 }
-
