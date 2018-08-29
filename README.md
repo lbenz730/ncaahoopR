@@ -68,6 +68,8 @@ For more information about how these win-probability charts are fit, check out t
  * ```team```: the name of the team to be suplied to function in ncaahoopR package
  * ```id```: team id; used in ESPN URLs
  * ```link```: link; used in ESPN URLs
+ 
+ These datasets can be loaded with ```data("ids")``` or ```data("dict")``` respectively.
 
 ## Examples
 __Single Game Assist Network__

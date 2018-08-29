@@ -22,6 +22,27 @@ clean <- function(data, half, OTs) {
   return(cleaned)
 }
 
+### Make ids df (only if package not loaded in memory)
+create_ids_df <- function() {
+  teams_url <- "http://www.espn.com/mens-college-basketball/teams"
+  x <- scan(teams_url, what = "", sep = "\n")
+  x <- x[grep("http://www.espn.com/mens-college-basketball/team/_/id/", x)]
+  x <- strsplit(x, "/")
+
+  ids <- data.frame("team" = rep(NA, 351),
+                    "id" = rep(NA, 351),
+                    "link" = rep(NA, 351))
+
+  for(i in 1:length(x)) {
+    ids$id[i] <- x[[i]][8]
+    y <- gsub("[<>\"]", "" , x[[i]][9])
+    y <- gsub("class=bi", "",  y)
+    y <- unlist(strsplit(y, " "))
+    ids$link[i] <- y[1]
+    ids$team[i] <- paste(y[-1], collapse = " ")
+  }
+  return(ids)
+}
 
 
 ###################################Get Season Long PBP Data ####################
@@ -35,6 +56,10 @@ clean <- function(data, half, OTs) {
 #' @return A data-frame of the team's Play-by-Play data for the current season
 #' @export
 get_pbp <- function(team) {
+  if(!"ncaahoopR" %in% .packages()) {
+   ids <- create_ids_df()
+  }
+
   print(paste("Getting Game IDs: ", team, sep = ""))
 
   ### Get Game IDs
@@ -170,7 +195,9 @@ get_pbp <- function(team) {
 #' @return A data-frame of the Play-by-Play data fror desired games.
 #' @export
 get_pbp_game <- function(gameIDs) {
-
+  if(!"ncaahoopR" %in% .packages()) {
+    ids <- create_ids_df()
+  }
   ### Get Play by Play Data
   base_url <- "http://www.espn.com/mens-college-basketball/playbyplay?gameId="
   summary_url <- "http://www.espn.com/mens-college-basketball/game?gameId="
@@ -303,6 +330,10 @@ get_pbp_game <- function(gameIDs) {
 #' @return A data-frame of the team's schedule for current season
 #' @export
 get_schedule <- function(team) {
+  if(!"ncaahoopR" %in% .packages()) {
+    ids <- create_ids_df()
+  }
+
   base_url <- "http://www.espn.com/mens-college-basketball/team/schedule/_/id/"
   url <- paste(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team], sep = "")
   schedule <- XML::readHTMLTable(url)[[1]][-1,]
@@ -347,6 +378,9 @@ get_schedule <- function(team) {
 #' @return A vector of the team's ESPN gameIDs for current season
 #' @export
 get_game_IDs <- function(team) {
+  if(!"ncaahoopR" %in% .packages()) {
+    ids <- create_ids_df()
+  }
   base_url <- "http://www.espn.com/mens-college-basketball/team/_/id/"
   url <- paste(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team], sep = "")
 
@@ -376,6 +410,9 @@ get_game_IDs <- function(team) {
 #' @return A data-frame of the team's roster for current season
 #' @export
 get_roster <- function(team) {
+  if(!"ncaahoopR" %in% .packages()) {
+    ids <- create_ids_df()
+  }
   print(paste("Getting Roster: ", team, sep = ""))
   base_url <- "http://www.espn.com/mens-college-basketball/team/roster/_/id/"
   url <-  paste(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team], sep = "")
