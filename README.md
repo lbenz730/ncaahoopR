@@ -37,7 +37,7 @@ Usage: ```assist_net(team, node_col, season, rmv_bench, tree, three_weights, mes
 * ```rmv_bench```: Logical. If TRUE, removes all players who aren't in the network. 
 * ```tree```: Logical. If TRUE, draws graph in tree structure. If FALSE, draws graph in circle. Tree structure is recommended for single game networks, while circles are recommended for entire season networks.
 * ```three_weights```: Logical. If TRUE, assisted three point shots are given 1.5 weight. If FALSE, assisted three point shots are given weight 1. In both cases, assisted 2 point shots are given weight 1. 
-* ```Message``` (default = ```NA```) Option for custom message to replace graph title when using a subset of the season (e.g. conference play).
+* ```message``` (default = ```NA```) Option for custom message to replace graph title when using a subset of the season (e.g. conference play).
 
 ### Win-Probability Charts
 __Plots win probability chart for given game.__
