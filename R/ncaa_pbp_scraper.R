@@ -24,23 +24,32 @@ clean <- function(data, half, OTs) {
 
 ### Make ids df (only if package not loaded in memory)
 create_ids_df <- function() {
+  test <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops_Play_By_Play/master/ids.csv",
+                   as.is = T)
   teams_url <- "http://www.espn.com/mens-college-basketball/teams"
   x <- scan(teams_url, what = "", sep = "\n")
-  x <- x[grep("http://www.espn.com/mens-college-basketball/team/_/id/", x)]
-  x <- strsplit(x, "/")
+  x <- x[grep("mens-college-basketball/team/schedule/_/id/", x)][2]
+  x <- strsplit(x, "Clubhouse")[[1]]
 
   ids <- data.frame("team" = rep(NA, 351),
                     "id" = rep(NA, 351),
                     "link" = rep(NA, 351))
 
-  for(i in 1:length(x)) {
-    ids$id[i] <- x[[i]][8]
-    y <- gsub("[<>\"]", "" , x[[i]][9])
-    y <- gsub("class=bi", "",  y)
-    y <- unlist(strsplit(y, " "))
-    ids$link[i] <- y[1]
-    ids$team[i] <- paste(y[-1], collapse = " ")
+  for(i in 2:length(x)) {
+    y <- strsplit(x[i], "mens-college-basketball/team/_/id/")[[1]][2]
+    y <- unlist(strsplit(y, "/"))
+    ids$id[i-1] <- y[1]
+    ids$link[i-1] <- gsub("\".*", "", y[2])
+    name <- test$team[ids$link[i-1] == test$link]
+    ids$team[i-1] <- ifelse(length(name) > 0, name, NA)
   }
+
+  tofill <- which(is.na(ids$team))
+  for(i in 1:length(tofill)) {
+    k <- which.min(stringdist(ids$link[tofill[i]], test$link[tofill]))
+    ids$team[tofill[i]] <- test$team[tofill[k]]
+  }
+
   return(ids)
 }
 
@@ -361,7 +370,7 @@ get_schedule <- function(team) {
   schedule$month[schedule$month == "Mar"] <- 3
   schedule$month[schedule$month == "Apr"] <- 4
   schedule$month <- as.numeric(schedule$month)
-  schedule$year <- ifelse(schedule$month <= 4, 18, 17)
+  schedule$year <- ifelse(schedule$month <= 4, 19, 18)
   schedule$date <- paste(schedule$month, schedule$day, schedule$year, sep = "/")
   schedule$game_id <- get_game_IDs(team)
   schedule$date <- as.Date(schedule$date, "%m/%d/%y")
