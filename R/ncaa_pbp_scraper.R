@@ -46,7 +46,7 @@ create_ids_df <- function() {
 
   tofill <- which(is.na(ids$team))
   for(i in 1:length(tofill)) {
-    k <- which.min(stringdist(ids$link[tofill[i]], test$link[tofill]))
+    k <- which.min(stringdist::stringdist(ids$link[tofill[i]], test$link[tofill]))
     ids$team[tofill[i]] <- test$team[tofill[k]]
   }
 
