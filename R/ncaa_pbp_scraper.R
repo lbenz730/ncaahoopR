@@ -31,9 +31,9 @@ create_ids_df <- function() {
   x <- x[grep("mens-college-basketball/team/schedule/_/id/", x)][2]
   x <- strsplit(x, "Clubhouse")[[1]]
 
-  ids <- data.frame("team" = rep(NA, 351),
-                    "id" = rep(NA, 351),
-                    "link" = rep(NA, 351))
+  ids <- data.frame("team" = rep(NA, 353),
+                    "id" = rep(NA, 353),
+                    "link" = rep(NA, 353))
 
   for(i in 2:length(x)) {
     y <- strsplit(x[i], "mens-college-basketball/team/_/id/")[[1]][2]
