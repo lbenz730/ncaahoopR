@@ -346,17 +346,23 @@ get_schedule <- function(team) {
   base_url <- "http://www.espn.com/mens-college-basketball/team/schedule/_/id/"
   url <- paste(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team], sep = "")
   schedule <- XML::readHTMLTable(url)[[1]][-1,]
+  schedule <- schedule[,1:4]
   names(schedule) <- c("date", "opponent", "result", "record")
-  schedule <- schedule[!is.na(schedule$opponent),]
+  schedule <- schedule[!is.na(schedule$opponent) & schedule$opponent != "Opponent",]
   schedule$location <- ifelse(grepl("[*]", schedule$opponent), "N",
                               ifelse(grepl("^vs", schedule$opponent), "H", "A"))
   schedule$opponent <- gsub("^vs", "", schedule$opponent)
   schedule$opponent <- gsub("[@#*()]", "", schedule$opponent)
   schedule$opponent <- gsub("[0-9]*", "", schedule$opponent)
   schedule$opponent <- gsub("^ ", "", schedule$opponent)
+  schedule$result[grep(":", schedule$result)] <- NA
+  schedule$result[grep("TBD", schedule$result)] <- NA
   scores <- unlist(sapply(gsub("[A-z]*", "", schedule$result), strsplit, "-"))
-  schedule$team_score <- as.numeric(scores[seq(1, length(scores), 2)])
-  schedule$opp_score <- as.numeric(scores[seq(2, length(scores), 2)])
+  team_scores <- as.numeric(scores[seq(1, length(scores), 2)])
+  opp_scores <- as.numeric(scores[seq(2, length(scores), 2)])
+  schedule <- dplyr::mutate(schedule, team_score = NA, opp_score = NA)
+  schedule$team_score[1:length(team_scores)] <- team_scores
+  schedule$opp_score[1:length(opp_scores)] <- opp_scores
   index <- grepl("L", schedule$result)
   tmp <- schedule$team_score[index]
   schedule$team_score[index] <- schedule$opp_score[index]
@@ -422,14 +428,13 @@ get_roster <- function(team) {
   if(!"ncaahoopR" %in% .packages()) {
     ids <- create_ids_df()
   }
-  print(paste("Getting Roster: ", team, sep = ""))
   base_url <- "http://www.espn.com/mens-college-basketball/team/roster/_/id/"
   url <-  paste(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team], sep = "")
   tmp <- try(XML::readHTMLTable(url))
   if(class(tmp) == "try-error") {
     return("Unable to get roster. ESPN is updating CBB files. Check back again soon")
   }
-  tmp <- as.data.frame(tmp[[1]][-1,])
+  tmp <- as.data.frame(tmp[[3]])
   names(tmp) <- c("Number", "Name", "Position", "Height", "Weight", "Class", "Hometown")
   return(tmp)
 }
