@@ -1,6 +1,6 @@
 y <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2017-18/NCAA_Hoops_Results_3_14_2018.csv",
               as.is = T)
-x <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Power_Rankings/Powerrankings.csv",
+x <- read.csv("https://github.com/lbenz730/NCAA_Hoops/blob/master/3.0_Files/Power_Rankings/power_rankings.csv",
               as.is = T)
 z <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2016-17/NCAA_Hoops_Results_2017_Final.csv", as.is = T)
 prior <- glm(wins ~ predscorediff, data = z, family = binomial)
@@ -115,8 +115,12 @@ wp_chart <- function(gameID, home_col, away_col, show_legend = T) {
   if(is.na(data$home_favored_by[1])) {
     data$home_favored_by <- get_line(data)
   }
-  data$pre_game_prob <- predict(prior, newdata = data.frame(predscorediff = data$home_favored_by),
-                                type = "response")
+  if(!is.na(data$home_favored_by[1])){
+    data$pre_game_prob <- predict(prior, newdata = data.frame(predscorediff = data$home_favored_by),
+                                  type = "response")
+  }else{
+    data$pre_game_prob <- 0.5
+  }
 
   ### Compute Win Prob
   data$winprob <- NA
@@ -130,12 +134,17 @@ wp_chart <- function(gameID, home_col, away_col, show_legend = T) {
     data$winprob[i] <- odds/(1 + odds)
   }
 
+  ### Hardcode to 50-50 if Line = 0 or NA
+  if(is.na(data$home_favored_by[1]) | data$home_favored_by[1] == 0) {
+    data$winprob[1] <- 0.5
+  }
+
   ### Game Excitemant Index
   data$wp_delta <- 0
   for(i in 2:nrow(data)) {
     data$wp_delta[i] <- abs(data$winprob[i] - data$winprob[i-1])
   }
-  gei <- sum(data$wp_delta) * 2400/msec
+  gei <- sum(data$wp_delta, na.rm = T) * 2400/msec
   gei <- paste("Game Excitement Index:", round(gei, 2))
   gap <- 0.08
 
@@ -173,7 +182,7 @@ wp_chart <- function(gameID, home_col, away_col, show_legend = T) {
 
   ### Min Win Prob
   if(data$scorediff[nrow(data)] > 0) {
-    min_prob <- min(data$winprob)
+    min_prob <- min(data$winprob, na.rm = T)
     if(min_prob < 0.01) {
       min_prob <- paste("Minimum Win Probability for", data$home[1], "< 1", "%")
     }
@@ -182,7 +191,7 @@ wp_chart <- function(gameID, home_col, away_col, show_legend = T) {
     }
   }
   else{
-    min_prob <- min(1 - data$winprob)
+    min_prob <- min(1 - data$winprob, na.rm = T)
     if(min_prob < 0.01) {
       min_prob <- paste("Minimum Win Probability for", data$away[1], "< 1", "%")
     }
@@ -196,3 +205,4 @@ wp_chart <- function(gameID, home_col, away_col, show_legend = T) {
     text(10, 0, "Luke Benz\n@recspecs730\nncaahoopR", cex = 0.5)
   }
 }
+
