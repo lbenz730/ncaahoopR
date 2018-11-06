@@ -487,8 +487,8 @@ get_master_schedule <- function(year, month, day) {
   schedule <- dplyr::mutate(schedule,
                             "away" = sapply(schedule$away, clean),
                             "home" = sapply(schedule$home, clean),
-                            "away_rank" = sapply(schedule$away, ranking),
-                            "home_rank" = sapply(schedule$home, ranking))
+                            "away_rank" = as.numeric(sapply(schedule$away, ranking)),
+                            "home_rank" = as.numeric(sapply(schedule$home, ranking)))
 
   x <- scan(url, sep = "\n", what = "")
   x <- x[278]
