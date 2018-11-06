@@ -453,3 +453,52 @@ is.nit <- function(gameID) {
   y <- scan(url, what = "", sep = "\n")
   return(sum(grepl("NIT", y)) > 1)
 }
+
+
+####################### Function To Get a Schedule by Date #####################
+#' Get Master Schedule
+#'
+#' Gets schedule for all games on a given date
+#'
+#' @param year year for which to get master schedule
+#' @param month month for which to get master schedule
+#' @param day day for which to get master schedule
+#' @return A data-frame of the day's schedule of games
+#' @export
+get_master_schedule <- function(year, month, day) {
+  date <- paste0(year, month, ifelse(length(day) == 1, paste0("0", day), day))
+  url <-paste0("http://www.espn.com/mens-college-basketball/schedule/_/date/", date, "/group/50")
+  schedule <- as.data.frame(XML::readHTMLTable(url)[[1]])[,c(1,2,6)]
+  names(schedule) <- c("away", "home", "location")
+
+  ### Extract Ranking
+  ranking <- function(team) {
+    rank <- gsub("[^0-9]", "", team)
+    return(ifelse(rank == "", NA, rank))
+  }
+
+  ### Clean Team Name
+  clean <- function(team) {
+    team <- gsub("[#0-9]", "", team)
+    team <- gsub("\\s[A-Z]*-*[A-Z]*$", "", team)
+    team <- gsub("\\s*$", "", gsub("^\\s*", "", team))
+  }
+
+  schedule <- dplyr::mutate(schedule,
+                            "away" = sapply(schedule$away, clean),
+                            "home" = sapply(schedule$home, clean),
+                            "away_rank" = sapply(schedule$away, ranking),
+                            "home_rank" = sapply(schedule$home, ranking))
+
+  x <- scan(url, sep = "\n", what = "")
+  x <- x[278]
+  x <- gsub("[A-z]", "", x)
+  x <- strsplit(x, "\\?=")[[1]]
+  x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
+  x <- x[!is.na(x) & !duplicated(x)]
+
+  schedule <- dplyr::mutate(schedule, "game_id" = x)
+  schedule <- dplyr::select(schedule, game_id, away, home, away_rank, home_rank, location)
+
+  return(schedule)
+}

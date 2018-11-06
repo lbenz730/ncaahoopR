@@ -25,6 +25,7 @@ as shown in the url for the summary of the UMBC-Virginia game below.
 * ```get_roster(team)```: Get a particular team's roster. 
 * ```get_schedule(team)```: Get a team's schedule.
 * ```get_game_IDs(team)```: Get a vector of ESPN Game IDs for all games in which ```team``` plays in.
+* ```get_master_schedule(year, month, day)```: Get schedule of all games for given date.
 
 ### Assist Networks
 Used to create college basketball assist networks. 
