@@ -66,7 +66,10 @@ create_ids_df <- function() {
 #' @export
 get_pbp <- function(team) {
   if(!"ncaahoopR" %in% .packages()) {
-   ids <- create_ids_df()
+    ids <- create_ids_df()
+  }
+  if(!team %in% ids$team) {
+    stop("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
   }
 
   print(paste("Getting Game IDs: ", team, sep = ""))
@@ -94,6 +97,12 @@ get_pbp <- function(team) {
       next
     }
     else{
+      t1 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][2,1]), ":")))
+      t2 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][3,1]), ":")))
+      if(60 * t1[1] + t1[2] < 60 * t2[1] + t2[2]) {
+        print("Game In Progress--Play by Play Data Not Available. Please Check Back After the Game")
+        next
+      }
       j <- j + 1
     }
 
@@ -227,6 +236,12 @@ get_pbp_game <- function(gameIDs) {
       next
     }
     else{
+      t1 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][2,1]), ":")))
+      t2 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][3,1]), ":")))
+      if(60 * t1[1] + t1[2] < 60 * t2[1] + t2[2]) {
+        print("Game In Progress--Play by Play Data Not Available. Please Check Back After the Game")
+        next
+      }
       j <- j + 1
     }
 
@@ -342,6 +357,9 @@ get_schedule <- function(team) {
   if(!"ncaahoopR" %in% .packages()) {
     ids <- create_ids_df()
   }
+  if(!team %in% ids$team) {
+    stop("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
+  }
 
   base_url <- "http://www.espn.com/mens-college-basketball/team/schedule/_/id/"
   url <- paste(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team], sep = "")
@@ -427,6 +445,9 @@ get_game_IDs <- function(team) {
 get_roster <- function(team) {
   if(!"ncaahoopR" %in% .packages()) {
     ids <- create_ids_df()
+  }
+  if(!team %in% ids$team) {
+    stop("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
   }
   base_url <- "http://www.espn.com/mens-college-basketball/team/roster/_/id/"
   url <-  paste(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team], sep = "")

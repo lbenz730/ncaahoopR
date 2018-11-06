@@ -1,6 +1,6 @@
 y <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2017-18/NCAA_Hoops_Results_3_14_2018.csv",
               as.is = T)
-x <- read.csv("https://github.com/lbenz730/NCAA_Hoops/blob/master/3.0_Files/Power_Rankings/power_rankings.csv",
+x <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Power_Rankings/power_rankings.csv",
               as.is = T)
 z <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2016-17/NCAA_Hoops_Results_2017_Final.csv", as.is = T)
 prior <- glm(wins ~ predscorediff, data = z, family = binomial)
@@ -108,6 +108,9 @@ get_line <- function(data) {
 wp_chart <- function(gameID, home_col, away_col, show_legend = T) {
   ### Scrape Data from ESPN
   data <- get_pbp_game(gameID)
+  if(is.null(data)) {
+   stop("PBP Data Not Available for Win Probability Chart")
+  }
   date <- data$date
 
   ### Cleaning

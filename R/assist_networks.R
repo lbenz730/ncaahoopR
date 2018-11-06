@@ -50,7 +50,6 @@ assist_net <- function(team, node_col, season, rmv_bench, tree, three_weights, m
   }
 
   ### Get Roster
-  team <- gsub(" ", "_", team)
   roster <- try(get_roster(team))
   if(class(roster) == "try-error") {
       return("Unable to get roster. ESPN is updating CBB files. Check back again soon")
@@ -169,21 +168,22 @@ assist_net <- function(team, node_col, season, rmv_bench, tree, three_weights, m
 
 
   ### Add Text to Network
-  text(-1.5, 1.0, paste(ifelse(three_weights, "Weighted ", ""), "Assist Frequency Leader: ",
+  text(-2, 1.0, paste(ifelse(three_weights, "Weighted ", ""), "Assist Frequency Leader: ",
                         ast_data$ast[which.max(ast_data$a_freq)], " (",
                         round(100 * max(ast_data$a_freq), 1), "%)", sep = ""),
-       cex = ifelse(three_weights, 0.8, 0.6))
-  text(-1.5, 0.9, paste(ifelse(three_weights, "Weighted ", ""), "(Assisted) Shot Frequency Leader: ",
+       cex = 0.6)
+  text(-2, 0.9, paste(ifelse(three_weights, "Weighted ", ""), "(Assisted) Shot Frequency Leader: ",
                         shot_data$shot[which.max(shot_data$a_freq)], " (",
                         round(100 * max(shot_data$a_freq), 1), "%)", sep = ""),
-       cex = ifelse(three_weights, 0.8, 0.6))
-  text(-1.5, 0.8, paste("PageRank MVP: ", names(which.max(pagerank)), " (",
-                        round(max(pagerank), 3), ")", sep = ""))
-  text(-1.5, 0.7, paste("Hub Score MVP: ", names(which.max(hubscores)), " (",
-                        round(max(hubscores), 3), ")", sep = ""))
-  text(-1.5, 0.6, paste("Authority Score MVP: ", names(which.max(auth_scores)), " (",
-                        round(max(auth_scores), 3), ")", sep = ""))
-  text(-1.5, 0.5, paste("Team Clustering Coefficient: ", clust_coeff, sep = ""))
+       cex = 0.6)
+  text(-2, 0.8, paste("PageRank MVP: ", names(which.max(pagerank)), " (",
+                        round(max(pagerank), 3), ")", sep = ""), cex = 0.6)
+  text(-2, 0.7, paste("Hub Score MVP: ", names(which.max(hubscores)), " (",
+                        round(max(hubscores), 3), ")", sep = ""), cex = 0.6)
+  text(-2, 0.6, paste("Authority Score MVP: ", names(which.max(auth_scores)), " (",
+                        round(max(auth_scores), 3), ")", sep = ""), cex = 0.6)
+  text(-2, 0.5, paste("Team Clustering Coefficient: ", clust_coeff, sep = ""),
+       cex = 0.6)
 
   if(three_weights){
     text(0, -1.4, cex = 0.7,
