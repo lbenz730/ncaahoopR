@@ -487,13 +487,14 @@ is.nit <- function(gameID) {
 #' @return A data-frame of the day's schedule of games
 #' @export
 get_master_schedule <- function(year, month, day) {
-  date <- paste0(year, ifelse(length(month) == 1, paste0("0", month), month),
-                 ifelse(length(day) == 1, paste0("0", day), day))
+  date <- paste0(year, ifelse(nchar(month) == 1, paste0("0", month), month),
+                 ifelse(nchar(day) == 1, paste0("0", day), day))
   url <-paste0("http://www.espn.com/mens-college-basketball/schedule/_/date/", date, "/group/50")
   z <- XML::readHTMLTable(url)
   if(length(z) > 1) {
     schedule <- as.data.frame(z[[1]])[,c(1,2)]
     completed <- as.data.frame(z[[2]][-1,1:3])
+    names(completed) <- c("away", "home", "result")
     names(schedule) <- c("away", "home")
   }else{
     completed <- as.data.frame(z[[1]][,1:3])
@@ -514,7 +515,7 @@ get_master_schedule <- function(year, month, day) {
     team <- gsub("\\s*$", "", gsub("^\\s*", "", team))
   }
 
-  if(!is.na(schedule)) {
+  if(any(!is.na(schedule[1]))) {
     schedule <- dplyr::mutate(schedule,
                               "away" = as.character(sapply(schedule$away, clean)),
                               "home" = as.character(sapply(schedule$home, clean)),
@@ -561,7 +562,7 @@ get_master_schedule <- function(year, month, day) {
   completed$away_score[!index] <- losing_scores[!index]
   completed$away_score[index] <- winning_scores[index]
 
-  if(!is.na(schedule)) {
+  if(any(!is.na(schedule[1]))) {
     schedule <- rbind(schedule, dplyr::select(completed, -away_anchor, -result))
   }else{
     schedule <- completed
