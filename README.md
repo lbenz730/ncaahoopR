@@ -70,7 +70,7 @@ For more information about how these win-probability charts are fit, check out t
  * ```id```: team id; used in ESPN URLs
  * ```link```: link; used in ESPN URLs
  
- These datasets can be loaded with ```data("ids")``` or ```data("dict")``` respectively.
+These datasets can be loaded by typing ```data("ids")``` or ```data("dict")``` respectively, followed by typing the typing the name of the desired dataset into the R console.
 
 ## Examples
 __Single Game Assist Network__
