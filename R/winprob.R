@@ -1,8 +1,9 @@
-y <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2017-18/NCAA_Hoops_Results_3_14_2018.csv",
+y <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2018-19/NCAA_Hoops_Results_11_8_2018.csv",
               as.is = T)
 x <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Power_Rankings/power_rankings.csv",
               as.is = T)
 z <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2016-17/NCAA_Hoops_Results_2017_Final.csv", as.is = T)
+
 prior <- glm(wins ~ predscorediff, data = z, family = binomial)
 
 ### Get Approiate Model for Time Remaining
@@ -82,7 +83,7 @@ get_line <- function(data) {
     return(NA)
   }
   game <- y %>% filter(team == home, opponent == away, location == "H")
-  HCA <- 0
+  HCA <- 3.4
   if(nrow(game) == 0) {
     game <- y %>% filter(team == home, opponent == away, location == "N")
     HCA <- 0
@@ -90,7 +91,7 @@ get_line <- function(data) {
       return(0)
     }
   }
-  line <- x$YUSAG_Coefficient[x$Team == home] - x$YUSAG_Coefficient[x$Team == away] + HCA
+  line <- x$yusag_coeff[x$team == home] - x$yusag_coeff[x$team == away] + HCA
   return(line)
 }
 
@@ -109,7 +110,8 @@ wp_chart <- function(gameID, home_col, away_col, show_legend = T) {
   ### Scrape Data from ESPN
   data <- get_pbp_game(gameID)
   if(is.null(data)) {
-   stop("PBP Data Not Available for Win Probability Chart")
+    print("PBP Data Not Available for Win Probability Chart")
+    return(NA)
   }
   date <- data$date
 
@@ -207,5 +209,9 @@ wp_chart <- function(gameID, home_col, away_col, show_legend = T) {
     text(600, gap, gei, cex = 0.8)
     text(10, 0, "Luke Benz\n@recspecs730\nncaahoopR", cex = 0.5)
   }
+
+  ### Returns Game Excitement Index
+  gei <- sum(data$wp_delta, na.rm = T) * 2400/msec
+  return(gei)
 }
 

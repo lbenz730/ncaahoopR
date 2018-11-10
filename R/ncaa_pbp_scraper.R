@@ -98,7 +98,7 @@ get_pbp <- function(team) {
     }
     else{
       t1 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][2,1]), ":")))
-      t2 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][3,1]), ":")))
+      t2 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][5,1]), ":")))
       if(60 * t1[1] + t1[2] < 60 * t2[1] + t2[2]) {
         print("Game In Progress--Play by Play Data Not Available. Please Check Back After the Game")
         next
@@ -234,10 +234,9 @@ get_pbp_game <- function(gameIDs) {
     if(length(tmp) < ncol(tmp[[1]]) | length(tmp) == 0) {
       print("Play by Play Data Not Available")
       next
-    }
-    else{
+    }else{
       t1 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][2,1]), ":")))
-      t2 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][3,1]), ":")))
+      t2 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][5,1]), ":")))
       if(60 * t1[1] + t1[2] < 60 * t2[1] + t2[2]) {
         print("Game In Progress--Play by Play Data Not Available. Please Check Back After the Game")
         next

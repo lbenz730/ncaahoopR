@@ -48,7 +48,7 @@ Usage:```wp_chart(gameID, home_color, away_color, show_legend = T)```
 * ```season```: Chart color for away team.
 * ```show_legend```: Logical, whether or not to show legend/text on chart. Default = `TRUE`.
 
-For more information about how these win-probability charts are fit, check out the below links
+Returns ```GEI``` (Game Excitement Index). For more information about how these win-probability charts are fit, check out the below links
 
 * [Model Methodology](https://sports.sites.yale.edu/ncaa-basketball-win-probability-model)
 * [Game Excitement Index](https://sports.sites.yale.edu/game-excitement-index-part-ii)
