@@ -210,9 +210,11 @@ get_pbp <- function(team) {
 #' Scrapes ESPN Play-by-Play data for the desired games.
 #'
 #' @param gameIDs Vector of ESPN game-IDs
+#' @param win_prob Logical whether to return win probability from home team perspective
+#' on each play of the game. Default = F.
 #' @return A data-frame of the Play-by-Play data fror desired games.
 #' @export
-get_pbp_game <- function(gameIDs) {
+get_pbp_game <- function(gameIDs, win_prob = F) {
   if(!"ncaahoopR" %in% .packages()) {
     ids <- create_ids_df()
   }
@@ -328,6 +330,39 @@ get_pbp_game <- function(gameIDs) {
     y <- unlist(strsplit(y, "-"))
     date <-  stripwhite(y[length(y) - 1])
     pbp$date <- date
+
+    ### Win Probability by Play
+    if(win_prob) {
+      ### Cleaning
+      pbp$scorediff <- pbp$home_score - pbp$away_score
+      if(is.na(pbp$home_favored_by[1])) {
+        pbp$home_favored_by <- get_line(pbp)
+      }
+      if(!is.na(pbp$home_favored_by[1])){
+        pbp$pre_game_prob <- predict(prior, newdata = data.frame(predscorediff = pbp$home_favored_by),
+                                     type = "response")
+      }else{
+        pbp$pre_game_prob <- 0.5
+      }
+
+      ### Compute Win Prob
+      pbp$winprob <- NA
+      msec <- max(pbp$secs_remaining)
+      for(k in 1:nrow(pbp)) {
+        m <- secs_to_model(pbp$secs_remaining[k], msec)
+        model <- wp_hoops[m,]
+        log_odds <- model$intercept + pbp$scorediff[k]*model$scorediff +
+          pbp$pre_game_prob[k]*model$pre_game_prob
+        odds <- exp(log_odds)
+        pbp$winprob[k] <- odds/(1 + odds)
+      }
+
+      ### Hardcode to 50-50 if Line = 0 or NA
+      if(is.na(pbp$home_favored_by[1]) | pbp$home_favored_by[1] == 0) {
+        pbp$winprob[1] <- 0.5
+      }
+      pbp <- select(pbp, -pre_game_prob)
+    }
 
     if(i == 1) {
       pbp_all <- pbp

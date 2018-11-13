@@ -4,10 +4,13 @@
 \alias{get_pbp_game}
 \title{Get Game Play-by-Play Data}
 \usage{
-get_pbp_game(gameIDs)
+get_pbp_game(gameIDs, win_prob = F)
 }
 \arguments{
 \item{gameIDs}{Vector of ESPN game-IDs}
+
+\item{win_prob}{Logical whether to return win probability from home team perspective
+on each play of the game. Default = F.}
 }
 \value{
 A data-frame of the Play-by-Play data fror desired games.
