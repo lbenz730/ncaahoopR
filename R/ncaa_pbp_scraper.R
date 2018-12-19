@@ -406,7 +406,7 @@ get_schedule <- function(team) {
   schedule$opponent <- gsub("^vs", "", schedule$opponent)
   schedule$opponent <- gsub("[@#*()]", "", schedule$opponent)
   schedule$opponent <- gsub("[0-9]*", "", schedule$opponent)
-  schedule$opponent <- gsub("^ ", "", schedule$opponent)
+  schedule$opponent <- stripwhite(gsub("^ ", "", schedule$opponent))
   schedule$result[grep(":", schedule$result)] <- NA
   schedule$result[grep("TBD", schedule$result)] <- NA
   scores <- unlist(sapply(gsub("[A-z]*", "", schedule$result), strsplit, "-"))
@@ -506,6 +506,9 @@ get_date <- function(gameID) {
 is.nit <- function(gameID) {
   url <- paste("http://www.espn.com/mens-college-basketball/playbyplay?gameId=", gameID, sep = "")
   y <- scan(url, what = "", sep = "\n")
+  if(any(grepl("NIT SEASON TIP-OFF", y))) {
+    return(F)
+  }
   return(sum(grepl("NIT", y)) > 1)
 }
 
