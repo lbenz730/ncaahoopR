@@ -309,6 +309,7 @@ get_schedule <- function(team) {
   schedule$result[grep(":", schedule$result)] <- NA
   schedule$result[grep("TBD", schedule$result)] <- NA
   scores <- unlist(sapply(gsub("[A-z]*", "", schedule$result), strsplit, "-"))
+  scores <- gsub("\\s.*", "", scores)
   team_scores <- suppressWarnings(as.numeric(scores[seq(1, length(scores), 2)]))
   opp_scores <- suppressWarnings(as.numeric(scores[seq(2, length(scores), 2)]))
   schedule <- dplyr::mutate(schedule, team_score = NA, opp_score = NA)
