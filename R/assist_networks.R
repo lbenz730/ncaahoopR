@@ -168,21 +168,21 @@ assist_net <- function(team, node_col, season, rmv_bench = T, tree = F, three_we
 
 
   ### Add Text to Network
-  text(-2, 1.0, paste(ifelse(three_weights, "Weighted ", ""), "Assist Frequency Leader: ",
+  text(-1.5, 1.0, paste(ifelse(three_weights, "Weighted ", ""), "Assist Frequency Leader: ",
                         ast_data$ast[which.max(ast_data$a_freq)], " (",
                         round(100 * max(ast_data$a_freq), 1), "%)", sep = ""),
        cex = 0.6)
-  text(-2, 0.9, paste(ifelse(three_weights, "Weighted ", ""), "(Assisted) Shot Frequency Leader: ",
+  text(-1.5, 0.9, paste(ifelse(three_weights, "Weighted ", ""), "(Assisted) Shot Frequency Leader: ",
                         shot_data$shot[which.max(shot_data$a_freq)], " (",
                         round(100 * max(shot_data$a_freq), 1), "%)", sep = ""),
        cex = 0.6)
-  text(-2, 0.8, paste("PageRank MVP: ", names(which.max(pagerank)), " (",
+  text(-1.5, 0.8, paste("PageRank MVP: ", names(which.max(pagerank)), " (",
                         round(max(pagerank), 3), ")", sep = ""), cex = 0.6)
-  text(-2, 0.7, paste("Hub Score MVP: ", names(which.max(hubscores)), " (",
+  text(-1.5, 0.7, paste("Hub Score MVP: ", names(which.max(hubscores)), " (",
                         round(max(hubscores), 3), ")", sep = ""), cex = 0.6)
-  text(-2, 0.6, paste("Authority Score MVP: ", names(which.max(auth_scores)), " (",
+  text(-1.5, 0.6, paste("Authority Score MVP: ", names(which.max(auth_scores)), " (",
                         round(max(auth_scores), 3), ")", sep = ""), cex = 0.6)
-  text(-2, 0.5, paste("Team Clustering Coefficient: ", clust_coeff, sep = ""),
+  text(-1.5, 0.5, paste("Team Clustering Coefficient: ", clust_coeff, sep = ""),
        cex = 0.6)
 
   if(three_weights){
