@@ -71,7 +71,7 @@ wp_chart <- function(game_id, home_col, away_col, show_legend = T) {
   }
 
   ### Min Win Prob
-  if(data$scorediff[nrow(data)] > 0) {
+  if(data$score_diff[nrow(data)] > 0) {
     min_prob <- min(data$win_prob, na.rm = T)
     if(min_prob < 0.01) {
       min_prob <- paste("Minimum Win Probability for", data$home[1], "< 1", "%")
@@ -104,20 +104,20 @@ wp_chart <- function(game_id, home_col, away_col, show_legend = T) {
 #' @return GEI--Game Exictement Index
 #' @export
 game_excitement_index <- function(game_id) {
- data <- get_pbp_game(game_id)
- if(is.null(data)) {
-   print("PBP Data Not Available")
-   return(NA)
- }
+  data <- get_pbp_game(game_id)
+  if(is.null(data)) {
+    print("PBP Data Not Available")
+    return(NA)
+  }
 
- ### Compute Game Excitemant Index
- msec <- max(data$secs_remaining_absolute)
- data$wp_delta <- 0
- for(i in 2:nrow(data)) {
-   data$wp_delta[i] <- abs(data$win_prob[i] - data$win_prob[i-1])
- }
- gei <- sum(data$wp_delta, na.rm = T) * 2400/msec
- return(gei)
+  ### Compute Game Excitemant Index
+  msec <- max(data$secs_remaining_absolute)
+  data$wp_delta <- 0
+  for(i in 2:nrow(data)) {
+    data$wp_delta[i] <- abs(data$win_prob[i] - data$win_prob[i-1])
+  }
+  gei <- sum(data$wp_delta, na.rm = T) * 2400/msec
+  return(gei)
 }
 
 #' Win Probability Charts in ggplot
@@ -166,6 +166,19 @@ gg_wp_chart <- function(game_id, home_col, away_col) {
   gei <- sum(data$wp_delta, na.rm = T) * 2400/msec
   gei <- paste("Game Excitement Index:", round(gei, 2))
 
+  ### Minimum Win Probability
+  if(data$score_diff[nrow(data)] > 0) {
+    min_prob <- min(data$win_prob)
+    min_prob <- paste0("Minimum Win Probability for ", home_team, ": ",
+                       ifelse(100 * min_prob < 1, "1%",
+                              paste0(round(100 * min_prob), "%")))
+  }else {
+    min_prob <- min(1 - data$win_prob)
+    min_prob <- paste0("Minimum Win Probability for ", away_team, ": ",
+                       ifelse(100 * min_prob < 1, "1%",
+                              paste0(round(100 * min_prob), "%")))
+  }
+
   ### Make Plot
   ggplot2::ggplot(x, aes(x = secs_elapsed, y = win_prob, group = team, col = team)) +
     ggplot2::geom_line(size = 1) +
@@ -185,7 +198,8 @@ gg_wp_chart <- function(game_id, home_col, away_col) {
     ggplot2::scale_x_continuous(breaks = seq(0, msec, 400)) +
     ggplot2::scale_color_manual(values = c(away_col, home_col),
                                 labels = c(away_team, home_team)) +
-    ggplot2::annotate("text", x = 300, y = 0.05, label = gei)
+    ggplot2::annotate("text", x = 300, y = 0.05, label = gei) +
+    ggplot2::annotate("text", x = 300, y = 0.025, label = min_prob)
 
 
 }
