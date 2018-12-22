@@ -68,7 +68,7 @@ __Game Flow Charts__
 
 __Game Excitement Index__
 
-```game_exciment_index(game_id):```
+```game_exciment_index(game_id)```
 
 Returns ```GEI``` (Game Excitement Index) for given espn. For more information about how these win-probability charts are fit and how Game Excitemnet Index is calculated, check out the below links
 
