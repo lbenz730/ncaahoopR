@@ -4,17 +4,17 @@
 \alias{wp_chart}
 \title{Win Probability Chart}
 \usage{
-wp_chart(gameID, home_col, away_col, show_legend = T)
+wp_chart(game_id, home_col, away_col, show_legend = T)
 }
 \arguments{
-\item{gameID}{ESPN gameID for which to create chart}
+\item{game_id}{ESPN game_id for which to create chart}
 
 \item{home_col}{Color of home team for chart}
 
+\item{away_col}{Color of away team for chart}
+
 \item{show_legend}{Logical indicating whether or not to display legend and min win probability
 on the chart. Default = TRUE}
-
-\item{home_col}{Color of away team for chart}
 }
 \description{
 Renders win proability chart for desired game

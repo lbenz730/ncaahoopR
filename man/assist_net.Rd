@@ -4,8 +4,8 @@
 \alias{assist_net}
 \title{Assist Network}
 \usage{
-assist_net(team, node_col, season, rmv_bench, tree, three_weights,
-  message = NA)
+assist_net(team, node_col, season, rmv_bench = T, tree = F,
+  three_weights = T, message = NA)
 }
 \arguments{
 \item{team}{Team to create network for}
@@ -15,13 +15,13 @@ assist_net(team, node_col, season, rmv_bench, tree, three_weights,
 \item{season}{Season, as a character,  (e.g. "2018-19"), or vector of ESPN gameIDS
 for which data to use in network. Currently only handles the current season worth of data.}
 
-\item{rmv_bench}{Logical indicating whether to remove players who do not factor in the network.}
+\item{rmv_bench}{Logical indicating whether to remove players who do not factor in the network. Default = TRUE.}
 
-\item{tree}{Logicial indicating whether to draw the network as a tree (recommended for single games).
-If FALSE, the network will be drawn as a circle (recommended for entire seasons).}
+\item{tree}{Logicial indicating whether to draw the network as a tree.
+If FALSE, the network will be drawn as a circle (recommended for entire seasons). Default = FALSE.}
 
 \item{three_weights}{Logical indicating whether to give extra weight for assisted three point shots.
-If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1).}
+If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1). Default = TRUE.}
 
 \item{message}{User supplied plot title to overwrite default plot title, if desired. Default = NA.}
 }

@@ -6,11 +6,11 @@
 #' @param node_col Color of nodes in network
 #' @param season Season, as a character,  (e.g. "2018-19"), or vector of ESPN gameIDS
 #' for which data to use in network. Currently only handles the current season worth of data.
-#' @param rmv_bench Logical indicating whether to remove players who do not factor in the network.
-#' @param tree Logicial indicating whether to draw the network as a tree (recommended for single games).
-#' If FALSE, the network will be drawn as a circle (recommended for entire seasons).
+#' @param rmv_bench Logical indicating whether to remove players who do not factor in the network. Default = TRUE.
+#' @param tree Logicial indicating whether to draw the network as a tree.
+#' If FALSE, the network will be drawn as a circle (recommended for entire seasons). Default = FALSE.
 #' @param three_weights Logical indicating whether to give extra weight for assisted three point shots.
-#' If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1).
+#' If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1). Default = TRUE.
 #' @param message User supplied plot title to overwrite default plot title, if desired. Default = NA.
 #' @return List with network statistics
 #' \itemize{
@@ -23,7 +23,7 @@
 #'  }
 #' @export
 
-assist_net <- function(team, node_col, season, rmv_bench, tree, three_weights, message = NA) {
+assist_net <- function(team, node_col, season, rmv_bench = T, tree = F, three_weights = T, message = NA) {
   text_team <- dict$ESPN_PBP[dict$ESPN == team]
   text_team <- text_team[!is.na(text_team)]
 
