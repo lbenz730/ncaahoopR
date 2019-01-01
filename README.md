@@ -21,10 +21,10 @@ as shown in the url for the summary of the UMBC-Virginia game below.
 
 ### Scraping Data
 * ```get_pbp(team)```: Game entire 2017-18 Season's worth of play-by-play data for a given team.
-* ```get_pbp_game(game_ids, win_prob = F)```:  Get play-by-play data for a specific vector of ESPN game ids. ```win_prob``` parameter allows users to specify whether win probability (from the home team's perspective) should be appended to the play-by-play data. Default = ```FALSE```.
+* ```get_pbp_game(game_ids)```:  Get play-by-play data for a specific vector of ESPN game_ids. 
 * ```get_roster(team)```: Get a particular team's roster. 
 * ```get_schedule(team)```: Get a team's schedule.
-* ```get_game_ids(team)```: Get a vector of ESPN Game IDs for all games in which ```team``` plays in.
+* ```get_game_ids(team)```: Get a vector of ESPN game_ids for all games in which ```team``` plays in.
 * ```get_master_schedule(year, month, day)```: Get schedule of all games for given date.
 
 ### Assist Networks
