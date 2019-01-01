@@ -106,8 +106,11 @@ Returns ```GEI``` (Game Excitement Index) for given espn. For more information a
 * `color_5`: Hexcode for team's 5th color, when available.
 * `color_6`: Hexcode for team's 6th color, when available.
 
+![Available Colors](figures/colors.png)
+_Primary and secondary colors for available teams._
 
-These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`, ```data("dict")```.
+
+These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`, or ```data("dict")```, respectively.
 
 ## Examples
 #### Single Game Assist Network
