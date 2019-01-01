@@ -127,8 +127,10 @@ game_excitement_index <- function(game_id) {
 #' @param game_id ESPN game_id for which to render chart
 #' @param home_col Color of home team for chart
 #' @param away_col Color of away team for chart
+#' @param show_labels Logical whether Game Exictement Index and Minimum
+#' Win Probability metrics should be displayed on the plot. Default = TRUE.
 #' @export
-gg_wp_chart <- function(game_id, home_col, away_col) {
+gg_wp_chart <- function(game_id, home_col, away_col, show_labels = T) {
   ### Get Data
   data <- get_pbp_game(game_id)
   if(is.null(data)) {
@@ -170,17 +172,17 @@ gg_wp_chart <- function(game_id, home_col, away_col) {
   if(data$score_diff[nrow(data)] > 0) {
     min_prob <- min(data$win_prob)
     min_prob <- paste0("Minimum Win Probability for ", home_team, ": ",
-                       ifelse(100 * min_prob < 1, "1%",
+                       ifelse(100 * min_prob < 1, "< 1%",
                               paste0(round(100 * min_prob), "%")))
   }else {
     min_prob <- min(1 - data$win_prob)
     min_prob <- paste0("Minimum Win Probability for ", away_team, ": ",
-                       ifelse(100 * min_prob < 1, "1%",
+                       ifelse(100 * min_prob < 1, "< 1%",
                               paste0(round(100 * min_prob), "%")))
   }
 
   ### Make Plot
-  ggplot2::ggplot(x, aes(x = secs_elapsed, y = win_prob, group = team, col = team)) +
+  p <- ggplot2::ggplot(x, aes(x = secs_elapsed, y = win_prob, group = team, col = team)) +
     ggplot2::geom_line(size = 1) +
     ggplot2::theme_bw() +
     ggplot2::geom_vline(xintercept = plot_lines, lty = 2, alpha = 0.5, size = 0.8) +
@@ -197,11 +199,14 @@ gg_wp_chart <- function(game_id, home_col, away_col) {
                    legend.position = "bottom",) +
     ggplot2::scale_x_continuous(breaks = seq(0, msec, 400)) +
     ggplot2::scale_color_manual(values = c(away_col, home_col),
-                                labels = c(away_team, home_team)) +
-    ggplot2::annotate("text", x = 300, y = 0.05, label = gei) +
-    ggplot2::annotate("text", x = 300, y = 0.025, label = min_prob)
+                                labels = c(away_team, home_team))
+  if(show_labels) {
+    p <- p +
+      ggplot2::annotate("text", x = 300, y = 0.05, label = gei) +
+      ggplot2::annotate("text", x = 300, y = 0.025, label = min_prob)
+  }
 
-
+  p
 }
 
 #' Game Flow Chart

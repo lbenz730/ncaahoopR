@@ -52,11 +52,12 @@ There are two functions for plotting win probability charts, one that uses base 
 * ```show_legend```: Logical, whether or not to show legend/text on chart. Default = `TRUE`.
 
 
-```gg_wp_chart(game_id, home_col, away_col)```
+```gg_wp_chart(game_id, home_col, away_col, show_labels = T)```
 
 * ```game_id``` ESPN game_id for the desired win probability chart.
 * ```home_col``` Chart color for home team.
 * ```away_col```: Chart color for away team.
+* `show_labels`: Logical whether Game Exictement Index and Minimum Win Probability metrics should be displayed on the plot. Default = `TRUE`.
 
 __Game Flow Charts__
 
@@ -92,7 +93,21 @@ Returns ```GEI``` (Game Excitement Index) for given espn. For more information a
  * ```id```: team id; used in ESPN URLs
  * ```link```: link; used in ESPN URLs
  
-These datasets can be loaded by typing ```data("ids")``` or ```data("dict")``` respectively, followed by typing the typing the name of the desired dataset into the R console.
+ 
+ ```ncaa_colors``` A dataframe of team color hex codes, pulled from [teamcolorcodes.com](https://teamcolorcodes.com/). Note that hexcodes are only available for 248 of 353 Division 1 teams.
+ 
+
+* `ncaa_name`: The name of the team, as listed on the NCAA website (same as `dict$NCAA`)
+* `espn_name`: The name of the team, as listed on the ESPN URLs (same as dict$ESPN)}
+* `primary_color`: Hexcode for team's primary color.
+* `secondary_color`: Hexcode for team's secondary color, when available.
+* `tertiary_color`: Hexcode for team's tertiary color, when available.
+* `color_4`: Hexcode for team's 4th color, when available.
+* `color_5`: Hexcode for team's 5th color, when available.
+* `color_6`: Hexcode for team's 6th color, when available.
+
+
+These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`, ```data("dict")```.
 
 ## Examples
 #### Single Game Assist Network

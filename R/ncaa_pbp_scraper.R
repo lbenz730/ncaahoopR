@@ -457,7 +457,7 @@ get_master_schedule <- function(year, month, day) {
   }
 
   x <- scan(url, sep = "\n", what = "")
-  x <- x[279]
+  x <- x[grep("gameId", x)[1]]
   x <- gsub("[A-z]", "", x)
   x <- strsplit(x, "\\?=")[[1]]
   x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))

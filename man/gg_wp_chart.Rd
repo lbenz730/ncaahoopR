@@ -4,7 +4,7 @@
 \alias{gg_wp_chart}
 \title{Win Probability Charts in ggplot}
 \usage{
-gg_wp_chart(game_id, home_col, away_col)
+gg_wp_chart(game_id, home_col, away_col, show_labels = T)
 }
 \arguments{
 \item{game_id}{ESPN game_id for which to render chart}
@@ -12,6 +12,9 @@ gg_wp_chart(game_id, home_col, away_col)
 \item{home_col}{Color of home team for chart}
 
 \item{away_col}{Color of away team for chart}
+
+\item{show_labels}{Logical whether Game Exictement Index and Minimum
+Win Probability metrics should be displayed on the plot. Default = TRUE.}
 }
 \description{
 Renders Win Probability Charts in ggplot

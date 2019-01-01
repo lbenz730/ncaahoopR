@@ -35,3 +35,25 @@
 #' data(dict)
 #'
 "dict"
+
+#' A data frame with team colors
+#'
+#' @docType data
+#' @format A data frame with team colors
+#' \describe{
+#'  \item{ncaa_name}{the name of the team, as listed on the NCAA website (same as dict$NCAA)}
+#'  \item{espn_name}{the name of the team, as listed on the ESPN URLs (same as dict$ESPN)}
+#'  \item{primary_color}{hexcode for team's primary color}
+#'  \item{secondary_color}{hexcode for team's secondary color, when available}
+#'  \item{tertiary_color}{hexcode for team's tertiary color, when available}
+#'  \item{color_4}{hexcode for team's 4th color, when available}
+#'  \item{color_5}{hexcode for team's 5th color, when available}
+#'  \item{color_6}{hexcode for team's 6th color, when available}
+#' }
+#'
+#' @details Convert between team names in various systems
+#'
+#' @examples
+#' data(ncaa_colors)
+#'
+"ncaa_colors"
