@@ -227,7 +227,7 @@ get_pbp_game <- function(game_ids) {
       dplyr::rename("secs_remaining_absolute" = secs_remaining,
                     "secs_remaining" = secs_remaining_relative)
 
-    if(i == 1) {
+    if(!exists("pbp_all")) {
       pbp_all <- pbp
     }
     else{
@@ -395,7 +395,12 @@ get_roster <- function(team) {
     return("Unable to get roster. ESPN is updating CBB files. Check back again soon")
   }
   tmp <- as.data.frame(tmp[[3]])
-  names(tmp) <- c("Number", "Name", "Position", "Height", "Weight", "Class", "Hometown")
+  names(tmp) <- c("number", "name", "position", "height", "weight", "class", "hometown")
+  for(i in 1:ncol(tmp)) {
+   tmp[,i] <- as.character(tmp[,i])
+  }
+  tmp$number <- as.numeric(tmp$number)
+  tmp <- dplyr::arrange(tmp, number)
   return(tmp)
 }
 

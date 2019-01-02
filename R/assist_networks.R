@@ -35,8 +35,8 @@ assist_net <- function(team, node_col, season, rmv_bench = T, tree = F, three_we
     x$description <- as.character(x$description)
   }else {
     x <- suppressWarnings(try(get_pbp_game(season), silent = T))
-    if(class(x) == "try-error") {
-      return("Play-by-Play Data Not Available")
+    if(class(x) == "try-error" | class(x) == "NULL") {
+      return("Play-by-Play Data Not Available for Assist Network")
     }
     opp <- setdiff(c(x$away, x$home), text_team)
     if(length(season) == 1){
@@ -54,7 +54,7 @@ assist_net <- function(team, node_col, season, rmv_bench = T, tree = F, three_we
   if(class(roster) == "try-error") {
       return("Unable to get roster. ESPN is updating CBB files. Check back again soon")
   }
-  roster$Name <- gsub("Jr.", "Jr", roster$Name)
+  roster$name <- gsub("Jr.", "Jr", roster$name)
   games <- unique(x$game_id)
   ast <- grep("Assisted", x$description)
   x <- x[ast, ]
@@ -80,7 +80,7 @@ assist_net <- function(team, node_col, season, rmv_bench = T, tree = F, three_we
   ### Get only shots made by the team in question
   x$ast <- gsub("Jr.", "Jr", x$ast)
   x$shot <- gsub("Jr.", "Jr", x$shot)
-  x <- x[is.element(x$ast, roster$Name), ]
+  x <- x[is.element(x$ast, roster$name), ]
 
   sets <- 2 * choose(nrow(roster), 2)
   network <- data.frame("ast" = rep(NA, sets),
@@ -96,13 +96,13 @@ assist_net <- function(team, node_col, season, rmv_bench = T, tree = F, three_we
 
   ### Aggregate Assists
   for(i in 1:nrow(roster)) {
-    ast <- roster$Name[i]
-    tmp <- roster[roster$Name != ast,]
+    ast <- roster$name[i]
+    tmp <- roster[roster$name != ast,]
     for(j in 1:nrow(tmp)) {
       index <- j + (i - 1) * nrow(tmp)
       network$ast[index] <- ast
-      network$shot[index] <- tmp$Name[j]
-      network$num[index] <- sum(x$weights[x$ast == ast & x$shot == tmp$Name[j]])
+      network$shot[index] <- tmp$name[j]
+      network$num[index] <- sum(x$weights[x$ast == ast & x$shot == tmp$name[j]])
     }
   }
 
