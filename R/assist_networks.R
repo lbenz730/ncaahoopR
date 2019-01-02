@@ -32,7 +32,6 @@ assist_net <- function(team, node_col, season, rmv_bench = T, tree = F, three_we
     x <- get_pbp(team)
     text <- " Assist Network for 2018-19 Season"
     factor <- 0.75
-    x$description <- as.character(x$description)
   }else {
     x <- suppressWarnings(try(get_pbp_game(season), silent = T))
     if(class(x) == "try-error" | class(x) == "NULL") {
@@ -45,7 +44,6 @@ assist_net <- function(team, node_col, season, rmv_bench = T, tree = F, three_we
     else{
       text <- paste(" Assist Network vs. ", message, sep = "")
     }
-    x$description <- as.character(x$description)
     factor <- 3
   }
 
@@ -151,7 +149,7 @@ assist_net <- function(team, node_col, season, rmv_bench = T, tree = F, three_we
   igraph::E(net)$width <- E(net)$weight * factor
   igraph::V(net)$color <- node_col
 
-  if(season %in% c("2016-17", "2017-18")) {
+  if(season %in% c("2016-17", "2017-18", "2018-19")) {
     labs <- NA
   }
   else{

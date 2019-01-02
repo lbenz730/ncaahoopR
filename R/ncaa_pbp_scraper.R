@@ -159,6 +159,7 @@ get_pbp_game <- function(game_ids) {
     }
 
     ### Time Outs
+    pbp$description <- as.character(pbp$description)
     timeout <- dplyr::filter(pbp, sapply(pbp$description, grepl, pattern = "Timeout")) %>%
       dplyr::filter(description != "Official TV Timeout")
 
