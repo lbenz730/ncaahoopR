@@ -398,7 +398,7 @@ get_roster <- function(team) {
   tmp <- as.data.frame(tmp[[3]])
   names(tmp) <- c("number", "name", "position", "height", "weight", "class", "hometown")
   for(i in 1:ncol(tmp)) {
-   tmp[,i] <- as.character(tmp[,i])
+    tmp[,i] <- as.character(tmp[,i])
   }
   tmp$number <- as.numeric(tmp$number)
   tmp <- dplyr::arrange(tmp, number)
@@ -439,6 +439,9 @@ get_master_schedule <- function(year, month, day) {
     schedule <- NA
   }
 
+  n_canceled <- sum(grepl("Canceled", completed$result))
+  completed <- dplyr::filter(completed, result != "Canceled")
+
   ### Extract Ranking
   ranking <- function(team) {
     rank <- gsub("[^0-9]", "", team)
@@ -468,6 +471,7 @@ get_master_schedule <- function(year, month, day) {
   x <- strsplit(x, "\\?=")[[1]]
   x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
   x <- x[!is.na(x) & !duplicated(x)]
+  x <- x[1:(length(x) - n_canceled)]
 
   ### Add in Completed Games
   find_anchor <- function(team) {
@@ -490,14 +494,17 @@ get_master_schedule <- function(year, month, day) {
 
   winners <- unname(sapply(completed$result, function(y) { gsub("\\s[0-9]*.*", "", y) }))
   scores <- as.numeric(gsub("[^0-9]", "", gsub("\\(.*\\)", "", unlist(strsplit(completed$result, ",")))))
-  winning_scores <- scores[seq(1, length(scores) - 1, 2)]
-  losing_scores <- scores[seq(2, length(scores), 2)]
 
-  index <- sapply(completed$away_anchor, function(y) { y %in% winners })
-  completed$home_score[index] <- losing_scores[index]
-  completed$home_score[!index] <- winning_scores[!index]
-  completed$away_score[!index] <- losing_scores[!index]
-  completed$away_score[index] <- winning_scores[index]
+  if(length(scores) > 0) {
+    winning_scores <- scores[seq(1, length(scores) - 1, 2)]
+    losing_scores <- scores[seq(2, length(scores), 2)]
+
+    index <- sapply(completed$away_anchor, function(y) { y %in% winners })
+    completed$home_score[index] <- losing_scores[index]
+    completed$home_score[!index] <- winning_scores[!index]
+    completed$away_score[!index] <- losing_scores[!index]
+    completed$away_score[index] <- winning_scores[index]
+  }
 
   if(any(!is.na(schedule[1]))) {
     schedule <- rbind(schedule, dplyr::select(completed, -away_anchor, -result))
