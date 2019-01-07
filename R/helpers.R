@@ -3,10 +3,10 @@ stripwhite <- function(x) gsub("\\s*$", "", gsub("^\\s*", "", x))
 
 ### Function to clean PBP data
 clean <- function(data, half, OTs) {
-  cleaned <- data %>% mutate(play_id = 1:nrow(data),
+  cleaned <- data %>% dplyr::mutate(play_id = 1:nrow(data),
                              half = half,
                              time_remaining_half = as.character(V1),
-                             description = V3,
+                             description = as.character(V3),
                              away_score = suppressWarnings(as.numeric(gsub("-.*", "", V4))),
                              home_score = suppressWarnings(as.numeric(gsub(".*-", "", V4))))
   cleaned$time_remaining_half[1] <- ifelse(half <= 2, "20:00", "5:00")
@@ -30,11 +30,11 @@ create_ids_df <- function() {
   x <- scan(teams_url, what = "", sep = "\n")
   x <- x[grep("mens-college-basketball/team/schedule/_/id/", x)][2]
   x <- strsplit(x, "Clubhouse")[[1]]
-  
+
   ids <- data.frame("team" = rep(NA, 353),
                     "id" = rep(NA, 353),
                     "link" = rep(NA, 353))
-  
+
   for(i in 2:length(x)) {
     y <- strsplit(x[i], "mens-college-basketball/team/_/id/")[[1]][2]
     y <- unlist(strsplit(y, "/"))
@@ -43,13 +43,13 @@ create_ids_df <- function() {
     name <- test$team[ids$link[i-1] == test$link]
     ids$team[i-1] <- ifelse(length(name) > 0, name, NA)
   }
-  
+
   tofill <- which(is.na(ids$team))
   for(i in 1:length(tofill)) {
     k <- which.min(stringdist::stringdist(ids$link[tofill[i]], test$link[tofill]))
     ids$team[tofill[i]] <- test$team[tofill[k]]
   }
-  
+
   return(ids)
 }
 
@@ -110,7 +110,7 @@ secs_to_model <- function(sec, msec) {
       sec <- sec - 300
     }
   }
-  
+
   if(sec == 0) {
     m <- 1
   }
@@ -139,11 +139,11 @@ secs_to_model <- function(sec, msec) {
 get_line <- function(data) {
   away <- data$away[1]
   home <- data$home[1]
-  
+
   ### Convert to NCAA Names
   away <- dict$NCAA[dict$ESPN_PBP == away]
   home <- dict$NCAA[dict$ESPN_PBP == home]
-  
+
   ### Get Predicted Line
   if(length(home) == 0 | length(away) == 0) {
     return(NA)
