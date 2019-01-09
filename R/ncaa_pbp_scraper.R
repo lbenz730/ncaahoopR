@@ -454,7 +454,9 @@ get_master_schedule <- function(year, month, day) {
   clean <- function(team) {
     team <- gsub("[#0-9]", "", team)
     team <- gsub("\\s[A-Z]*-*[A-Z]*$", "", team)
+    team <- gsub("TA&M", "", team)
     team <- gsub("\\s*$", "", gsub("^\\s*", "", team))
+    return(team)
   }
 
   if(any(!is.na(schedule[1]))) {
