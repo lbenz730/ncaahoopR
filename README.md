@@ -20,26 +20,17 @@ as shown in the url for the summary of the UMBC-Virginia game below.
 ![game_id](figures/espn.png)
 
 ### Scraping Data
-* ```get_pbp(team)```: Game entire 2017-18 Season's worth of play-by-play data for a given team.
+* ```get_pbp(team)```: Game entire current season's worth of play-by-play data for a given team.
 * ```get_pbp_game(game_ids)```:  Get play-by-play data for a specific vector of ESPN game_ids. 
 * ```get_roster(team)```: Get a particular team's roster. 
 * ```get_schedule(team)```: Get a team's schedule.
 * ```get_game_ids(team)```: Get a vector of ESPN game_ids for all games in which ```team``` plays in.
 * ```get_master_schedule(year, month, day)```: Get schedule of all games for given date.
 
-### Assist Networks
-
-```assist_net(team, node_col, season, rmv_bench, tree, three_weights, message = NA)```
-
-* ```team``` is the ESPN team name, as listed in the `ids` dataframe.
-* ```node_col``` is the node color for the graph
-* ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
-* ```rmv_bench``` (default = ```TRUE```): Logical. If TRUE, removes all players who aren't in the network. 
-* ```tree``` (default = ```FALSE```): Logical. If TRUE, draws graph in tree structure. If FALSE, draws graph in circle. Tree structure is recommended for single game networks, while circles are recommended for entire season networks.
-* ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three point shots are given 1.5 weight. If FALSE, assisted three point shots are given weight 1. In both cases, assisted 2 point shots are given weight 1. 
-* ```message``` (default = ```NA```) Option for custom message to replace graph title when using a subset of the season (e.g. conference play).
+The `team` parameter in the above functions must be a valid team name from the `ids` data set built into the package. See the __Datesets__ section below for more details.
 
 ### Win-Probability and Game-Flow Charts
+
 __Win Probability Charts__
 
 There are two functions for plotting win probability charts, one that uses base graphics (`wp_chart`), and the other which uses the ```ggplot2``` library (```gg_wp_chart```). Both are maintainted, as graphics in base R have some nice concatenation principles.
@@ -75,6 +66,30 @@ Returns ```GEI``` (Game Excitement Index) for given espn. For more information a
 
 * [Model Methodology](https://sports.sites.yale.edu/ncaa-basketball-win-probability-model)
 * [Game Excitement Index](https://sports.sites.yale.edu/game-excitement-index-part-ii)
+
+### Assist Networks
+
+__Traditional Assist Networks__
+
+```assist_net(team, node_col, season, three_weights, threshold, message = NA)```
+
+* ```team``` is the ESPN team name, as listed in the `ids` dataframe.
+* ```node_col``` is the node color for the graph
+* ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
+* ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three point shots are given 1.5 weight. If FALSE, assisted three point shots are given weight 1. In both cases, assisted 2 point shots are given weight 1. 
+* `threshold`: Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
+* ```message``` (default = ```NA```) Option for custom message to replace graph title when using a subset of the season (e.g. conference play).
+
+__Circle Assist Networks and Player Highlighting__
+```circle_assist_net(team, season, highlight_player, highlight_color, three_weights, message = NA)```
+
+* ```team``` is the ESPN team name, as listed in the `ids` dataframe.
+* ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
+* ```highlight_player```: Name of player to highlight in assist network. `NA` yields full team assist etwork with no player highlighting. Default = `NA`.
+* ```highlight_color```: Color of player links to be highlighted. `NA` if ```highlight_player``` is `NA`.
+* ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three point shots are given 1.5 weight. If FALSE, assisted three point shots are given weight 1. In both cases, assisted 2 point shots are given weight 1. 
+* `threshold`: Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
+
 
 ## Datasets
 
@@ -113,28 +128,35 @@ _Primary and secondary colors for available teams._
 These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`, or ```data("dict")```, respectively.
 
 ## Examples
-#### Single Game Assist Network
-![Assist Single](figures/oklahoma.png)
-```assist_net(team = "Oklahoma", node_col = "firebrick4", season = 400989185, rmv_bench = T, tree = F, three_weights = T)```
-
-
-
-#### Season Long Assist Network
-![Assist All](figures/yale.png)
-```assist_net(team = "Yale", node_col = "royalblue4", season = "2017-18", rmv_bench = T, tree = F, three_weights = T)```
-
-__NOTE:__ The use ```season = "2017-18"``` would be replaced with the current season. Backdated charts are currently not avaiable.
-
 #### Win Probability Charts
 ![2018 NCAA Championship Game](figures/wp_chart.png)
 ```wp_chart(game_id = 401025888, home_col = "navy", away_col = "goldenrod1")```
 
 ![ggwp](figures/gg_wp_chart.png)
 ```gg_wp_chart(game_id = 401082978, home_col = "gray", away_col = "orange")```
+
 #### Game Flow Chart
 ![game_flow](figures/game_flow.png)
 ```game_flow(game_id = 401082669, home_col = "blue", away_col = "navy")```
 
+#### Single Game Assist Network
+![Assist Single](figures/oklahoma.png)
+```assist_net(team = "Oklahoma", node_col = "firebrick4", season = 400989185)```
+
+#### Season Long Assist Network
+![Assist All](figures/yale.png)
+```assist_net(team = "Yale", node_col = "royalblue4", season = "2017-18")```
+
+
+__NOTE:__ The argument ```season = "2017-18"``` would be replaced with the current season. Backdated charts are currently not avaiable.
+
+#### Circle Assist Networks
+![UNC](figures/unc.png)
+```circle_assist_net(team = "UNC", season = 401082861)```
+
+#### Player Highlighting
+![Frankie Ferrari](figures/ferrari.png)
+```circle_assist_net(team = "San Francisco", season = "2018-19", highlight_player = "Frankie Ferrari", highlight_color = "#FDBB30")```
 
 ## Glossary
 Play-by-Play files contain the following variables:
