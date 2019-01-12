@@ -442,7 +442,8 @@ get_master_schedule <- function(year, month, day) {
   }
 
   n_canceled <- sum(grepl("Canceled", completed$result))
-  completed <- dplyr::filter(completed, result != "Canceled")
+  n_postponed <- sum(grepl("Postponed", completed$result))
+  completed <- dplyr::filter(completed, result != "Canceled", result != "Postponed")
 
   ### Extract Ranking
   ranking <- function(team) {
@@ -475,7 +476,7 @@ get_master_schedule <- function(year, month, day) {
   x <- strsplit(x, "\\?=")[[1]]
   x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
   x <- x[!is.na(x) & !duplicated(x)]
-  x <- x[1:(length(x) - n_canceled)]
+  x <- x[1:(length(x) - n_canceled - n_postponed)]
 
   ### Add in Completed Games
   find_anchor <- function(team) {

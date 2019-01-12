@@ -114,8 +114,9 @@ assist_net <- function(team, node_col, season, three_weights = T, threshold = 0,
   }
 
   network$a_freq <- network$num/sum(network$num)
-
   network <- dplyr::filter(network, a_freq > 0)
+  player_asts <-
+    sapply(roster$name, function(name) { sum(network$a_freq[network$ast == name | network$shot == name]) })
 
   ### Team Ast/Shot Distributions
   ast_data <- aggregate(a_freq ~ ast, data = network, sum)
@@ -123,7 +124,7 @@ assist_net <- function(team, node_col, season, three_weights = T, threshold = 0,
 
   ### Create Temporary Directed Network For Stat Aggregation
   net <- igraph::graph.data.frame(network, directed = T)
-  deg <- igraph::degree(net, mode="all")
+  deg <- igraph::degree(net, mode = "all")
   igraph::E(net)$weight <- network$num
 
   ### Compute Clustering Coefficient
@@ -147,14 +148,15 @@ assist_net <- function(team, node_col, season, three_weights = T, threshold = 0,
   names(shot_freq) <- shot_data$shot
 
   ### Create/Plot Undirected Network
-  if(max(network$a_freq) < threshold) {
+  if(max(player_asts) < threshold) {
     warning("Threshold is too large--no players exceed threshold")
     ### Return Results
     return(list("clust_coeff" = clust_coeff, "page_ranks" = pagerank,
                 "hub_scores" = hubscores, "auth_scores" = auth_scores,
                 "ast_freq" = ast_freq, "shot_freq" = shot_freq))
   }
-  network <- dplyr::filter(network, a_freq > threshold)
+  keep <- names(player_asts)[player_asts > threshold]
+  network <- dplyr::filter(network, shot %in% keep, ast %in% keep)
 
   net <- igraph::graph.data.frame(network, directed = T)
   deg <- igraph::degree(net, mode="all")
@@ -342,8 +344,9 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   }
 
   network$a_freq <- network$num/sum(network$num)
-
   network <- dplyr::filter(network, a_freq > 0)
+  player_asts <-
+    sapply(roster$name, function(name) { sum(network$a_freq[network$ast == name | network$shot == name]) })
 
   ### Team Ast/Shot Distributions
   ast_data <- aggregate(a_freq ~ ast, data = network, sum)
@@ -375,13 +378,16 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   names(shot_freq) <- shot_data$shot
 
   ### Create/Plot Undirected Network
-  if(max(network$a_freq) < threshold) {
+  if(max(player_asts) < threshold) {
     warning("Threshold is too large--no players exceed threshold")
     ### Return Results
     return(list("clust_coeff" = clust_coeff, "page_ranks" = pagerank,
                 "hub_scores" = hubscores, "auth_scores" = auth_scores,
                 "ast_freq" = ast_freq, "shot_freq" = shot_freq))
   }
+  keep <- names(player_asts)[player_asts > threshold]
+  network <- dplyr::filter(network, shot %in% keep, ast %in% keep)
+
 
   if(season %in% c("2016-17", "2017-18", "2018-19")) {
     labs <- NA
