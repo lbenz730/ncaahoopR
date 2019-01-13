@@ -415,7 +415,7 @@ if(length(unique(x$game_id)) == 1) {
     pull(player)
 
   if(is.na(highlight_player)) {
-    circlize::chordDiagram(network, order = players,
+    circlize::chordDiagram(network[,-4], order = players,
                            grid.col = sample(ncaa_colors$primary_color, length(players)),
                            annotationTrack = "grid",
                            preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(network))))))
@@ -430,7 +430,7 @@ if(length(unique(x$game_id)) == 1) {
     borders <- filter(network, ast == highlight_player) %>%
       select(ast, shot) %>%
       mutate(graphical = 1)
-    circlize::chordDiagram(network, order = players,
+    circlize::chordDiagram(network[,-4], order = players,
                            grid.col = cols,
                            link.lwd = 2,
                            link.border = borders,
@@ -454,6 +454,3 @@ if(length(unique(x$game_id)) == 1) {
               "hub_scores" = hubscores, "auth_scores" = auth_scores,
               "ast_freq" = ast_freq, "shot_freq" = shot_freq))
 }
-
-
-

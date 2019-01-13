@@ -407,14 +407,6 @@ get_roster <- function(team) {
   return(tmp)
 }
 
-get_date <- function(game_id) {
-  url <- paste("http://www.espn.com/mens-college-basketball/playbyplay?gameId=", game_id, sep = "")
-  y <- scan(url, what = "", sep = "\n")[8]
-  y <- unlist(strsplit(y, "-"))
-  date <-  stripwhite(y[length(y) - 1])
-  return(date)
-}
-
 ####################### Function To Get a Schedule by Date #####################
 #' Get Master Schedule
 #'
