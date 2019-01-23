@@ -160,19 +160,19 @@ get_line <- function(data) {
   }
 
   ### Impute from 2016-17 Season
-  if(date >= "2016-11-01" & date <= "2017-05-01") {
+  if(game_date >= "2016-11-01" & game_date <= "2017-05-01") {
     game <- dplyr::filter(games_2016, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
 
   ### Impute from 2017-18 Season
-  if(date >= "2017-11-01" & date <= "2018-05-01") {
+  if(game_date >= "2017-11-01" & game_date <= "2018-05-01") {
     game <- dplyr::filter(games_2017, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
 
   ### Impute from 2018-19 Season
-  if(date >= "2018-11-01" & date <= "2019-05-01") {
+  if(game_date >= "2018-11-01" & game_date <= "2019-05-01") {
     game <- dplyr::filter(games_2018, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
