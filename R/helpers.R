@@ -155,7 +155,7 @@ get_line <- function(data) {
   }
 
   ### Don't have Imputed Lines Before 2016-17
-  if(date < "2016-11-01") {
+  if(game_date < "2016-11-01") {
     return(NA)
   }
 
