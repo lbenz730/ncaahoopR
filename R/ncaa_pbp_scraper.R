@@ -114,8 +114,7 @@ get_pbp_game <- function(game_ids) {
       if(abv == home_abv) {
         line <- line * -1
       }
-    }
-    else {
+    }else {
       line <- NA
     }
 
@@ -135,7 +134,7 @@ get_pbp_game <- function(game_ids) {
       pbp$home_favored_by <- get_line(pbp)
     }
     if(!is.na(pbp$home_favored_by[1])){
-      pbp$pre_game_prob <- predict(prior, newdata = data.frame(predscorediff = pbp$home_favored_by),
+      pbp$pre_game_prob <- predict(prior, newdata = data.frame(pred_score_diff = pbp$home_favored_by),
                                    type = "response")
     }else{
       pbp$pre_game_prob <- 0.5

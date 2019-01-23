@@ -24,7 +24,7 @@ wp_chart <- function(game_id, home_col, away_col, show_legend = T) {
     data$home_favored_by <- get_line(data)
   }
   if(!is.na(data$home_favored_by[1])){
-    data$pre_game_prob <- predict(prior, newdata = data.frame(predscorediff = data$home_favored_by),
+    data$pre_game_prob <- predict(prior, newdata = data.frame(pred_score_diff = data$home_favored_by),
                                   type = "response")
   }else{
     data$pre_game_prob <- 0.5

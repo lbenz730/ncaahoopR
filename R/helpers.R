@@ -64,12 +64,16 @@ is.nit <- function(game_id) {
 }
 
 ######################## Loading for Win Prob + Related Charts #################
-y <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2018-19/NCAA_Hoops_Results_11_8_2018.csv",
-              as.is = T)
-x <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Power_Rankings/power_rankings.csv",
-              as.is = T)
-z <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2016-17/NCAA_Hoops_Results_2017_Final.csv", as.is = T)
-prior <- glm(wins ~ predscorediff, data = z, family = binomial)
+history <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/History/history.csv", as.is = T)
+games_2016 <-
+  read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2016-17/NCAA_Hoops_Results_2017_Final.csv", as.is = T) %>%
+  dplyr::rename("pred_score_diff" = predscorediff) %>%
+  dplyr::mutate("date" = as.Date(paste(year, month, day, sep = "-")))
+games_2017 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2017-18/training.csv", as.is = T)
+games_2018 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2018-19/2019_Final.csv", as.is = T)
+train <- rbind(select(games_2016, pred_score_diff, wins),
+               select(games_2017, pred_score_diff, wins))
+prior <- glm(wins ~ pred_score_diff, data = train, family = binomial)
 
 ### Get Approiate Model for Time Remaining
 secs_to_model <- function(sec, msec) {
@@ -137,6 +141,7 @@ secs_to_model <- function(sec, msec) {
 
 ### Impute Line for Games
 get_line <- function(data) {
+  game_date <- data$date[1]
   away <- data$away[1]
   home <- data$home[1]
 
@@ -148,17 +153,29 @@ get_line <- function(data) {
   if(length(home) == 0 | length(away) == 0) {
     return(NA)
   }
-  game <- y %>% filter(team == home, opponent == away, location == "H")
-  HCA <- 3.4
-  if(nrow(game) == 0) {
-    game <- y %>% filter(team == home, opponent == away, location == "N")
-    HCA <- 0
-    if(nrow(game) == 0) {
-      return(0)
-    }
+
+  ### Don't have Imputed Lines Before 2016-17
+  if(date < "2016-11-01") {
+    return(NA)
   }
-  line <- x$yusag_coeff[x$team == home] - x$yusag_coeff[x$team == away] + HCA
-  return(line)
+
+  ### Impute from 2016-17 Season
+  if(date >= "2016-11-01" & date <= "2017-05-01") {
+    game <- dplyr::filter(games_2016, team == home, opponent == away, date == game_date)
+    return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
+  }
+
+  ### Impute from 2017-18 Season
+  if(date >= "2017-11-01" & date <= "2018-05-01") {
+    game <- dplyr::filter(games_2017, team == home, opponent == away, date == game_date)
+    return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
+  }
+
+  ### Impute from 2018-19 Season
+  if(date >= "2018-11-01" & date <= "2019-05-01") {
+    game <- dplyr::filter(games_2018, team == home, opponent == away, date == game_date)
+    return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
+  }
 }
 
 ### Get Date of Given Game
