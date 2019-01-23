@@ -183,9 +183,11 @@ assist_net <- function(team, node_col, season, three_weights = T, threshold = 0,
        edge.curved = 0.3, edge.label = labs, edge.label.cex = 1.2,
        edge.label.color = "black",
        layout = layout_in_circle,
-       vertex.label.family = "Arial Black",
-       main = title)
+       vertex.label.family = "Arial Black")
 
+  par(cex = 0.6)
+  title(main = paste("\n", title))
+  par(cex = 1)
 
   ### Add Text to Network
   text(-1.5, 1.0, paste(ifelse(three_weights, "Weighted ", ""), "Assist Frequency Leader: ",
@@ -416,7 +418,7 @@ if(length(unique(x$game_id)) == 1) {
 
   if(is.na(highlight_player)) {
     circlize::chordDiagram(network[,-4], order = players,
-                           grid.col = sample(ncaa_colors$primary_color, length(players)),
+                           grid.col = gg_color_hue(length(players)),
                            annotationTrack = "grid",
                            preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(network))))))
   }else {
