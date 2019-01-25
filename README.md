@@ -71,11 +71,11 @@ Returns ```GEI``` (Game Excitement Index) for given espn. For more information a
 
 __Traditional Assist Networks__
 
-```assist_net(team, node_col, season, three_weights, threshold, message = NA)```
+```assist_net(team, season, node_col, three_weights, threshold, message = NA)```
 
 * ```team``` is the ESPN team name, as listed in the `ids` dataframe.
-* ```node_col``` is the node color for the graph
 * ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
+* ```node_col``` is the node color for the graph.
 * ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three point shots are given 1.5 weight. If FALSE, assisted three point shots are given weight 1. In both cases, assisted 2 point shots are given weight 1. 
 * `threshold`: Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
 * ```message``` (default = ```NA```) Option for custom message to replace graph title when using a subset of the season (e.g. conference play).
