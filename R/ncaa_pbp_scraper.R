@@ -11,6 +11,11 @@ source("R/helpers.R")
 #' @return A data-frame of the Play-by-Play data fror desired games.
 #' @export
 get_pbp_game <- function(game_ids) {
+  ### Error Testing
+  if(all(is.na(game_ids))) {
+    stop("game_ids is missing with no default")
+  }
+
   if(!"ncaahoopR" %in% .packages()) {
     ids <- create_ids_df()
   }
@@ -20,9 +25,9 @@ get_pbp_game <- function(game_ids) {
   j <- 0
 
   for(i in 1:length(game_ids)) {
-    print(paste0("Scraping Data for Game: ", i, " of ", length(game_ids)))
+    message(paste0("Scraping Data for Game: ", i, " of ", length(game_ids)))
     if(is.nit(game_ids[i])) {
-      print("NIT Game--Play by Play Data Not Available at this time")
+      message("NIT Game--Play by Play Data Not Available at this time")
       next
     }
     url <- paste(base_url, game_ids[i], sep = "")
@@ -30,16 +35,16 @@ get_pbp_game <- function(game_ids) {
 
     ### Check if PBP Data is Available
     if(length(tmp) == 0) {
-      print("Play by Play Data Not Available")
+      message("Play by Play Data Not Available")
       next
     }else if(length(tmp) < ncol(tmp[[1]]) | length(tmp) == 0) {
-      print("Play by Play Data Not Available")
+      message("Play by Play Data Not Available")
       next
     }else{
       t1 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][2,1]), ":")))
       t2 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][5,1]), ":")))
       if(60 * t1[1] + t1[2] < 60 * t2[1] + t2[2]) {
-        print("Game In Progress--Play by Play Data Not Available. Please Check Back After the Game")
+        message("Game In Progress--Play by Play Data Not Available. Please Check Back After the Game")
         next
       }
       j <- j + 1
@@ -196,7 +201,6 @@ get_pbp_game <- function(game_ids) {
           pbp$away_timeout_ind[pbp$secs_remaining_relative <= secs_remaining & pbp$secs_remaining_relative
                                >= secs_remaining - 60 & pbp$half == half] <- 1
         }
-
       }
     }
     pbp$home_time_out_remaining[pbp$half > 2] <-
@@ -255,6 +259,10 @@ get_pbp_game <- function(game_ids) {
 #' @return A data-frame of the team's Play-by-Play data for the current season
 #' @export
 get_pbp <- function(team) {
+  ### Error Testing
+  if(is.na(team)) {
+    stop("team is missing with no default")
+  }
   if(!"ncaahoopR" %in% .packages()) {
     ids <- create_ids_df()
   }
@@ -262,7 +270,7 @@ get_pbp <- function(team) {
     stop("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
   }
 
-  print(paste("Getting Game IDs: ", team, sep = ""))
+  message(paste("Getting Game IDs: ", team, sep = ""))
 
   ### Get Game IDs
   game_ids <- get_game_ids(team)
@@ -282,6 +290,10 @@ get_pbp <- function(team) {
 #' @return A data-frame of the team's schedule for current season
 #' @export
 get_schedule <- function(team) {
+  ### Error Testing
+  if(is.na(team)) {
+    stop("team is missing with no default")
+  }
   if(!"ncaahoopR" %in% .packages()) {
     ids <- create_ids_df()
   }
@@ -353,6 +365,10 @@ get_schedule <- function(team) {
 #' @return A vector of the team's ESPN game_ids for current season
 #' @export
 get_game_ids <- function(team) {
+  ### Error Testing
+  if(is.na(team)) {
+    stop("team is missing with no default")
+  }
   if(!"ncaahoopR" %in% .packages()) {
     ids <- create_ids_df()
   }
@@ -384,6 +400,10 @@ get_game_ids <- function(team) {
 #' @return A data-frame of the team's roster for current season
 #' @export
 get_roster <- function(team) {
+  ### Error Testing
+  if(is.na(team)) {
+    stop("team is missing with no default")
+  }
   if(!"ncaahoopR" %in% .packages()) {
     ids <- create_ids_df()
   }
@@ -394,7 +414,8 @@ get_roster <- function(team) {
   url <-  paste(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team], sep = "")
   tmp <- try(XML::readHTMLTable(url))
   if(class(tmp) == "try-error") {
-    return("Unable to get roster. ESPN is updating CBB files. Check back again soon")
+    warning("Unable to get roster. ESPN is updating CBB files. Check back again soon")
+    return(NULL)
   }
   tmp <- as.data.frame(tmp[[3]])
   names(tmp) <- c("number", "name", "position", "height", "weight", "class", "hometown")
@@ -417,6 +438,22 @@ get_roster <- function(team) {
 #' @return A data-frame of the day's schedule of games
 #' @export
 get_master_schedule <- function(year, month, day) {
+  ### Error Testing
+  if(is.na(year)) {
+    stop("year is missing with no default")
+  }
+  if(is.na(month)) {
+    stop("month is missing with no default")
+  }
+  if(is.na(day)) {
+    stop("day is missing with no default")
+  }
+
+  tmp <- try(as.Date(paste(year, month, day, sep = "-")))
+  if(class(tmp) == "try-error") {
+    stop("Please enter valid date")
+  }
+
   date <- paste0(year, ifelse(nchar(month) == 1, paste0("0", month), month),
                  ifelse(nchar(day) == 1, paste0("0", day), day))
   url <- paste0("http://www.espn.com/mens-college-basketball/schedule/_/date/", date, "/group/50")

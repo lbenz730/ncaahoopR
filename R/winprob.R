@@ -9,6 +9,17 @@
 #' on the chart. Default = TRUE
 #' @export
 wp_chart <- function(game_id, home_col, away_col, show_legend = T) {
+  ### Error Testing
+  if(is.na(game_id)) {
+    stop("game_id is missing with no default")
+  }
+  if(is.na(home_col)) {
+    stop("home_col is missing with no default")
+  }
+  if(is.na(away_col)) {
+    stop("away_col is missing with no default")
+  }
+
   ### Scrape Data from ESPN
   data <- get_pbp_game(game_id)
   if(is.null(data)) {
@@ -104,9 +115,13 @@ wp_chart <- function(game_id, home_col, away_col, show_legend = T) {
 #' @return GEI--Game Exictement Index
 #' @export
 game_excitement_index <- function(game_id) {
+  ### Error Testing
+  if(is.na(game_id)) {
+    stop("game_id is missing with no default")
+  }
+
   data <- get_pbp_game(game_id)
   if(is.null(data)) {
-    print("PBP Data Not Available")
     return(NA)
   }
 
@@ -131,11 +146,22 @@ game_excitement_index <- function(game_id) {
 #' Win Probability metrics should be displayed on the plot. Default = TRUE.
 #' @export
 gg_wp_chart <- function(game_id, home_col, away_col, show_labels = T) {
+  ### Error Testing
+  if(is.na(game_id)) {
+    stop("game_id is missing with no default")
+  }
+  if(is.na(home_col)) {
+    stop("home_col is missing with no default")
+  }
+  if(is.na(away_col)) {
+    stop("away_col is missing with no default")
+  }
+
   ### Get Data
   data <- get_pbp_game(game_id)
   if(is.null(data)) {
-    print("PBP Data Not Available for Win Probability Chart")
-    return(NA)
+    warning("PBP Data Not Available for Win Probability Chart")
+    return(NULL)
   }
   home_team <- data$home[1]
   away_team <- data$away[1]
@@ -218,11 +244,22 @@ gg_wp_chart <- function(game_id, home_col, away_col, show_labels = T) {
 #' @param away_col Color of away team for chart
 #' @export
 game_flow <- function(game_id, home_col, away_col) {
+  ### Error Testing
+  if(is.na(game_id)) {
+    stop("game_id is missing with no default")
+  }
+  if(is.na(home_col)) {
+    stop("home_col is missing with no default")
+  }
+  if(is.na(away_col)) {
+    stop("away_col is missing with no default")
+  }
+
   ### Get Data
   data <- get_pbp_game(game_id)
   if(is.null(data)) {
-    print("PBP Data Not Available for Game Flow Chart")
-    return(NA)
+    warning("PBP Data Not Available for Game Flow Chart")
+    return(NULL)
   }
   home_team <- data$home[1]
   away_team <- data$away[1]

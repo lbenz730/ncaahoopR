@@ -21,7 +21,18 @@
 #'  }
 #' @export
 
-assist_net <- function(team, node_col, season, three_weights = T, threshold = 0, message = NA) {
+assist_net <- function(team, season, node_col, three_weights = T, threshold = 0, message = NA) {
+  ### Error Testing
+  if(is.na(team)) {
+    stop("team is missing with no default")
+  }
+  if(is.na(season)) {
+    stop("season is missing with no default")
+  }
+  if(is.na(node_col)) {
+    stop("node_col is missing with no default")
+  }
+
   text_team <- dict$ESPN_PBP[dict$ESPN == team]
   text_team <- text_team[!is.na(text_team)]
 
@@ -30,10 +41,12 @@ assist_net <- function(team, node_col, season, three_weights = T, threshold = 0,
     ids <- create_ids_df()
   }
   if(!team %in% ids$team) {
-    stop("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
+    warning("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
+    return(NULL)
   }
   if(threshold < 0 | threshold > 1) {
     warning("Threshold for display must be between 0 and 1")
+    return(NULL)
   }
 
   ### Read Play-by-Play File
@@ -44,7 +57,8 @@ assist_net <- function(team, node_col, season, three_weights = T, threshold = 0,
   }else {
     x <- suppressWarnings(try(get_pbp_game(season), silent = T))
     if(class(x) == "try-error" | class(x) == "NULL") {
-      return("Play-by-Play Data Not Available for Assist Network")
+      warning("Play-by-Play Data Not Available for Assist Network")
+      return(NULL)
     }
     opp <- setdiff(c(x$away, x$home), text_team)
     if(length(season) == 1){
@@ -59,7 +73,8 @@ assist_net <- function(team, node_col, season, three_weights = T, threshold = 0,
   ### Get Roster
   roster <- try(get_roster(team))
   if(class(roster) == "try-error") {
-      return("Unable to get roster. ESPN is updating CBB files. Check back again soon")
+    warning("Unable to get roster. ESPN is updating CBB files. Check back again soon")
+    return(NULL)
   }
   roster$name <- gsub("Jr.", "Jr", roster$name)
   games <- unique(x$game_id)
@@ -250,9 +265,15 @@ assist_net <- function(team, node_col, season, three_weights = T, threshold = 0,
 #' @export
 circle_assist_net <- function(team, season, highlight_player = NA, highlight_color = NA,
                               three_weights = T, threshold = 0, message = NA) {
-
+  ### Error Testing
+  if(is.na(team)) {
+    stop("team is missing with no default")
+  }
+  if(is.na(season)) {
+    stop("season is missing with no default")
+  }
   if(is.na(highlight_color) & !is.na(highlight_player)) {
-    stop("Please provide highlight color")
+    warning("Please provide highlight color")
   }
 
   text_team <- dict$ESPN_PBP[dict$ESPN == team]
@@ -263,10 +284,12 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
     ids <- create_ids_df()
   }
   if(!team %in% ids$team) {
-    stop("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
+    warning("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
+    return(NULL)
   }
   if(threshold < 0 | threshold > 1) {
     warning("Threshold for display must be between 0 and 1")
+    return(NULL)
   }
 
   ### Read Play-by-Play File
@@ -277,7 +300,8 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   }else {
     x <- suppressWarnings(try(get_pbp_game(season), silent = T))
     if(class(x) == "try-error" | class(x) == "NULL") {
-      return("Play-by-Play Data Not Available for Assist Network")
+      warning("Play-by-Play Data Not Available for Assist Network")
+      return(NULL)
     }
     opp <- setdiff(c(x$away, x$home), text_team)
     if(length(season) == 1){
@@ -292,7 +316,8 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   ### Get Roster
   roster <- try(get_roster(team))
   if(class(roster) == "try-error") {
-    return("Unable to get roster. ESPN is updating CBB files. Check back again soon")
+    warning("Unable to get roster. ESPN is updating CBB files. Check back again soon")
+    return(NULL)
   }
   roster$name <- gsub("Jr.", "Jr", roster$name)
   games <- unique(x$game_id)
@@ -400,10 +425,10 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
     labs <- as.character(network$num)
   }
 
-plot_title <- paste0(text_team, ifelse(three_weights, " Weighted", ""), text)
-if(length(unique(x$game_id)) == 1) {
-  plot_title <- paste(plot_title, format(as.Date(x$date[1]), "%B %d, %Y"), sep = "\n")
-}
+  plot_title <- paste0(text_team, ifelse(three_weights, " Weighted", ""), text)
+  if(length(unique(x$game_id)) == 1) {
+    plot_title <- paste(plot_title, format(as.Date(x$date[1]), "%B %d, %Y"), sep = "\n")
+  }
 
   players <- group_by(network, ast) %>%
     summarise("count" = sum(num)) %>%
