@@ -70,6 +70,7 @@ assist_net <- function(team, node_col, season, three_weights = T, threshold = 0,
   splitplay <- function(description) {
     tmp <- strsplit(strsplit(description, "Assisted")[[1]], " ")
     n1 <- grep("made", tmp[[1]])
+    n1 <- n1[length(n1)]
     n2 <- length(tmp[[2]])
     tmp[[2]][n2] <- substring(tmp[[2]][n2], 1, nchar(tmp[[2]][n2]) - 1)
     shot_maker <- paste(tmp[[1]][1:(n1-1)], collapse = " ")
@@ -302,6 +303,7 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   splitplay <- function(description) {
     tmp <- strsplit(strsplit(description, "Assisted")[[1]], " ")
     n1 <- grep("made", tmp[[1]])
+    n1 <- n1[length(n1)]
     n2 <- length(tmp[[2]])
     tmp[[2]][n2] <- substring(tmp[[2]][n2], 1, nchar(tmp[[2]][n2]) - 1)
     shot_maker <- paste(tmp[[1]][1:(n1-1)], collapse = " ")
