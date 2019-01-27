@@ -62,10 +62,22 @@ __Game Excitement Index__
 
 ```game_exciment_index(game_id)```
 
-Returns ```GEI``` (Game Excitement Index) for given espn. For more information about how these win-probability charts are fit and how Game Excitemnet Index is calculated, check out the below links
+Returns ```GEI``` (Game Excitement Index) for given ESPN game_id. For more information about how these win-probability charts are fit and how Game Excitemnet Index is calculated, check out the below links
 
 * [Model Methodology](https://sports.sites.yale.edu/ncaa-basketball-win-probability-model)
 * [Game Excitement Index](https://sports.sites.yale.edu/game-excitement-index-part-ii)
+
+__Game Control Measures__
+
+```average_win_prob(game_id)```
+
+* ESPN game_id for which to compute time-based average win probability (from perspective of home team).
+
+```average_score_diff(game_id)```
+
+* ESPN game_id for which to compute time-based average score differential (from perspective of home team).
+
+
 
 ### Assist Networks
 
@@ -170,6 +182,7 @@ Play-by-Play files contain the following variables:
 * ```home_score```: Home team's score.
 * ```away_score```: Away team's score.
 * ```score_diff```: Score differential from the home team's perspective (```home_score``` - ```away_score```)
+* ```play_length```: Duration of the the given play, in seconds.
 * ```win_prob```: Win probability for the home team.
 * ```home```: Name of the home team.
 * ```away```: Name of the away team.

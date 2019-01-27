@@ -4,16 +4,16 @@
 \alias{assist_net}
 \title{Assist Network}
 \usage{
-assist_net(team, node_col, season, three_weights = T, threshold = 0,
+assist_net(team, season, node_col, three_weights = T, threshold = 0,
   message = NA)
 }
 \arguments{
 \item{team}{Team to create network for}
 
-\item{node_col}{Color of nodes in network}
-
 \item{season}{Season, as a character,  (e.g. "2018-19"), or vector of ESPN game_ids.
 for which data to use in network. Currently only handles the current season worth of data.}
+
+\item{node_col}{Color of nodes in network}
 
 \item{three_weights}{Logical indicating whether to give extra weight for assisted three point shots.
 If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1). Default = `TRUE`.}

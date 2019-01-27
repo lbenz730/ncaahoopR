@@ -222,14 +222,19 @@ get_pbp_game <- function(game_ids) {
       }
     }
 
+    ### Play Length
+    pbp$play_length <- 0
+    pbp$play_length[1:(nrow(pbp)-1)] <-
+      pbp$secs_remaining[1:(nrow(pbp)-1)] -
+      pbp$secs_remaining[2:nrow(pbp)]
 
     pbp <- dplyr::select(pbp, -pre_game_prob)
     pbp <- dplyr::select(pbp, play_id, half, time_remaining_half,
                          secs_remaining_relative, secs_remaining, description,
-                         home_score, away_score, score_diff, win_prob, home,
-                         away, home_time_out_remaining, away_time_out_remaining,
-                         home_timeout_ind, away_timeout_ind,home_favored_by,
-                         game_id, date) %>%
+                         home_score, away_score, score_diff, play_length,
+                         win_prob, home, away, home_time_out_remaining,
+                         away_time_out_remaining, home_timeout_ind,
+                         away_timeout_ind, home_favored_by, game_id, date) %>%
       dplyr::rename("secs_remaining_absolute" = secs_remaining,
                     "secs_remaining" = secs_remaining_relative)
 

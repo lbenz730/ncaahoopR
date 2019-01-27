@@ -135,6 +135,50 @@ game_excitement_index <- function(game_id) {
   return(gei)
 }
 
+#' Average Win Probability
+#'
+#' Computes Time-Based Average Win Probability for the Home Team
+#'
+#' @param game_id ESPN game_id for which to compute average win probability
+#' @return Average Win Probability
+#' @export
+average_win_prob <- function(game_id) {
+  ### Error Testing
+  if(is.na(game_id)) {
+    stop("game_id is missing with no default")
+  }
+
+  data <- get_pbp_game(game_id)
+  if(is.null(data)) {
+    return(NA)
+  }
+
+  avg_wp <- sum(data$play_length * data$win_prob/max(data$secs_remaining_absolute))
+  return(avg_wp)
+}
+
+#' Average Score Differential
+#'
+#' Computes Time-Based Average Score Differential for the Home Team
+#'
+#' @param game_id ESPN game_id for which to compute average score differential.
+#' @return Average score differential
+#' @export
+average_score_diff <- function(game_id) {
+  ### Error Testing
+  if(is.na(game_id)) {
+    stop("game_id is missing with no default")
+  }
+
+  data <- get_pbp_game(game_id)
+  if(is.null(data)) {
+    return(NA)
+  }
+
+  avg_sd <- sum(data$play_length * data$score_diff/max(data$secs_remaining_absolute))
+  return(avg_sd)
+}
+
 #' Win Probability Charts in ggplot
 #'
 #' Renders Win Probability Charts in ggplot
@@ -287,6 +331,14 @@ game_flow <- function(game_id, home_col, away_col) {
     dplyr::mutate("secs_elapsed" = max(secs_remaining_absolute) - secs_remaining_absolute)
 
 
+  ### Message
+  avg_sd <- round(sum(data$play_length * data$score_diff/max(data$secs_remaining_absolute)), 2)
+  home_win <- data$home_score[nrow(data)] > data$away_score[nrow(data)]
+  avg_sd <- ifelse(home_win, avg_sd, -avg_sd)
+  avg_sd <- paste0("Average Score Differential for ",
+                  ifelse(home_win, home_team, away_team), ": ", avg_sd)
+  max_score <- max(c(data$home_score, data$away_score))
+
   ### Make Plot
   ggplot2::ggplot(x, aes(x = secs_elapsed, y = score, group = team, col = team)) +
     ggplot2::geom_step(size = 1) +
@@ -305,5 +357,7 @@ game_flow <- function(game_id, home_col, away_col) {
                    legend.position = "bottom",) +
     ggplot2::scale_x_continuous(breaks = seq(0, msec, 400)) +
     ggplot2::scale_color_manual(values = c(away_col, home_col),
-                                labels = c(away_team, home_team))
+                                labels = c(away_team, home_team)) +
+    ggplot2::annotate("text", x = 600, y = max_score - 10, label = avg_sd)
+
 }
