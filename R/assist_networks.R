@@ -191,7 +191,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
 
 
   title <-
-    ifelse(is.na(messaage), paste0(text_team, ifelse(three_weights, " Weighted", ""), text), text)
+    ifelse(is.na(message), paste0(text_team, ifelse(three_weights, " Weighted", ""), text), text)
   if(length(unique(x$game_id)) == 1) {
     title <- paste(title, format(as.Date(x$date[1]), "%B %d, %Y"), sep = "\n")
   }
@@ -427,7 +427,7 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   }
 
   plot_title <-
-    ifelse(is.na(messaage), paste0(text_team, ifelse(three_weights, " Weighted", ""), text), text)
+    ifelse(is.na(message), paste0(text_team, ifelse(three_weights, " Weighted", ""), text), text)
   if(length(unique(x$game_id)) == 1) {
     plot_title <- paste(plot_title, format(as.Date(x$date[1]), "%B %d, %Y"), sep = "\n")
   }
