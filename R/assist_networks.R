@@ -26,7 +26,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
   if(is.na(team)) {
     stop("team is missing with no default")
   }
-  if(is.na(season)) {
+  if(is.na(season[1])) {
     stop("season is missing with no default")
   }
   if(is.na(node_col)) {
@@ -65,7 +65,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
       text <- paste(" Assist Network vs. ", opp, sep = "")
     }
     else{
-      text <- paste(" Assist Network vs. ", message, sep = "")
+      text <- message
     }
     factor <- 1.25
   }
@@ -182,7 +182,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
   igraph::E(net)$width <- E(net)$weight * factor
   igraph::V(net)$color <- node_col
 
-  if(season %in% c("2016-17", "2017-18", "2018-19")) {
+  if(any(season %in% c("2016-17", "2017-18", "2018-19"))) {
     labs <- NA
   }
   else{
@@ -269,7 +269,7 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   if(is.na(team)) {
     stop("team is missing with no default")
   }
-  if(is.na(season)) {
+  if(is.na(season[1])) {
     stop("season is missing with no default")
   }
   if(is.na(highlight_color) & !is.na(highlight_player)) {
@@ -308,7 +308,7 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
       text <- paste(" Assist Network vs. ", opp, sep = "")
     }
     else{
-      text <- paste(" Assist Network vs. ", message, sep = "")
+      text <- message
     }
     factor <- 1.25
   }
@@ -418,7 +418,7 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   network <- dplyr::filter(network, shot %in% keep, ast %in% keep)
 
 
-  if(season %in% c("2016-17", "2017-18", "2018-19")) {
+  if(any(season %in% c("2016-17", "2017-18", "2018-19"))) {
     labs <- NA
   }
   else{
