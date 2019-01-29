@@ -153,7 +153,7 @@ average_win_prob <- function(game_id) {
     return(NA)
   }
 
-  avg_wp <- sum(data$play_length * data$win_prob/max(data$secs_remaining_absolute))
+  avg_wp <- sum(data$play_length * data$win_prob/max(data$secs_remaining_absolute), na.rm = T)
   return(avg_wp)
 }
 
@@ -175,7 +175,7 @@ average_score_diff <- function(game_id) {
     return(NA)
   }
 
-  avg_sd <- sum(data$play_length * data$score_diff/max(data$secs_remaining_absolute))
+  avg_sd <- sum(data$play_length * data$score_diff/max(data$secs_remaining_absolute), na.rm = T)
   return(avg_sd)
 }
 
