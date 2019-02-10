@@ -191,7 +191,8 @@ get_team_plot <- function(game_ids, team, heatmap = F) {
     team_shots <- df %>% filter(team_name == team)
 
     ### flip shots if they are on the wrong side
-    team_shots[team_shots$y > 47, "y"] <- 47 - (team_shots[team_shots$y > 47,"y"] - 47)
+    team_shots[team_shots$y > 47, "x"] <- 50 - team_shots[team_shots$y > 47, "x"]
+    team_shots[team_shots$y > 47, "y"] <- 94 - team_shots[team_shots$y > 47, "y"]
 
     ### only pick one color
     color <- as.character(unique(team_shots$color))[1]
