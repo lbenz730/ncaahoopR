@@ -7,68 +7,84 @@ source("R/helpers.R")
 #' @param game_ids Vector of ESPN game_ids
 #' @return A data-frame with shot details (including location) for given game_ids
 #' @export
-get_shot_locs <- function(game_id) {
-  url = paste0('http://www.espn.com/mens-college-basketball/playbyplay?gameId=', game_id)
-  y <- scan(url, what = "", sep = "\n")[8]
-  y <- unlist(strsplit(y, "-"))
-  date <-  stripwhite(y[length(y) - 1])
-  date <- as.Date(date, "%B %d, %Y")
+get_shot_locs <- function(game_ids) {
+  if(any(is.na(game_ids))) {
+    error("game_ids missing with no default")
+  }
+  n <- length(game_ids)
+  for(i in 1:n) {
+    message(paste("Getting Shots for Game", i, "of", n))
+    url = paste0('http://www.espn.com/mens-college-basketball/playbyplay?gameId=', game_ids[i])
+    y <- scan(url, what = "", sep = "\n")[8]
+    y <- unlist(strsplit(y, "-"))
+    date <-  stripwhite(y[length(y) - 1])
+    date <- as.Date(date, "%B %d, %Y")
 
-  away_team_name <-
-    stringr::str_replace_all(read_html(url) %>% rvest::html_nodes(".away h3") %>% rvest::html_text(), "[\r\n\t]" , "")
+    away_team_name <-
+      stringr::str_replace_all(read_html(url) %>% rvest::html_nodes(".away h3") %>% rvest::html_text(), "[\r\n\t]" , "")
 
-  ## if not equal to 1, then print this
-  if(length(away_team_name) == 0){
-    message("No shot location data available for this game.")
+    ## if not equal to 1, then print this
+    if(length(away_team_name) == 0){
+      message("No shot location data available for this game.")
+    }else{
+      away_shot_text <- xml2::read_html(url) %>% rvest::html_nodes(".away-team li") %>% html_text()
+
+      ## Style, get shot location data from here
+      away_shot_style <- xml2::read_html(url) %>% rvest::html_nodes(".away-team li") %>% xml2::xml_attr("style")
+      away_color  <- gsub("^.*border-color:\\s*|\\s*;.*$", "", away_shot_style[1])
+
+      ### home text
+      home_team_name <- stringr::str_replace_all(read_html(url) %>% rvest::html_nodes(".home h3") %>% rvest::html_text(), "[\r\n\t]" , "")
+      home_shot_text <- xml2::read_html(url) %>% rvest::html_nodes(".home-team li") %>% rvest::html_text()
+
+      ## Style, get shot location data from here
+      home_shot_style <- xml2::read_html(url) %>% rvest::html_nodes(".home-team li") %>% xml2::xml_attr("style")
+      home_color <- gsub("^.*border-color:\\s*|\\s*;.*$", "", home_shot_style[1])
+
+
+      away_df <- data.frame(
+        team_name = away_team_name,
+        shot_text = away_shot_text,
+        shot_style = away_shot_style,
+        color = away_color,
+        stringsAsFactors = F
+      )
+
+      home_df <- data.frame(
+        team_name = home_team_name,
+        shot_text = home_shot_text,
+        shot_style = home_shot_style,
+        color = home_color,
+        stringsAsFactors = F
+      )
+
+      total_df = rbind(away_df, home_df)
+
+      total_df <-total_df %>%
+        mutate(
+          "date" = date,
+          "outcome" = ifelse(grepl("made", shot_text), "made", "missed"),
+          "shooter" = gsub("made.*", "", shot_text),
+          "shooter" = gsub("missed.*", "", shooter),
+          "asissted" = gsub(".{1}$", "", gsub(".*Assisted by", "", shot_text)),
+          "asissted" = ifelse(grepl("made", asissted) | grepl("missed", asissted), NA, asissted),
+          "three_pt" = grepl("Three Point", shot_text),
+          "x" = as.numeric(gsub('^.*top:\\s*|\\s*%;.*$', '', total_df$shot_style)) * 0.5,
+          "y" = as.numeric(gsub('^.*left:\\s*|\\s*%;top.*$', '', total_df$shot_style)) * .94
+        ) %>% select(-shot_style)
+
+      if(!exists("total_df_all")) {
+        total_df_all <- total_df
+      }else{
+        total_df_all <- rbind(total_df_all, total_df)
+      }
+    }
+  }
+
+  if(!exists("total_df_all")) {
     return(NULL)
   }
-  away_shot_text <- xml2::read_html(url) %>% rvest::html_nodes(".away-team li") %>% html_text()
-
-  ## Style, get shot location data from here
-  away_shot_style <- xml2::read_html(url) %>% rvest::html_nodes(".away-team li") %>% xml2::xml_attr("style")
-  away_color  <- gsub("^.*border-color:\\s*|\\s*;.*$", "", away_shot_style[1])
-
-  ### home text
-  home_team_name <- stringr::str_replace_all(read_html(url) %>% rvest::html_nodes(".home h3") %>% rvest::html_text(), "[\r\n\t]" , "")
-  home_shot_text <- xml2::read_html(url) %>% rvest::html_nodes(".home-team li") %>% rvest::html_text()
-
-  ## Style, get shot location data from here
-  home_shot_style <- xml2::read_html(url) %>% rvest::html_nodes(".home-team li") %>% xml2::xml_attr("style")
-  home_color <- gsub("^.*border-color:\\s*|\\s*;.*$", "", home_shot_style[1])
-
-
-  away_df <- data.frame(
-    team_name = away_team_name,
-    shot_text = away_shot_text,
-    shot_style = away_shot_style,
-    color = away_color,
-    stringsAsFactors = F
-  )
-
-  home_df <- data.frame(
-    team_name = home_team_name,
-    shot_text = home_shot_text,
-    shot_style = home_shot_style,
-    color = home_color,
-    stringsAsFactors = F
-  )
-
-  total_df = rbind(away_df, home_df)
-
-  total_df <-total_df %>%
-    mutate(
-      "date" = date,
-      "outcome" = ifelse(grepl("made", shot_text), "made", "missed"),
-      "shooter" = gsub("made.*", "", shot_text),
-      "shooter" = gsub("missed.*", "", shooter),
-      "asissted" = gsub(".{1}$", "", gsub(".*Assisted by", "", shot_text)),
-      "asissted" = ifelse(grepl("made", asissted) | grepl("missed", asissted), NA, asissted),
-      "three_pt" = grepl("Three Point", shot_text),
-      "x" = as.numeric(gsub('^.*top:\\s*|\\s*%;.*$', '', total_df$shot_style)) * 0.5,
-      "y" = as.numeric(gsub('^.*left:\\s*|\\s*%;top.*$', '', total_df$shot_style)) * .94
-    ) %>% select(-shot_style)
-
-  return(total_df)
+  return(total_df_all)
 }
 
 
@@ -112,38 +128,38 @@ get_game_plot <- function(game_id, heatmap = F){
     }
 
     p1 <- suppressMessages(ggplot2::ggplot() +
-                           ggplot2::geom_point(data = shot_loc_df,
-                                               aes(
-                                                 x = x,
-                                                 y = y,
-                                                 shape = outcome,
-                                                 color = team_name),
-                                               size = 3) +
-                           ggplot2::geom_polygon(data = court, aes(x = x, y = y, group = group), col = "gray") +
-                           ggplot2::geom_point(alpha = 0.2, size = 1.5) + coord_equal() +
-                           ggplot2::scale_color_manual(values = color) +
-                           ggplot2::xlab("") +
-                           ggplot2::ylab("")  +
-                           ggplot2::coord_flip() +
-                           ggplot2::theme_void() +
-                           ggplot2::theme(
-                             axis.text.x = element_blank(),
-                             axis.text.y = element_blank(),
-                             axis.ticks.x = element_blank(),
-                             axis.ticks.y = element_blank(),
-                             axis.title = element_blank(),
-                             legend.position = "bottom",
-                             legend.direction = 'vertical',
-                             plot.title = element_text(size = 16, hjust = 0.5),
-                             plot.subtitle = element_text(size = 12, hjust = 0.5),
-                             plot.caption = element_text(size = 8, hjust = 0),
-                             plot.background = element_rect(fill = 'cornsilk')) +
-                           ggplot2::labs(
-                             title = game_title,
-                             subtitle = date,
-                             color = 'Team',
-                             shape = 'Made',
-                             caption = "Meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR"))
+                             ggplot2::geom_point(data = shot_loc_df,
+                                                 aes(
+                                                   x = x,
+                                                   y = y,
+                                                   shape = outcome,
+                                                   color = team_name),
+                                                 size = 3) +
+                             ggplot2::geom_polygon(data = court, aes(x = x, y = y, group = group), col = "gray") +
+                             ggplot2::geom_point(alpha = 0.2, size = 1.5) + coord_equal() +
+                             ggplot2::scale_color_manual(values = color) +
+                             ggplot2::xlab("") +
+                             ggplot2::ylab("")  +
+                             ggplot2::coord_flip() +
+                             ggplot2::theme_void() +
+                             ggplot2::theme(
+                               axis.text.x = element_blank(),
+                               axis.text.y = element_blank(),
+                               axis.ticks.x = element_blank(),
+                               axis.ticks.y = element_blank(),
+                               axis.title = element_blank(),
+                               legend.position = "bottom",
+                               legend.direction = 'vertical',
+                               plot.title = element_text(size = 16, hjust = 0.5),
+                               plot.subtitle = element_text(size = 12, hjust = 0.5),
+                               plot.caption = element_text(size = 8, hjust = 0),
+                               plot.background = element_rect(fill = 'cornsilk')) +
+                             ggplot2::labs(
+                               title = game_title,
+                               subtitle = date,
+                               color = 'Team',
+                               shape = 'Made',
+                               caption = "Meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR"))
     return(p1)
   }
 }
