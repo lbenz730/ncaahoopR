@@ -102,6 +102,23 @@ __Circle Assist Networks and Player Highlighting__
 * ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three point shots are given 1.5 weight. If FALSE, assisted three point shots are given weight 1. In both cases, assisted 2 point shots are given weight 1. 
 * `threshold`: Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
 
+### Shot Charts
+There are currently three functions for scraping and plotting shot location data. These functions are written by [Meyappan Subbaiah](https://github.com/meysubb).
+
+`get_shot_locs(game_id)`: Returns data frame with shot location data when avaiable.
+
+* `game_id`: ESPN game_id for which to scrape shot location.
+
+`get_game_plot(game_id, heatmap = F)`: Plots shots for a given game.
+
+* `game_id`: ESPN game_id for which to scrape shot location.
+* `heatmap`: Logical, whether to use density-heatmap or plot individual points. Default = `FALSE`.
+
+`get_team_plot(game_id, team, heatmap = F)`: Plots shots for a given game.
+
+* `game_id`: Vector ESPN game_id for which to scrape shot location.
+* `team`: Which team to chart shots for.
+* `heatmap`: Logical, whether to use density-heatmap or plot individual points. Default = `FALSE`.
 
 ## Datasets
 
@@ -170,6 +187,13 @@ __NOTE:__ The argument ```season = "2017-18"``` would be replaced with the curre
 ![Frankie Ferrari](figures/ferrari.png)
 ```circle_assist_net(team = "San Francisco", season = "2018-19", highlight_player = "Frankie Ferrari", highlight_color = "#FDBB30")```
 
+#### Shot Charts
+![heatmap](figures/heat_map.png)
+```get_game_plot(game_id = 401083557, heatmap = T)```
+
+![shotchart](figures/shot_chart.png)
+`get_game_plot(game_id = 401083557)`
+
 ## Glossary
 Play-by-Play files contain the following variables:
 
@@ -193,3 +217,17 @@ Play-by-Play files contain the following variables:
 * ```home_favored_by```: Number of points by which the home team is favored, prior to tip-off. If Vegas point spread is available on ESPN, that is used as the default. When not available, an attempt is made to impute the pre-game point sread from derived team strengths. Imputed point spreads are not available for games prior to the 2016-17 season or when one of the teams is not in Division 1.
 * ```game_id```: ESPN game_id for the game in question.
 * ```date```: Date of game.
+
+Shot Location data frames contain the following variables.
+
+* `team_name`: Name of shooting team.
+* `shot_text`: Description of shot.
+* `color`: Color hexcode used to render shot chart graphic on ESPN.
+* `date`: Date of game.
+* `outcome`: Whether the shot was made or missed.
+* `shooter`: Player making the shot.
+* `assister`: Playing assisting the shot.
+* `three_pt`: Logical, whether the shot is a 3-point attempt.
+* `x`: x-coordinate of shot location.
+* `y`: y-coordinate of shot location.
+
