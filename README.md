@@ -109,12 +109,12 @@ There are currently three functions for scraping and plotting shot location data
 
 * `game_id`: ESPN game_id for which to scrape shot location.
 
-`get_game_plot(game_id, heatmap = F)`: Plots shots for a given game.
+`game_shot_chart(game_id, heatmap = F)`: Plots shots for a given game.
 
 * `game_id`: ESPN game_id for which to scrape shot location.
 * `heatmap`: Logical, whether to use density-heatmap or plot individual points. Default = `FALSE`.
 
-`get_team_plot(game_id, team, heatmap = F)`: Plots shots for a given game.
+`team_shot_chart(game_id, team, heatmap = F)`: Plots shots for a given game.
 
 * `game_id`: Vector ESPN game_id for which to scrape shot location.
 * `team`: Which team to chart shots for.
@@ -189,10 +189,10 @@ __NOTE:__ The argument ```season = "2017-18"``` would be replaced with the curre
 
 #### Shot Charts
 ![heatmap](figures/heat_map.png)
-```get_game_plot(game_id = 401083557, heatmap = T)```
+```game_shot_chart(game_id = 401083557, heatmap = T)```
 
 ![shotchart](figures/shot_chart.png)
-`get_game_plot(game_id = 401083557)`
+`game_shot_chart(game_id = 401083557)`
 
 ## Glossary
 Play-by-Play files contain the following variables:

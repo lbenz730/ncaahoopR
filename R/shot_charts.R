@@ -97,12 +97,12 @@ get_shot_locs <- function(game_ids) {
 #' @export
 #'
 #'
-get_game_plot <- function(game_id, heatmap = F){
+game_shot_chart <- function(game_id, heatmap = F){
   if(any(is.na(game_id))) {
     error("game_id missing with no default")
   }
   if(length(game_id) > 1) {
-    error("get_game_plot only takes in a single game_id")
+    error("game_shot_chart only takes in a single game_id")
   }
 
   shot_loc_df <- get_shot_locs(game_id)
@@ -117,9 +117,9 @@ get_game_plot <- function(game_id, heatmap = F){
       title <- cowplot::ggdraw() +
         draw_label(full_title,
                    fontface = 'bold')
-      p <- get_team_plot(game_id, teams[1], heatmap = T) +
+      p <- team_shot_chart(game_id, teams[1], heatmap = T) +
         theme(legend.position = "bottom")
-      p2 <- get_team_plot(game_id, teams[2], heatmap=T) +
+      p2 <- team_shot_chart(game_id, teams[2], heatmap=T) +
         labs(caption="") +
         theme(legend.position = "bottom")
       p3 <- cowplot::plot_grid(p,p2)
@@ -177,7 +177,7 @@ get_game_plot <- function(game_id, heatmap = F){
 #' @export
 #'
 #'
-get_team_plot <- function(game_ids, team, heatmap = F) {
+team_shot_chart <- function(game_ids, team, heatmap = F) {
   if(any(is.na(game_ids))) {
     error("game_ids missing with no default")
   }

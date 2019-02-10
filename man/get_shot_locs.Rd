@@ -4,7 +4,7 @@
 \alias{get_shot_locs}
 \title{Get Shot Locations}
 \usage{
-get_shot_locs(game_id)
+get_shot_locs(game_ids)
 }
 \arguments{
 \item{game_ids}{Vector of ESPN game_ids}
