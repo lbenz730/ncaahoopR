@@ -136,11 +136,13 @@ get_game_plot <- function(game_id, heatmap = F){
                                                    color = team_name),
                                                  size = 3) +
                              ggplot2::geom_polygon(data = court, aes(x = x, y = y, group = group), col = "gray") +
-                             ggplot2::geom_point(alpha = 0.2, size = 1.5) + coord_equal() +
+                             ggplot2::geom_point(alpha = 0.2, size = 1.5) +
+                             coord_equal() +
                              ggplot2::scale_color_manual(values = color) +
                              ggplot2::xlab("") +
                              ggplot2::ylab("")  +
                              ggplot2::coord_flip() +
+                             ggplot2::scale_x_reverse() +
                              ggplot2::theme_void() +
                              ggplot2::theme(
                                axis.text.x = element_blank(),
@@ -189,7 +191,7 @@ get_team_plot <- function(game_ids, team, heatmap = F) {
     team_shots <- df %>% filter(team_name == team)
 
     ### flip shots if they are on the wrong side
-    team_shots[team_shots$y > 47,"y"] <- 47 - (team_shots[team_shots$y > 47,"y"] - 47)
+    team_shots[team_shots$y > 47, "y"] <- 47 - (team_shots[team_shots$y > 47,"y"] - 47)
 
     ### only pick one color
     color <- as.character(unique(team_shots$color))[1]
