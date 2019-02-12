@@ -188,7 +188,7 @@ team_shot_chart <- function(game_ids, team, heatmap = F) {
 
   if(!is.null(df)) {
     side_one <- court %>% filter(side == 1)
-    team_shots <- df %>% filter(team_name == team)
+    team_shots <- df %>% filter(team_name %in% c(team, dict$ESPN_PBP[dict$ESPN == team]))
 
     ### flip shots if they are on the wrong side
     team_shots[team_shots$y > 47, "x"] <- 50 - team_shots[team_shots$y > 47, "x"]
@@ -231,7 +231,7 @@ team_shot_chart <- function(game_ids, team, heatmap = F) {
     }
 
     p1 <-
-      ggplot2::ggplot() +
+      suppressMessages(ggplot2::ggplot() +
       ggplot2::geom_point(data = team_shots,
                           aes(
                             x = x,
@@ -259,7 +259,7 @@ team_shot_chart <- function(game_ids, team, heatmap = F) {
       ggplot2::labs(
         title = paste0(team, " shots"),
         shape = 'Made',
-        caption = "Meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR")
+        caption = "Meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR"))
     return(p1)
   }
 }
