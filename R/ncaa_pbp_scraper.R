@@ -427,7 +427,8 @@ get_roster <- function(team) {
   for(i in 1:ncol(tmp)) {
     tmp[,i] <- as.character(tmp[,i])
   }
-  tmp$number <- as.numeric(tmp$number)
+  tmp$number <- as.numeric(gsub("[^0-9]", "", tmp$name))
+  tmp$name <- gsub("[0-9]*", "", tmp$name)
   tmp <- dplyr::arrange(tmp, number)
   return(tmp)
 }
