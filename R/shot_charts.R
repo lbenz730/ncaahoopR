@@ -225,7 +225,7 @@ team_shot_chart <- function(game_ids, team, heatmap = F) {
           plot.caption = element_text(size = 8, hjust = 0)) +
         ggplot2::labs(
           title = paste0(team," shots"),
-          shape = 'Made',
+          shape = "Shot Outcome",
           caption = "Meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR")
       return(p1)
     }
@@ -240,11 +240,10 @@ team_shot_chart <- function(game_ids, team, heatmap = F) {
                           color = color,
                           size = 3) +
       ggplot2::geom_polygon(data = side_one, aes(x = x, y = y, group = group), col = "gray") +
-      ggplot2::geom_point(alpha = 0.2, size = 1.5) + coord_equal() +
+      ggplot2::geom_point(alpha = 0.2, size = 1.5) +
       ggplot2::scale_color_manual(values = color) +
       ggplot2:: xlab("") +
       ggplot2::ylab("")  +
-      ggplot2::coord_flip() +
       ggplot2::theme_void() +
       ggplot2::theme(
         axis.text.x = element_blank(),
@@ -258,7 +257,7 @@ team_shot_chart <- function(game_ids, team, heatmap = F) {
         plot.background = element_rect(fill = 'cornsilk')) +
       ggplot2::labs(
         title = paste0(team, " shots"),
-        shape = 'Made',
+        shape = "Shot Outcome",
         caption = "Meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR"))
     return(p1)
   }
