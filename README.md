@@ -231,3 +231,4 @@ Shot Location data frames contain the following variables.
 * `x`: x-coordinate of shot location.
 * `y`: y-coordinate of shot location.
 
+The court is 50 feet by 94 feet, with (0,0) always being placed in the bottom corner of the shot chart. Any full court shot chart rendered using `game_shot_chart()` preserves ESPN shot locations as they are found online, while half court charts using `team_shot_chart()` convert all shot locations to to a 50 feet by 47 feet half court. The perspective on the half court shot charts is as if one is standing under the hoop, looking towards the opposition hoop. (0,0) again represents the bottom left corner and (50, 47) represents the top right corner. 

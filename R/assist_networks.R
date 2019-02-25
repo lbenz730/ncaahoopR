@@ -61,7 +61,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
       return(NULL)
     }
     opp <- setdiff(c(x$away, x$home), text_team)
-    if(length(season) == 1){
+    if(length(season) == 1 & is.na(message)){
       text <- paste(" Assist Network vs. ", opp, sep = "")
     }
     else{
@@ -192,7 +192,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
 
   title <-
     ifelse(is.na(message), paste0(text_team, ifelse(three_weights, " Weighted", ""), text), text)
-  if(length(unique(x$game_id)) == 1) {
+  if(length(unique(x$game_id)) == 1 & is.na(message)) {
     title <- paste(title, format(as.Date(x$date[1]), "%B %d, %Y"), sep = "\n")
   }
 

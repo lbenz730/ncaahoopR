@@ -107,9 +107,11 @@ game_shot_chart <- function(game_id, heatmap = F){
 
   shot_loc_df <- get_shot_locs(game_id)
   if(!is.null(shot_loc_df)) {
-    teams <- unique(shot_loc_df$team_name)
+    teams <- sort(unique(shot_loc_df$team_name))
     game_title <- paste0(teams[1]," vs. ", teams[2])
-    color <- as.character(unique(shot_loc_df$color))
+    color <- c(shot_loc_df$color[shot_loc_df$team_name == teams[1]][1],
+               shot_loc_df$color[shot_loc_df$team_name == teams[2]][1])
+
     date <- format(as.Date(shot_loc_df$date[1]), "%B %d, %Y")
 
     if(heatmap){
@@ -137,7 +139,6 @@ game_shot_chart <- function(game_id, heatmap = F){
                                                  size = 3) +
                              ggplot2::geom_polygon(data = court, aes(x = x, y = y, group = group), col = "gray") +
                              ggplot2::geom_point(alpha = 0.2, size = 1.5) +
-                             coord_equal() +
                              ggplot2::scale_color_manual(values = color) +
                              ggplot2::xlab("") +
                              ggplot2::ylab("")  +
@@ -202,7 +203,8 @@ team_shot_chart <- function(game_ids, team, heatmap = F) {
                                  aes(x = x, y = y, fill = stat(density / max(density))),
                                  geom = "raster", contour = FALSE, interpolate = TRUE, n = 200) +
         ggplot2::geom_polygon(data = side_one, aes(x = x, y = y, group = group), col = "gray") +
-        ggplot2::geom_point(alpha = 0.2, size = 1.5) + coord_equal() +
+        ggplot2::geom_point(alpha = 0.2, size = 1.5) +
+        ggplot2::coord_equal() +
         ggplot2::scale_color_manual(values = color) +
         ggplot2::xlab("") +
         ggplot2::ylab("")  +
