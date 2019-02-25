@@ -359,5 +359,4 @@ game_flow <- function(game_id, home_col, away_col) {
     ggplot2::scale_color_manual(values = c(away_col, home_col),
                                 labels = c(away_team, home_team)) +
     ggplot2::annotate("text", x = 600, y = max_score - 10, label = avg_sd)
-
 }

@@ -179,7 +179,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
   igraph::E(net)$weight <- network$num
   igraph::E(net)$arrow.size <- 0.7
   igraph::E(net)$edge.color <- "white"
-  igraph::E(net)$width <- E(net)$weight * factor
+  igraph::E(net)$width <- igraph::E(net)$weight * factor
   igraph::V(net)$color <- node_col
 
   if(any(season %in% c("2016-17", "2017-18", "2018-19"))) {
@@ -199,7 +199,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
   plot(net, vertex.label.color= "black", vertex.label.cex = 1,
        edge.curved = 0.3, edge.label = labs, edge.label.cex = 1.2,
        edge.label.color = "black",
-       layout = layout_in_circle,
+       layout = igraph::layout_in_circle,
        vertex.label.family = "Arial Black")
 
   par(cex = 0.6)
@@ -432,18 +432,18 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
     plot_title <- paste(plot_title, format(as.Date(x$date[1]), "%B %d, %Y"), sep = "\n")
   }
 
-  players <- group_by(network, ast) %>%
-    summarise("count" = sum(num)) %>%
-    rename("player" = ast) %>%
+  players <- dplyr::group_by(network, ast) %>%
+    dplyr::summarise("count" = sum(num)) %>%
+    dplyr::rename("player" = ast) %>%
     rbind(
-      group_by(network, shot) %>%
-        summarise("count" = sum(num)) %>%
-        rename("player" = shot)
+      dplyr::group_by(network, shot) %>%
+        dplyr::summarise("count" = sum(num)) %>%
+        dplyr::rename("player" = shot)
     ) %>%
-    group_by(player) %>%
-    summarise("count" = sum(count)) %>%
-    arrange(desc(count)) %>%
-    pull(player)
+    dplyr::group_by(player) %>%
+    dplyr::summarise("count" = sum(count)) %>%
+    dplyr::arrange(desc(count)) %>%
+    dplyr::pull(player)
 
   if(is.na(highlight_player)) {
     circlize::chordDiagram(network[,-4], order = players,
@@ -474,7 +474,7 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   }
   par(cex = 0.6)
   circlize::circos.track(track.index = 1, panel.fun = function(x, y) {
-    circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index,
+    circlize::circos.text(circlize::CELL_META$xcenter, circlize::CELL_META$ylim[1], circlize::CELL_META$sector.index,
                 facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
   }, bg.border = NA)
   par(cex = 1)

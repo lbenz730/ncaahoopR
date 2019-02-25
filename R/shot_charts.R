@@ -21,20 +21,20 @@ get_shot_locs <- function(game_ids) {
     date <- as.Date(date, "%B %d, %Y")
 
     away_team_name <-
-      stringr::str_replace_all(read_html(url) %>% rvest::html_nodes(".away h3") %>% rvest::html_text(), "[\r\n\t]" , "")
+      stringr::str_replace_all(xml2::read_html(url) %>% rvest::html_nodes(".away h3") %>% rvest::html_text(), "[\r\n\t]" , "")
 
     ## if not equal to 1, then print this
     if(length(away_team_name) == 0){
       message("No shot location data available for this game.")
     }else{
-      away_shot_text <- xml2::read_html(url) %>% rvest::html_nodes(".away-team li") %>% html_text()
+      away_shot_text <- xml2::read_html(url) %>% rvest::html_nodes(".away-team li") %>% rvest::html_text()
 
       ## Style, get shot location data from here
       away_shot_style <- xml2::read_html(url) %>% rvest::html_nodes(".away-team li") %>% xml2::xml_attr("style")
       away_color  <- gsub("^.*border-color:\\s*|\\s*;.*$", "", away_shot_style[1])
 
       ### home text
-      home_team_name <- stringr::str_replace_all(read_html(url) %>% rvest::html_nodes(".home h3") %>% rvest::html_text(), "[\r\n\t]" , "")
+      home_team_name <- stringr::str_replace_all(xml2::read_html(url) %>% rvest::html_nodes(".home h3") %>% rvest::html_text(), "[\r\n\t]" , "")
       home_shot_text <- xml2::read_html(url) %>% rvest::html_nodes(".home-team li") %>% rvest::html_text()
 
       ## Style, get shot location data from here
@@ -175,8 +175,6 @@ game_shot_chart <- function(game_id, heatmap = F){
 #' @param team Team Name
 #' @param heatmap Use a density type heatmap (Default = FALSE)
 #' @export
-#'
-#'
 team_shot_chart <- function(game_ids, team, heatmap = F) {
   if(any(is.na(game_ids))) {
     error("game_ids missing with no default")
