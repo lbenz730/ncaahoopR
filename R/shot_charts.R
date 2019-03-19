@@ -205,7 +205,6 @@ team_shot_chart <- function(game_ids, team, heatmap = F) {
         ggplot2::geom_polygon(data = side_one, aes(x = x, y = y, group = group), col = "gray") +
         ggplot2::geom_point(alpha = 0.2, size = 1.5) +
         ggplot2::coord_equal() +
-        ggplot2::scale_color_manual(values = color) +
         ggplot2::xlab("") +
         ggplot2::ylab("")  +
         ggplot2::scale_fill_viridis_c("Shot Frequency    ",
