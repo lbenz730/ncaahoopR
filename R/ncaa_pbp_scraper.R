@@ -353,8 +353,9 @@ get_schedule <- function(team) {
   schedule$date <- paste(schedule$month, schedule$day, schedule$year, sep = "/")
 
   ### Game IDs
-  schedule$game_id <- get_game_ids(team)
   schedule$date <- as.Date(schedule$date, "%m/%d/%y")
+  schedule <- dplyr::arrange(schedule, date)
+  schedule$game_id <- get_game_ids(team)
 
   ### Return Schedule
   return(schedule[,c("game_id", "date", "opponent", "location",
