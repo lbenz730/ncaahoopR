@@ -64,10 +64,11 @@ get_shot_locs <- function(game_ids) {
         mutate(
           "date" = date,
           "outcome" = ifelse(grepl("made", shot_text), "made", "missed"),
-          "shooter" = gsub("made.*", "", shot_text),
-          "shooter" = gsub("missed.*", "", shooter),
-          "asissted" = gsub(".{1}$", "", gsub(".*Assisted by", "", shot_text)),
-          "asissted" = ifelse(grepl("made", asissted) | grepl("missed", asissted), NA, asissted),
+          "shooter" = stripwhite(gsub("made.*", "", shot_text)),
+          "shooter" = stripwhite(gsub("missed.*", "", shooter)),
+          "asissted" = stripwhite(gsub(".{1}$", "", gsub(".*Assisted by", "", shot_text))),
+          "asissted" = stripwhite(ifelse(grepl("made", asissted) |
+                                           grepl("missed", asissted), NA, asissted)),
           "three_pt" = grepl("Three Point", shot_text),
           "x" = as.numeric(gsub('^.*top:\\s*|\\s*%;.*$', '', total_df$shot_style)) * 0.5,
           "y" = as.numeric(gsub('^.*left:\\s*|\\s*%;top.*$', '', total_df$shot_style)) * .94
@@ -117,7 +118,7 @@ game_shot_chart <- function(game_id, heatmap = F){
     if(heatmap){
       full_title <- paste0(game_title," \n ",date)
       title <- cowplot::ggdraw() +
-        draw_label(full_title,
+        cowplot::draw_label(full_title,
                    fontface = 'bold')
       p <- team_shot_chart(game_id, teams[1], heatmap = T) +
         theme(legend.position = "bottom")
