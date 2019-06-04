@@ -307,9 +307,9 @@ get_schedule <- function(team) {
   }
 
   ### Scrape Team Schedule
-  base_url <- "http://www.espn.com/mens-college-basketball/team/schedule/_/id/"
+  base_url <- "https://www.espn.com/mens-college-basketball/team/schedule/_/id/"
   url <- paste(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team], sep = "")
-  schedule <- XML::readHTMLTable(url)[[1]][-1,]
+  schedule <- XML::readHTMLTable(RCurl::getURL(url))[[1]][-1,]
   schedule <- schedule[,1:4]
   names(schedule) <- c("date", "opponent", "result", "record")
   schedule <- schedule[!is.na(schedule$opponent) & schedule$opponent != "Opponent",]
