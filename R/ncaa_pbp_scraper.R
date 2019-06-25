@@ -20,8 +20,8 @@ get_pbp_game <- function(game_ids) {
     ids <- create_ids_df()
   }
   ### Get Play by Play Data
-  base_url <- "http://www.espn.com/mens-college-basketball/playbyplay?gameId="
-  summary_url <- "http://www.espn.com/mens-college-basketball/game?gameId="
+  base_url <- "https://www.espn.com/mens-college-basketball/playbyplay?gameId="
+  summary_url <- "https://www.espn.com/mens-college-basketball/game?gameId="
   j <- 0
 
   for(i in 1:length(game_ids)) {
@@ -31,7 +31,7 @@ get_pbp_game <- function(game_ids) {
       next
     }
     url <- paste(base_url, game_ids[i], sep = "")
-    tmp <- try(XML::readHTMLTable(url), silent = T)
+    tmp <- try(XML::readHTMLTable(RCurl::getURL(url)), silent = T)
 
     ### Check if PBP Data is Available
     if(length(tmp) == 0) {
@@ -101,7 +101,7 @@ get_pbp_game <- function(game_ids) {
 
     ### Get full team names
     url2 <- paste(summary_url, game_ids[i], sep = "")
-    tmp <- XML::readHTMLTable(url2)
+    tmp <- XML::readHTMLTable(RCurl::getURL(url2))
     pbp$away <- as.character(as.data.frame(tmp[[2]])[1,1])
     pbp$home <- as.character(as.data.frame(tmp[[2]])[2,1])
     away_abv <- as.character(as.data.frame(tmp[[1]])[1,1])
