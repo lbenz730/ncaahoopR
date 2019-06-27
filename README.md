@@ -93,6 +93,7 @@ __Traditional Assist Networks__
 * ```message``` (default = ```NA```) Option for custom message to replace graph title when using a subset of the season (e.g. conference play).
 
 __Circle Assist Networks and Player Highlighting__
+
 ```circle_assist_net(team, season, highlight_player, highlight_color, three_weights, message = NA)```
 
 * ```team``` is the ESPN team name, as listed in the `ids` data frame.
