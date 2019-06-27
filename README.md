@@ -16,7 +16,7 @@ devtools::install_github("lbenz730/ncaahoopR")
 
 ## Functions
 Several functions use ESPN game_ids. You can find the game_id in the URL for the game summary, 
-as shown in the url for the summary of the UMBC-Virginia game below.
+as shown in the URL for the summary of the UMBC-Virginia game below.
 ![game_id](figures/espn.png)
 
 ### Scraping Data
@@ -33,7 +33,7 @@ The `team` parameter in the above functions must be a valid team name from the `
 
 __Win Probability Charts__
 
-There are two functions for plotting win probability charts, one that uses base graphics (`wp_chart`), and the other which uses the ```ggplot2``` library (```gg_wp_chart```). Both are maintainted, as graphics in base R have some nice concatenation principles.
+There are two functions for plotting win probability charts, one that uses base graphics (`wp_chart`), and the other which uses the ```ggplot2``` library (```gg_wp_chart```). Both are maintained, as graphics in base R have some nice concatenation principles.
 
 ```wp_chart(game_id, home_col, away_col, show_legend = T)```
 
@@ -48,7 +48,7 @@ There are two functions for plotting win probability charts, one that uses base 
 * ```game_id``` ESPN game_id for the desired win probability chart.
 * ```home_col``` Chart color for home team.
 * ```away_col```: Chart color for away team.
-* `show_labels`: Logical whether Game Exictement Index and Minimum Win Probability metrics should be displayed on the plot. Default = `TRUE`.
+* `show_labels`: Logical whether Game Excitement Index and Minimum Win Probability metrics should be displayed on the plot. Default = `TRUE`.
 
 __Game Flow Charts__
 
@@ -62,7 +62,7 @@ __Game Excitement Index__
 
 ```game_exciment_index(game_id)```
 
-Returns ```GEI``` (Game Excitement Index) for given ESPN game_id. For more information about how these win-probability charts are fit and how Game Excitemnet Index is calculated, check out the below links
+Returns ```GEI``` (Game Excitement Index) for given ESPN game_id. For more information about how these win-probability charts are fit and how Game Excitement Index is calculated, check out the below links
 
 * [Model Methodology](https://sports.sites.yale.edu/ncaa-basketball-win-probability-model)
 * [Game Excitement Index](https://sports.sites.yale.edu/game-excitement-index-part-ii)
@@ -85,7 +85,7 @@ __Traditional Assist Networks__
 
 ```assist_net(team, season, node_col, three_weights, threshold, message = NA)```
 
-* ```team``` is the ESPN team name, as listed in the `ids` dataframe.
+* ```team``` is the ESPN team name, as listed in the `ids` data frame.
 * ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
 * ```node_col``` is the node color for the graph.
 * ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three point shots are given 1.5 weight. If FALSE, assisted three point shots are given weight 1. In both cases, assisted 2 point shots are given weight 1. 
@@ -95,9 +95,9 @@ __Traditional Assist Networks__
 __Circle Assist Networks and Player Highlighting__
 ```circle_assist_net(team, season, highlight_player, highlight_color, three_weights, message = NA)```
 
-* ```team``` is the ESPN team name, as listed in the `ids` dataframe.
+* ```team``` is the ESPN team name, as listed in the `ids` data frame.
 * ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
-* ```highlight_player```: Name of player to highlight in assist network. `NA` yields full team assist etwork with no player highlighting. Default = `NA`.
+* ```highlight_player```: Name of player to highlight in assist network. `NA` yields full team assist network with no player highlighting. Default = `NA`.
 * ```highlight_color```: Color of player links to be highlighted. `NA` if ```highlight_player``` is `NA`.
 * ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three point shots are given 1.5 weight. If FALSE, assisted three point shots are given weight 1. In both cases, assisted 2 point shots are given weight 1. 
 * `threshold`: Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
@@ -105,24 +105,24 @@ __Circle Assist Networks and Player Highlighting__
 ### Shot Charts
 There are currently three functions for scraping and plotting shot location data. These functions are written by [Meyappan Subbaiah](https://github.com/meysubb).
 
-`get_shot_locs(game_id)`: Returns data frame with shot location data when avaiable.
+`get_shot_locs(game_id)`: Returns data frame with shot location data when available.
 
 * `game_id`: ESPN game_id for which to scrape shot location.
 
 `game_shot_chart(game_id, heatmap = F)`: Plots shots for a given game.
 
 * `game_id`: ESPN game_id for which to scrape shot location.
-* `heatmap`: Logical, whether to use density-heatmap or plot individual points. Default = `FALSE`.
+* `heatmap`: Logical, whether to use density-heat map or plot individual points. Default = `FALSE`.
 
 `team_shot_chart(game_id, team, heatmap = F)`: Plots shots for a given game.
 
 * `game_id`: Vector ESPN game_id for which to scrape shot location.
 * `team`: Which team to chart shots for.
-* `heatmap`: Logical, whether to use density-heatmap or plot individual points. Default = `FALSE`.
+* `heatmap`: Logical, whether to use density-heat map or plot individual points. Default = `FALSE`.
 
 ## Datasets
 
-```dict``` A dataframe for converting between team names from various sites.
+```dict``` A data frame for converting between team names from various sites.
  
  * ```NCAA```: the name of the team, as listed on the NCAA website
  * ```ESPN```: the name of the team, as listed on the ESPN URLs
@@ -131,14 +131,14 @@ There are currently three functions for scraping and plotting shot location data
  * ```Trank```: the name of the team, as listed on barttorvik.com
  * ```name_247```: the name of the team, as listed on 247Sports.com
 
-```ids``` A dataframe for converting between team names from various sites.
+```ids``` A data frame for converting between team names from various sites.
  
- * ```team```: the name of the team to be suplied to function in ncaahoopR package
+ * ```team```: the name of the team to be supplied to function in ncaahoopR package
  * ```id```: team id; used in ESPN URLs
  * ```link```: link; used in ESPN URLs
  
  
- ```ncaa_colors``` A dataframe of team color hex codes, pulled from [teamcolorcodes.com](https://teamcolorcodes.com/). Note that hexcodes are only available for 248 of 353 Division 1 teams.
+ ```ncaa_colors``` A data frame of team color hex codes, pulled from [teamcolorcodes.com](https://teamcolorcodes.com/). Note that hexcodes are only available for 248 of 353 Division 1 teams.
  
 
 * `ncaa_name`: The name of the team, as listed on the NCAA website (same as `dict$NCAA`)
@@ -154,7 +154,7 @@ There are currently three functions for scraping and plotting shot location data
 _Primary and secondary colors for available teams._
 
 
-These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`, or ```data("dict")```, respectively.
+These data sets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`, or ```data("dict")```, respectively.
 
 ## Examples
 #### Win Probability Charts
@@ -177,7 +177,7 @@ These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`,
 ```assist_net(team = "Yale", node_col = "royalblue4", season = "2017-18")```
 
 
-__NOTE:__ The argument ```season = "2017-18"``` would be replaced with the current season. Backdated charts are currently not avaiable.
+__NOTE:__ The argument ```season = "2017-18"``` would be replaced with the current season. Backdated charts are currently not available.
 
 #### Circle Assist Networks
 ![UNC](figures/unc.png)
@@ -199,7 +199,7 @@ Play-by-Play files contain the following variables:
 
 * ```play_id```: Unique identifier of play/event in sequence of game events.
 * ```half```: Period of action in the game. 1 and 2 denote the first and second halves of play, while 3 denotes OT1, 4 denotes OT2 etc.
-* ```time_remaining_half```: Time remaining in the peroid as it would appear on a scoreboard.
+* ```time_remaining_half```: Time remaining in the period as it would appear on a scoreboard.
 * ```secs_remaining```: Time remaining in regulation, in seconds.
 * ```secs_remaining_absolute```: The time remaining until the game is over, in seconds. For example a game that goes to overtime would begin with 2700 seconds remaining (2400 for regulation and 300 for overtime), and regulation would end with 300 seconds remaining.
 * ```description```: A description of the play/game event.
@@ -214,7 +214,7 @@ Play-by-Play files contain the following variables:
 * ```away_timeout_remaining```: Number of timeouts remaining for the away team.
 * ```home_timeout_ind```: Binary indicator of whether home team took a timeout in the previous 60 seconds of game time.
 * ```away_timeout_ind```: Binary indicator of whether away team took a timeout in the previous 60 seconds of game time.
-* ```home_favored_by```: Number of points by which the home team is favored, prior to tip-off. If Vegas point spread is available on ESPN, that is used as the default. When not available, an attempt is made to impute the pre-game point sread from derived team strengths. Imputed point spreads are not available for games prior to the 2016-17 season or when one of the teams is not in Division 1.
+* ```home_favored_by```: Number of points by which the home team is favored, prior to tip-off. If Vegas point spread is available on ESPN, that is used as the default. When not available, an attempt is made to impute the pre-game point spread from derived team strengths. Imputed point spreads are not available for games prior to the 2016-17 season or when one of the teams is not in Division 1.
 * ```game_id```: ESPN game_id for the game in question.
 * ```date```: Date of game.
 
