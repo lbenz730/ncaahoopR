@@ -126,12 +126,7 @@ get_pbp_game <- function(game_ids) {
     pbp$home_favored_by <- line
     pbp$play_id <- 1:nrow(pbp)
     pbp$game_id <- game_ids[i]
-
-    url <- paste0("http://www.espn.com/mens-college-basketball/playbyplay?gameId=", game_ids[i])
-    y <- scan(url, what = "", sep = "\n")[8]
-    y <- unlist(strsplit(y, "-"))
-    date <-  stripwhite(y[length(y) - 1])
-    pbp$date <- as.Date(date, "%B %d, %Y")
+    pbp$date <- get_date(game_ids[i])
     pbp$score_diff <- pbp$home_score - pbp$away_score
 
     ### Win Probability by Play
@@ -349,7 +344,7 @@ get_schedule <- function(team) {
   schedule$month[schedule$month == "Mar"] <- 3
   schedule$month[schedule$month == "Apr"] <- 4
   schedule$month <- as.numeric(schedule$month)
-  schedule$year <- ifelse(schedule$month <= 4, 19, 18)
+  schedule$year <- ifelse(schedule$month <= 4, 20, 19)
   schedule$date <- paste(schedule$month, schedule$day, schedule$year, sep = "/")
 
   ### Game IDs
