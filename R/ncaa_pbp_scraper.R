@@ -140,20 +140,16 @@ get_pbp_game <- function(game_ids) {
       pbp$pre_game_prob <- 0.5
     }
 
-    ### Compute Win Prob +
-    pbp$win_prob <- NA
+    ### Relative Time
     pbp$secs_remaining_relative <- NA
     msec <- max(pbp$secs_remaining)
     for(k in 1:nrow(pbp)) {
-      m <- secs_to_model(pbp$secs_remaining[k], msec)[1]
       pbp$secs_remaining_relative[k] <-
         secs_to_model(pbp$secs_remaining[k], msec)[2]
-      model <- wp_hoops[m,]
-      log_odds <- model$intercept + pbp$score_diff[k]*model$scorediff +
-        pbp$pre_game_prob[k]*model$pre_game_prob
-      odds <- exp(log_odds)
-      pbp$win_prob[k] <- odds/(1 + odds)
     }
+
+    ### Compute Win Prob
+    pbp$win_prob <- wp_compute(pbp)
 
     ### Hardcode to 50-50 if Line = 0 or NA
     if(is.na(pbp$home_favored_by[1]) | pbp$home_favored_by[1] == 0) {

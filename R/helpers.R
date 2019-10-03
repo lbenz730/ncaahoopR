@@ -4,11 +4,11 @@ stripwhite <- function(x) gsub("\\s*$", "", gsub("^\\s*", "", x))
 ### Function to clean PBP data
 clean <- function(data, half, OTs) {
   cleaned <- data %>% dplyr::mutate(play_id = 1:nrow(data),
-                             half = half,
-                             time_remaining_half = as.character(V1),
-                             description = as.character(V3),
-                             away_score = suppressWarnings(as.numeric(gsub("-.*", "", V4))),
-                             home_score = suppressWarnings(as.numeric(gsub(".*-", "", V4))))
+                                    half = half,
+                                    time_remaining_half = as.character(V1),
+                                    description = as.character(V3),
+                                    away_score = suppressWarnings(as.numeric(gsub("-.*", "", V4))),
+                                    home_score = suppressWarnings(as.numeric(gsub(".*-", "", V4))))
   cleaned$time_remaining_half[1] <- ifelse(half <= 2, "20:00", "5:00")
   mins <- suppressWarnings(as.numeric(gsub(":.*","", cleaned$time_remaining_half)))
   secs <- suppressWarnings(as.numeric(gsub(".*:","", cleaned$time_remaining_half)))
@@ -74,6 +74,41 @@ games_2018 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/ma
 train <- rbind(select(games_2016, pred_score_diff, wins),
                select(games_2017, pred_score_diff, wins))
 prior <- glm(wins ~ pred_score_diff, data = train, family = binomial)
+
+### Set Coefficients to achieve deterministic relationship at max_time = 0
+coeffs <- read.csv("https://raw.githubusercontent.com/lbenz730/Senior-Thesis/master/model_coefficients/model_0_coeffs.csv", as.is = T)
+coeffs$estimate[coeffs$max_time <= 2 & coeffs$coefficient == "favored_by"] <- 0
+
+### Fit Loess Models to get smooth functions of coefficient estimate over time
+score_diff_smooth <-
+  loess(estimate ~ max_time,
+        data = filter(coeffs, coefficient == "score_diff"),
+        span = 0.5)
+
+favored_by_smooth <-
+  loess(estimate ~ max_time,
+        data = filter(coeffs, coefficient == "favored_by"),
+        span = 0.5)
+
+### Win Probability Function
+wp_compute <- function(x) {
+  ### Get Coefficient Values for Current Game
+  sc_diff <- predict(score_diff_smooth, newdata = x$secs_remaining_relative)
+  fb <- predict(favored_by_smooth, newdata = x$secs_remaining_relative)
+
+  ### Capture Game Determinism
+  index <- x$secs_remaining == 0 & (x$home_score != x$away_score)
+  sc_diff[index] <- 20
+  fb[index] <- predict(favored_by_smooth, newdata = 1)
+
+  ### Compute log odds of winning
+  log_odds <-
+    sc_diff * x$score_diff  +
+    fb * x$home_favored_by
+
+
+  return(logit(log_odds))
+}
 
 ### Get Approiate Model for Time Remaining
 secs_to_model <- function(sec, msec) {
@@ -193,4 +228,15 @@ get_date <- function(game_id) {
 gg_color_hue <- function(n) {
   hues = seq(15, 375, length = n + 1)
   hcl(h = hues, l = 65, c = 100)[1:n]
+}
+
+
+### Define Logit Function
+logit <- function(x) {
+  tmp <- exp(x)
+  case_when(
+    tmp == Inf ~ 1,
+    tmp == -Inf ~ 0,
+    T ~ tmp/(1 + tmp)
+  )
 }
