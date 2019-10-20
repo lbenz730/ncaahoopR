@@ -1,6 +1,6 @@
 Package: ncaahoopR
 Title: NCAA Men's Basketball Play-By-Play Functionality
-Version: 1.4.4
+Version: 1.4.5
 Authors@R: c(person("Luke", "Benz", email = "lukesbenz@gmail.com", role = c("aut", "cre")), person("Meyappan", "Subbaiah", email = "meysubb@gmail.com", role = c("ctb")))
 Description: An R package for working with NCAA Men's Basketball Play-by-Play Data.
     This package allows users to scrape play-by-play data into a tidy format, create
