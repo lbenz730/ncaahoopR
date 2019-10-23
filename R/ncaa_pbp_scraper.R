@@ -407,14 +407,14 @@ get_roster <- function(team) {
   if(!team %in% ids$team) {
     stop("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
   }
-  base_url <- "http://www.espn.com/mens-college-basketball/team/roster/_/id/"
+  base_url <- "https://www.espn.com/mens-college-basketball/team/roster/_/id/"
   url <-  paste(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team], sep = "")
-  tmp <- try(XML::readHTMLTable(url))
+  tmp <- try(XML::readHTMLTable(RCurl::getURL(url)))
   if(class(tmp) == "try-error") {
     warning("Unable to get roster. ESPN is updating CBB files. Check back again soon")
     return(NULL)
   }
-  tmp <- as.data.frame(tmp[[3]])
+  tmp <- as.data.frame(tmp[[1]])
   names(tmp) <- c("number", "name", "position", "height", "weight", "class", "hometown")
   for(i in 1:ncol(tmp)) {
     tmp[,i] <- as.character(tmp[,i])
