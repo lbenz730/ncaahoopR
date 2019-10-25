@@ -15,10 +15,7 @@ get_shot_locs <- function(game_ids) {
   for(i in 1:n) {
     message(paste("Getting Shots for Game", i, "of", n))
     url = paste0('http://www.espn.com/mens-college-basketball/playbyplay?gameId=', game_ids[i])
-    y <- scan(url, what = "", sep = "\n")[8]
-    y <- unlist(strsplit(y, "-"))
-    date <-  stripwhite(y[length(y) - 1])
-    date <- as.Date(date, "%B %d, %Y")
+    date <- get_date(game_ids[i])
 
     away_team_name <-
       stringr::str_replace_all(xml2::read_html(url) %>% rvest::html_nodes(".away h3") %>% rvest::html_text(), "[\r\n\t]" , "")
@@ -119,7 +116,7 @@ game_shot_chart <- function(game_id, heatmap = F){
       full_title <- paste0(game_title," \n ",date)
       title <- cowplot::ggdraw() +
         cowplot::draw_label(full_title,
-                   fontface = 'bold')
+                            fontface = 'bold')
       p <- team_shot_chart(game_id, teams[1], heatmap = T) +
         theme(legend.position = "bottom")
       p2 <- team_shot_chart(game_id, teams[2], heatmap=T) +
@@ -232,33 +229,33 @@ team_shot_chart <- function(game_ids, team, heatmap = F) {
 
     p1 <-
       suppressMessages(ggplot2::ggplot() +
-      ggplot2::geom_point(data = team_shots,
-                          aes(
-                            x = x,
-                            y = y,
-                            shape = outcome),
-                          color = color,
-                          size = 3) +
-      ggplot2::geom_polygon(data = side_one, aes(x = x, y = y, group = group), col = "gray") +
-      ggplot2::geom_point(alpha = 0.2, size = 1.5) +
-      ggplot2::scale_color_manual(values = color) +
-      ggplot2:: xlab("") +
-      ggplot2::ylab("")  +
-      ggplot2::theme_void() +
-      ggplot2::theme(
-        axis.text.x = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title = element_blank(),
-        plot.title = element_text(size = 16, hjust = 0.5),
-        plot.subtitle = element_text(size = 12, hjust = 0.5),
-        plot.caption = element_text(size = 8, hjust = 0),
-        plot.background = element_rect(fill = 'cornsilk')) +
-      ggplot2::labs(
-        title = paste0(team, " shots"),
-        shape = "Shot Outcome",
-        caption = "Meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR"))
+                         ggplot2::geom_point(data = team_shots,
+                                             aes(
+                                               x = x,
+                                               y = y,
+                                               shape = outcome),
+                                             color = color,
+                                             size = 3) +
+                         ggplot2::geom_polygon(data = side_one, aes(x = x, y = y, group = group), col = "gray") +
+                         ggplot2::geom_point(alpha = 0.2, size = 1.5) +
+                         ggplot2::scale_color_manual(values = color) +
+                         ggplot2:: xlab("") +
+                         ggplot2::ylab("")  +
+                         ggplot2::theme_void() +
+                         ggplot2::theme(
+                           axis.text.x = element_blank(),
+                           axis.text.y = element_blank(),
+                           axis.ticks.x = element_blank(),
+                           axis.ticks.y = element_blank(),
+                           axis.title = element_blank(),
+                           plot.title = element_text(size = 16, hjust = 0.5),
+                           plot.subtitle = element_text(size = 12, hjust = 0.5),
+                           plot.caption = element_text(size = 8, hjust = 0),
+                           plot.background = element_rect(fill = 'cornsilk')) +
+                         ggplot2::labs(
+                           title = paste0(team, " shots"),
+                           shape = "Shot Outcome",
+                           caption = "Meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR"))
     return(p1)
   }
 }
