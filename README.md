@@ -1,6 +1,6 @@
 # ncaahoopR <img src="figures/logo.png" align="right" />
-`ncaahoopR` is an R package for working with NCAA Basketball Play-by-Play Data. It scrapes play by play data 
-and returns it to the user in a tidy format and allows the user to explore the data with assist networks and in game win-probability charts.
+`ncaahoopR` is an R package for working with NCAA Basketball Play-by-Play Data. It scrapes play-by-play data 
+and returns it to the user in a tidy format and allows the user to explore the data with assist networks and in-game win-probability charts.
 
 __Note:__ `ncaahoopR` scrapes data from ESPN. Since ESPN is currently updating many college basketball pages, such as schedules and rosters,
 some functionality may be temporarily unavailable. Once we approach the beginning of the season, all functionality should work as desired.
@@ -27,13 +27,13 @@ as shown in the URL for the summary of the UMBC-Virginia game below.
 * ```get_game_ids(team)```: Get a vector of ESPN game_ids for all games in which ```team``` plays in.
 * ```get_master_schedule(year, month, day)```: Get schedule of all games for given date.
 
-The `team` parameter in the above functions must be a valid team name from the `ids` data set built into the package. See the __Datesets__ section below for more details.
+The `team` parameter in the above functions must be a valid team name from the `ids` dataset built into the package. See the __Datasets__ section below for more details.
 
 ### Win-Probability and Game-Flow Charts
 
 __Win Probability Charts__
 
-There are two functions for plotting win probability charts, one that uses base graphics (`wp_chart`), and the other which uses the ```ggplot2``` library (```gg_wp_chart```). Both are maintained, as graphics in base R have some nice concatenation principles.
+There are two functions for plotting win probability charts, one that uses base graphics (`wp_chart`), and another that uses the ```ggplot2``` library (```gg_wp_chart```). Both are maintained, as graphics in base R have some nice concatenation principles.
 
 ```wp_chart(game_id, home_col, away_col, show_legend = T)```
 
@@ -88,7 +88,7 @@ __Traditional Assist Networks__
 * ```team``` is the ESPN team name, as listed in the `ids` data frame.
 * ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
 * ```node_col``` is the node color for the graph.
-* ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three point shots are given 1.5 weight. If FALSE, assisted three point shots are given weight 1. In both cases, assisted 2 point shots are given weight 1. 
+* ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three-point shots are given 1.5 weight. If FALSE, assisted three-point shots are given weight 1. In both cases, assisted two-point shots are given weight 1. 
 * `threshold`: Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
 * ```message``` (default = ```NA```) Option for custom message to replace graph title when using a subset of the season (e.g. conference play).
 
@@ -100,7 +100,7 @@ __Circle Assist Networks and Player Highlighting__
 * ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
 * ```highlight_player```: Name of player to highlight in assist network. `NA` yields full team assist network with no player highlighting. Default = `NA`.
 * ```highlight_color```: Color of player links to be highlighted. `NA` if ```highlight_player``` is `NA`.
-* ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three point shots are given 1.5 weight. If FALSE, assisted three point shots are given weight 1. In both cases, assisted 2 point shots are given weight 1. 
+* ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three-point shots are given 1.5 weight. If FALSE, assisted three-point shots are given weight 1. In both cases, assisted two-point shots are given weight 1. 
 * `threshold`: Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
 
 ### Shot Charts
@@ -108,22 +108,22 @@ There are currently three functions for scraping and plotting shot location data
 
 `get_shot_locs(game_id)`: Returns data frame with shot location data when available.
 
-* `game_id`: ESPN game_id for which to scrape shot location.
+* `game_id`: ESPN game_id from which shot locations should be scraped.
 
 `game_shot_chart(game_id, heatmap = F)`: Plots shots for a given game.
 
-* `game_id`: ESPN game_id for which to scrape shot location.
+* `game_id`: ESPN game_id from which shot locations should be scraped.
 * `heatmap`: Logical, whether to use density-heat map or plot individual points. Default = `FALSE`.
 
 `team_shot_chart(game_id, team, heatmap = F)`: Plots shots for a given game.
 
-* `game_id`: Vector ESPN game_id for which to scrape shot location.
+* `game_id`: Vector ESPN game_id from which shot locations should be scraped.
 * `team`: Which team to chart shots for.
 * `heatmap`: Logical, whether to use density-heat map or plot individual points. Default = `FALSE`.
 
 ## Datasets
 
-```dict``` A data frame for converting between team names from various sites.
+```dict``` A dataframe for converting between team names from various sites.
  
  * ```NCAA```: the name of the team, as listed on the NCAA website
  * ```ESPN```: the name of the team, as listed on the ESPN URLs
@@ -155,7 +155,7 @@ There are currently three functions for scraping and plotting shot location data
 _Primary and secondary colors for available teams._
 
 
-These data sets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`, or ```data("dict")```, respectively.
+These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`, or ```data("dict")```, respectively.
 
 ## Examples
 #### Win Probability Charts
@@ -169,11 +169,11 @@ These data sets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`
 ![game_flow](figures/game_flow.png)
 ```game_flow(game_id = 401082669, home_col = "blue", away_col = "navy")```
 
-#### Single Game Assist Network
+#### Single-Game Assist Network
 ![Assist Single](figures/oklahoma.png)
 ```assist_net(team = "Oklahoma", node_col = "firebrick4", season = 400989185)```
 
-#### Season Long Assist Network
+#### Season-Long Assist Network
 ![Assist All](figures/yale.png)
 ```assist_net(team = "Yale", node_col = "royalblue4", season = "2017-18")```
 
@@ -226,10 +226,10 @@ Shot Location data frames contain the following variables.
 * `color`: Color hexcode used to render shot chart graphic on ESPN.
 * `date`: Date of game.
 * `outcome`: Whether the shot was made or missed.
-* `shooter`: Player making the shot.
+* `shooter`: Player attempting the shot.
 * `assister`: Playing assisting the shot.
 * `three_pt`: Logical, whether the shot is a 3-point attempt.
 * `x`: x-coordinate of shot location.
 * `y`: y-coordinate of shot location.
 
-The court is 50 feet by 94 feet, with (0,0) always being placed in the bottom corner of the shot chart. Any full court shot chart rendered using `game_shot_chart()` preserves ESPN shot locations as they are found online, while half court charts using `team_shot_chart()` convert all shot locations to to a 50 feet by 47 feet half court. The perspective on the half court shot charts is as if one is standing under the hoop, looking towards the opposition hoop. (0,0) again represents the bottom left corner and (50, 47) represents the top right corner. 
+The court is 50 feet by 94 feet, with (0,0) always being placed in the bottom left corner of the shot chart. Any full-court shot chart rendered using `game_shot_chart()` preserves ESPN shot locations as they are found online, while halfcourt charts using `team_shot_chart()` convert all shot locations to to a 50 feet by 47 feet halfcourt. The perspective on the halfcourt shot charts is as if one is standing under the hoop, looking toward the opposition hoop. (0,0) again represents the bottom left corner and (50, 47) represents the top right corner. 
