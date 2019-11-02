@@ -50,7 +50,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
   }
 
   ### Read Play-by-Play File
-  if(season[1] == "2018-19") {
+  if(season[1] == "2019-20") {
     x <- get_pbp(team)
     text <- " Assist Network for 2018-19 Season"
     factor <- 0.75
