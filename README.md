@@ -14,6 +14,8 @@ You can install `ncaahoopR` from GitHub with:
 devtools::install_github("lbenz730/ncaahoopR")
 ```
 
+__NOTE:__ Recently, some users have encountered issues with certain dependencies failing to install properly. If asked the option to compile any packages from source rather than installing existing binaries, choose `'No'`.
+
 ## Functions
 Several functions use ESPN game_ids. You can find the game_id in the URL for the game summary, 
 as shown in the URL for the summary of the UMBC-Virginia game below.
