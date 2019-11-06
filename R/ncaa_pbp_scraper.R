@@ -454,8 +454,8 @@ get_master_schedule <- function(year, month, day) {
 
   date <- paste0(year, ifelse(nchar(month) == 1, paste0("0", month), month),
                  ifelse(nchar(day) == 1, paste0("0", day), day))
-  url <- paste0("http://www.espn.com/mens-college-basketball/schedule/_/date/", date)
-  z <- XML::readHTMLTable(url)
+  url <- paste0("https://www.espn.com/mens-college-basketball/schedule/_/date/", date)
+  z <- XML::readHTMLTable(RCurl::getURL(url))
   if(length(z) > 1) {
     schedule <- as.data.frame(z[[1]])[,c(1,2)]
     completed <- as.data.frame(z[[2]][-1,1:3])

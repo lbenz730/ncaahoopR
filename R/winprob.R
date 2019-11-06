@@ -252,11 +252,11 @@ gg_wp_chart <- function(game_id, home_col, away_col, show_labels = T) {
   }
 
   ### Make Plot
-  p <- ggplot2::ggplot(x, aes(x = secs_elapsed, y = win_prob, group = team, col = team)) +
+  p <- ggplot2::ggplot(x, aes(x = secs_elapsed/60, y = win_prob, group = team, col = team)) +
     ggplot2::geom_line(size = 1) +
     ggplot2::theme_bw() +
-    ggplot2::geom_vline(xintercept = plot_lines, lty = 2, alpha = 0.5, size = 0.8) +
-    ggplot2::labs(x = "Seconds Elapsed",
+    ggplot2::geom_vline(xintercept = plot_lines/60, lty = 2, alpha = 0.5, size = 0.8) +
+    ggplot2::labs(x = "Minutes Elapsed",
                   y = "Win Probability",
                   col = "",
                   title = paste("Win Probability Chart for", home_team, "vs.", away_team),
@@ -267,13 +267,14 @@ gg_wp_chart <- function(game_id, home_col, away_col, show_labels = T) {
                    axis.title = element_text(size = 14),
                    plot.caption = element_text(size = 8, hjust = 0),
                    legend.position = "bottom",) +
-    ggplot2::scale_x_continuous(breaks = seq(0, msec, 400)) +
+    ggplot2::scale_x_continuous(breaks = seq(0, msec/60, 5)) +
+    ggplot2::scale_y_continuous(labels = function(x) {paste(100 * x, "%")}) +
     ggplot2::scale_color_manual(values = c(away_col, home_col),
                                 labels = c(away_team, home_team))
   if(show_labels) {
     p <- p +
-      ggplot2::annotate("text", x = 300, y = 0.05, label = gei) +
-      ggplot2::annotate("text", x = 300, y = 0.025, label = min_prob)
+      ggplot2::annotate("text", x = 5, y = 0.05, label = gei) +
+      ggplot2::annotate("text", x = 5, y = 0.025, label = min_prob)
   }
 
   p
@@ -340,11 +341,11 @@ game_flow <- function(game_id, home_col, away_col) {
   max_score <- max(c(data$home_score, data$away_score))
 
   ### Make Plot
-  ggplot2::ggplot(x, aes(x = secs_elapsed, y = score, group = team, col = team)) +
+  ggplot2::ggplot(x, aes(x = secs_elapsed/60, y = score, group = team, col = team)) +
     ggplot2::geom_step(size = 1) +
     ggplot2::theme_bw() +
-    ggplot2::geom_vline(xintercept = plot_lines, lty = 2, alpha = 0.5, size = 0.8) +
-    ggplot2::labs(x = "Seconds Elapsed",
+    ggplot2::geom_vline(xintercept = plot_lines/60, lty = 2, alpha = 0.5, size = 0.8) +
+    ggplot2::labs(x = "Minutes Elapsed",
                   y = "Score",
                   col = "",
                   title = paste("Game Flow Chart for", home_team, "vs.", away_team),
@@ -355,8 +356,8 @@ game_flow <- function(game_id, home_col, away_col) {
                    axis.title = element_text(size = 14),
                    plot.caption = element_text(size = 8, hjust = 0),
                    legend.position = "bottom",) +
-    ggplot2::scale_x_continuous(breaks = seq(0, msec, 400)) +
+    ggplot2::scale_x_continuous(breaks = seq(0, msec/60, 5)) +
     ggplot2::scale_color_manual(values = c(away_col, home_col),
                                 labels = c(away_team, home_team)) +
-    ggplot2::annotate("text", x = 600, y = max_score - 10, label = avg_sd)
+    ggplot2::annotate("text", x = 10, y = max_score - 10, label = avg_sd)
 }

@@ -92,6 +92,9 @@ favored_by_smooth <-
 
 ### Win Probability Function
 wp_compute <- function(x) {
+  if(is.na(x$home_favored_by[1])) {
+    x$home_favored_by <- 0
+  }
   ### Get Coefficient Values for Current Game
   sc_diff <- predict(score_diff_smooth, newdata = x$secs_remaining_relative)
   fb <- predict(favored_by_smooth, newdata = x$secs_remaining_relative)
@@ -211,6 +214,8 @@ get_line <- function(data) {
     game <- dplyr::filter(games_2018, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
+
+  return(NA)
 }
 
 ### Get Date of Given Game
