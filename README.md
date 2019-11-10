@@ -35,7 +35,7 @@ The `team` parameter in the above functions must be a valid team name from the `
 
 __Win Probability Charts__
 
-There are two functions for plotting win probability charts, one that uses base graphics (`wp_chart`), and another that uses the ```ggplot2``` library (```gg_wp_chart```). Both are maintained, as graphics in base R have some nice concatenation principles.
+There are two functions for plotting win probability charts, one that uses base graphics (`wp_chart`), and another that uses the ```ggplot2``` library (```gg_wp_chart```). Both are maintained, as graphics in base R have some nice concatenation principles. Personally, I think ```gg_wp_chart``` looks nicer and is eaiser to edit should additional post-processing be desired.
 
 ```wp_chart(game_id, home_col, away_col, show_legend = T)```
 
@@ -117,9 +117,15 @@ There are currently three functions for scraping and plotting shot location data
 * `game_id`: ESPN game_id from which shot locations should be scraped.
 * `heatmap`: Logical, whether to use density-heat map or plot individual points. Default = `FALSE`.
 
-`team_shot_chart(game_id, team, heatmap = F)`: Plots shots for a given game.
+`team_shot_chart(game_ids, team, heatmap = F)`: Plots shots taken by team during a given set of game(s).
 
-* `game_id`: Vector ESPN game_id from which shot locations should be scraped.
+* `game_ids`: Vector ESPN game_ids from which shot locations should be scraped.
+* `team`: Which team to chart shots for.
+* `heatmap`: Logical, whether to use density-heat map or plot individual points. Default = `FALSE`.
+
+`opp_shot_chart(game_ids, team, heatmap = F)`: Plots shots against a team during a given set of game(s).
+
+* `game_ids`: Vector ESPN game_ids from which shot locations should be scraped.
 * `team`: Which team to chart shots for.
 * `heatmap`: Logical, whether to use density-heat map or plot individual points. Default = `FALSE`.
 
