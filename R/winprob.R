@@ -131,7 +131,7 @@ game_excitement_index <- function(game_id) {
   for(i in 2:nrow(data)) {
     data$wp_delta[i] <- abs(data$win_prob[i] - data$win_prob[i-1])
   }
-  gei <- sum(data$wp_delta, na.rm = T) * 2400/msec
+  gei <- sum(data$wp_delta, na.rm = T)
   return(gei)
 }
 
