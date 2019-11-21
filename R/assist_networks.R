@@ -10,6 +10,7 @@
 #' If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1). Default = `TRUE`.
 #' @param threshold Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
 #' @param message User supplied plot title to overwrite default plot title, if desired. Default = `NA`.
+#' @param listing Allows disabling the return of list of network statistics
 #' @return List with network statistics
 #' \itemize{
 #'  \item{"clust_coeff"} - Network Clustering Coefficient
@@ -21,7 +22,7 @@
 #'  }
 #' @export
 
-assist_net <- function(team, season, node_col, three_weights = T, threshold = 0, message = NA) {
+assist_net <- function(team, season, node_col, three_weights = T, threshold = 0, message = NA, listing = TRUE) {
   ### Error Testing
   if(is.na(team)) {
     stop("team is missing with no default")
@@ -232,9 +233,11 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
 
 
   ### Return Results
-  return(list("clust_coeff" = clust_coeff, "page_ranks" = pagerank,
-              "hub_scores" = hubscores, "auth_scores" = auth_scores,
-              "ast_freq" = ast_freq, "shot_freq" = shot_freq))
+  if (listing==TRUE) {
+    return(list("clust_coeff" = clust_coeff, "page_ranks" = pagerank,
+                "hub_scores" = hubscores, "auth_scores" = auth_scores,
+                "ast_freq" = ast_freq, "shot_freq" = shot_freq))
+  }
 }
 
 
@@ -254,6 +257,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
 #' If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1). Default = `TRUE`.
 #' @param threshold Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
 #' @param message User supplied plot title to overwrite default plot title, if desired. Default = `NA`.
+#' @param listing Allows disabling the return of list of network statistics
 #' @return List with network statistics
 #' \itemize{
 #'  \item{"clust_coeff"} - Network Clustering Coefficient
@@ -265,7 +269,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
 #'  }
 #' @export
 circle_assist_net <- function(team, season, highlight_player = NA, highlight_color = NA,
-                              three_weights = T, threshold = 0, message = NA) {
+                              three_weights = T, threshold = 0, message = NA, listing = TRUE) {
   ### Error Testing
   if(is.na(team)) {
     stop("team is missing with no default")
@@ -481,7 +485,9 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   title(paste("\n\n", plot_title))
 
   ### Return Results
-  return(list("clust_coeff" = clust_coeff, "page_ranks" = pagerank,
+  if (listing == TRUE) {
+    return(list("clust_coeff" = clust_coeff, "page_ranks" = pagerank,
               "hub_scores" = hubscores, "auth_scores" = auth_scores,
               "ast_freq" = ast_freq, "shot_freq" = shot_freq))
+  }
 }
