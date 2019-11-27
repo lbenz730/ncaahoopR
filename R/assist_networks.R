@@ -4,12 +4,13 @@
 #'
 #' @param team Team to create network for
 #' @param node_col Color of nodes in network
-#' @param season Season, as a character,  (e.g. "2018-19"), or vector of ESPN game_ids.
+#' @param season Season, as a character,  (e.g. "2019-20"), or vector of ESPN game_ids.
 #' for which data to use in network. Currently only handles the current season worth of data.
 #' @param three_weights Logical indicating whether to give extra weight for assisted three point shots.
 #' If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1). Default = `TRUE`.
 #' @param threshold Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
 #' @param message User supplied plot title to overwrite default plot title, if desired. Default = `NA`.
+#' @param return_stats Return Assist Network related statistics (default = `TRUE`)
 #' @return List with network statistics
 #' \itemize{
 #'  \item{"clust_coeff"} - Network Clustering Coefficient
@@ -21,7 +22,7 @@
 #'  }
 #' @export
 
-assist_net <- function(team, season, node_col, three_weights = T, threshold = 0, message = NA) {
+assist_net <- function(team, season, node_col, three_weights = T, threshold = 0, message = NA, return_stats = T) {
   ### Error Testing
   if(is.na(team)) {
     stop("team is missing with no default")
@@ -52,7 +53,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
   ### Read Play-by-Play File
   if(season[1] == "2019-20") {
     x <- get_pbp(team)
-    text <- " Assist Network for 2018-19 Season"
+    text <- " Assist Network for 2019-20 Season"
     factor <- 0.75
   }else {
     x <- suppressWarnings(try(get_pbp_game(season), silent = T))
@@ -232,9 +233,11 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
 
 
   ### Return Results
-  return(list("clust_coeff" = clust_coeff, "page_ranks" = pagerank,
-              "hub_scores" = hubscores, "auth_scores" = auth_scores,
-              "ast_freq" = ast_freq, "shot_freq" = shot_freq))
+  if(return_stats) {
+    return(list("clust_coeff" = clust_coeff, "page_ranks" = pagerank,
+                "hub_scores" = hubscores, "auth_scores" = auth_scores,
+                "ast_freq" = ast_freq, "shot_freq" = shot_freq))
+  }
 }
 
 
@@ -254,6 +257,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
 #' If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1). Default = `TRUE`.
 #' @param threshold Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
 #' @param message User supplied plot title to overwrite default plot title, if desired. Default = `NA`.
+#' @param return_stats Return Assist Network related statistics (default = `TRUE`)
 #' @return List with network statistics
 #' \itemize{
 #'  \item{"clust_coeff"} - Network Clustering Coefficient
@@ -265,7 +269,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
 #'  }
 #' @export
 circle_assist_net <- function(team, season, highlight_player = NA, highlight_color = NA,
-                              three_weights = T, threshold = 0, message = NA) {
+                              three_weights = T, threshold = 0, message = NA, return_stats = T) {
   ### Error Testing
   if(is.na(team)) {
     stop("team is missing with no default")
@@ -294,9 +298,9 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   }
 
   ### Read Play-by-Play File
-  if(season[1] == "2018-19") {
+  if(season[1] == "2019-20") {
     x <- get_pbp(team)
-    text <- " Assist Network\n2018-19 Season"
+    text <- " Assist Network\n2019-20 Season"
     factor <- 0.75
   }else {
     x <- suppressWarnings(try(get_pbp_game(season), silent = T))
@@ -475,13 +479,15 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   par(cex = 0.6)
   circlize::circos.track(track.index = 1, panel.fun = function(x, y) {
     circlize::circos.text(circlize::CELL_META$xcenter, circlize::CELL_META$ylim[1], circlize::CELL_META$sector.index,
-                facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
+                          facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
   }, bg.border = NA)
   par(cex = 1)
   title(paste("\n\n", plot_title))
 
   ### Return Results
-  return(list("clust_coeff" = clust_coeff, "page_ranks" = pagerank,
-              "hub_scores" = hubscores, "auth_scores" = auth_scores,
-              "ast_freq" = ast_freq, "shot_freq" = shot_freq))
+  if(return_stats) {
+    return(list("clust_coeff" = clust_coeff, "page_ranks" = pagerank,
+                "hub_scores" = hubscores, "auth_scores" = auth_scores,
+                "ast_freq" = ast_freq, "shot_freq" = shot_freq))
+  }
 }

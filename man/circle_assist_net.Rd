@@ -6,7 +6,7 @@
 \usage{
 circle_assist_net(team, season, highlight_player = NA,
   highlight_color = NA, three_weights = T, threshold = 0,
-  message = NA)
+  message = NA, return_stats = T)
 }
 \arguments{
 \item{team}{Team to create network for}
@@ -25,6 +25,8 @@ If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weig
 \item{threshold}{Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.}
 
 \item{message}{User supplied plot title to overwrite default plot title, if desired. Default = `NA`.}
+
+\item{return_stats}{Return Assist Network related statistics (default = `TRUE`)}
 }
 \value{
 List with network statistics

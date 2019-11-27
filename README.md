@@ -93,6 +93,7 @@ __Traditional Assist Networks__
 * ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three-point shots are given 1.5 weight. If FALSE, assisted three-point shots are given weight 1. In both cases, assisted two-point shots are given weight 1. 
 * `threshold`: Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
 * ```message``` (default = ```NA```) Option for custom message to replace graph title when using a subset of the season (e.g. conference play).
+* `return_stats`: Return Assist Network related statistics (default = `TRUE`)
 
 __Circle Assist Networks and Player Highlighting__
 
@@ -104,6 +105,8 @@ __Circle Assist Networks and Player Highlighting__
 * ```highlight_color```: Color of player links to be highlighted. `NA` if ```highlight_player``` is `NA`.
 * ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three-point shots are given 1.5 weight. If FALSE, assisted three-point shots are given weight 1. In both cases, assisted two-point shots are given weight 1. 
 * `threshold`: Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
+* `message`: User supplied plot title to overwrite default plot title, if desired. Default = `NA`.
+* `return_stats`: Return Assist Network related statistics (default = `TRUE`)
 
 ### Shot Charts
 There are currently three functions for scraping and plotting shot location data. These functions are written by [Meyappan Subbaiah](https://github.com/meysubb).
