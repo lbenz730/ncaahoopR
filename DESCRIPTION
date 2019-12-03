@@ -5,7 +5,7 @@ Authors@R: c(person("Luke", "Benz", email = "lukesbenz@gmail.com", role = c("aut
 Description: An R package for working with NCAA Men's Basketball Play-by-Play Data.
     This package allows users to scrape play-by-play data into a tidy format, create
     assist networks games of their choosing, and examine in-game win probability charts.
-Depends: R (>= 3.4.0),
+Depends: R (>= 3.5.0),
          dplyr,
          ggplot2
 Imports: 

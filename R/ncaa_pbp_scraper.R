@@ -269,7 +269,10 @@ get_pbp <- function(team) {
   message(paste("Getting Game IDs: ", team, sep = ""))
 
   ### Get Game IDs
-  game_ids <- get_game_ids(team)
+  game_ids <- get_schedule(team) %>%
+    dplyr::filter(date < Sys.Date()) %>%
+    pull(game_id)
+
 
   ### Get PBP Data
   pbp_season <- get_pbp_game(game_ids)

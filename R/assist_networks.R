@@ -71,6 +71,11 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
     factor <- 1.25
   }
 
+  ### Override plot title
+  if(!is.na(message)) {
+    text <- message
+  }
+
   ### Get Roster
   roster <- try(get_roster(team))
   if(class(roster) == "try-error") {
@@ -318,6 +323,12 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
     factor <- 1.25
   }
 
+  ### Override plot title
+  if(!is.na(message)) {
+    text <- message
+  }
+
+
   ### Get Roster
   roster <- try(get_roster(team))
   if(class(roster) == "try-error") {
@@ -432,7 +443,7 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
 
   plot_title <-
     ifelse(is.na(message), paste0(text_team, ifelse(three_weights, " Weighted", ""), text), text)
-  if(length(unique(x$game_id)) == 1) {
+  if(length(unique(x$game_id)) == 1 & is.na(message)) {
     plot_title <- paste(plot_title, format(as.Date(x$date[1]), "%B %d, %Y"), sep = "\n")
   }
 
