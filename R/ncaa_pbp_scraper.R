@@ -34,7 +34,10 @@ get_pbp_game <- function(game_ids) {
     tmp <- try(XML::readHTMLTable(RCurl::getURL(url)), silent = T)
 
     ### Check if PBP Data is Available
-    if(length(tmp) == 0) {
+    if(class(tmp) == "try-error") {
+      message("Play by Play Data Not Available")
+      next
+    } else if(length(tmp) == 0) {
       message("Play by Play Data Not Available")
       next
     }else if(length(tmp) < ncol(tmp[[1]]) | length(tmp) == 0) {
