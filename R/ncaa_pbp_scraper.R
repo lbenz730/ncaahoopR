@@ -150,6 +150,7 @@ get_pbp_game <- function(game_ids) {
 
     ### Compute Win Prob
     pbp$win_prob <- wp_compute(pbp)
+    pbp$naive_win_prob <- wp_compute(dplyr::mutate(pbp, "home_favored_by" = 0))
 
     ### Hardcode to 50-50 if Line = 0 or NA
     if(is.na(pbp$home_favored_by[1]) | pbp$home_favored_by[1] == 0) {
@@ -174,8 +175,6 @@ get_pbp_game <- function(game_ids) {
     }
     pbp$home_time_out_remaining <- 4
     pbp$away_time_out_remaining <- 4
-    pbp$home_timeout_ind <- 0
-    pbp$away_timeout_ind <- 0
     nplay <- nrow(pbp)
     if(nrow(timeout) > 0) {
       for(j in 1:nrow(timeout)) {
@@ -185,12 +184,10 @@ get_pbp_game <- function(game_ids) {
 
         if(timeout$team[j] == home) {
           pbp$home_time_out_remaining[play_id:nplay] <- pbp$home_time_out_remaining[play_id:nplay] - 1
-          pbp$home_timeout_ind[pbp$secs_remaining_relative <= secs_remaining & pbp$secs_remaining_relative
-                               >= secs_remaining - 60 & pbp$half == half] <- 1
+
         }else {
           pbp$away_time_out_remaining[play_id:nplay] <- pbp$away_time_out_remaining[play_id:nplay] - 1
-          pbp$away_timeout_ind[pbp$secs_remaining_relative <= secs_remaining & pbp$secs_remaining_relative
-                               >= secs_remaining - 60 & pbp$half == half] <- 1
+
         }
       }
     }
@@ -223,9 +220,8 @@ get_pbp_game <- function(game_ids) {
     pbp <- dplyr::select(pbp, play_id, half, time_remaining_half,
                          secs_remaining_relative, secs_remaining, description,
                          home_score, away_score, score_diff, play_length,
-                         win_prob, home, away, home_time_out_remaining,
-                         away_time_out_remaining, home_timeout_ind,
-                         away_timeout_ind, home_favored_by, game_id, date) %>%
+                         win_prob, naive_win_prob, home, away, home_time_out_remaining,
+                         away_time_out_remaining, home_favored_by, game_id, date) %>%
       dplyr::rename("secs_remaining_absolute" = secs_remaining,
                     "secs_remaining" = secs_remaining_relative)
 
