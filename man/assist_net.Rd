@@ -10,7 +10,7 @@ assist_net(team, season, node_col, three_weights = T, threshold = 0,
 \arguments{
 \item{team}{Team to create network for}
 
-\item{season}{Season, as a character,  (e.g. "2018-19"), or vector of ESPN game_ids.
+\item{season}{Season, as a character,  (e.g. "2019-20"), or vector of ESPN game_ids.
 for which data to use in network. Currently only handles the current season worth of data.}
 
 \item{node_col}{Color of nodes in network}
