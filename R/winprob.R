@@ -46,7 +46,7 @@ wp_chart <- function(game_id, home_col, away_col, show_legend = T) {
   for(i in 2:nrow(data)) {
     data$wp_delta[i] <- abs(data$win_prob[i] - data$win_prob[i-1])
   }
-  gei <- sum(data$wp_delta, na.rm = T) * 2400/msec
+  gei <- sum(data$wp_delta, na.rm = T)
   gei <- paste("Game Excitement Index:", round(gei, 2))
   gap <- 0.08
 
@@ -235,7 +235,7 @@ gg_wp_chart <- function(game_id, home_col, away_col, show_labels = T) {
   for(i in 2:nrow(data)) {
     data$wp_delta[i] <- abs(data$win_prob[i] - data$win_prob[i-1])
   }
-  gei <- sum(data$wp_delta, na.rm = T) * 2400/msec
+  gei <- sum(data$wp_delta, na.rm = T)
   gei <- paste("Game Excitement Index:", round(gei, 2))
 
   ### Minimum Win Probability
