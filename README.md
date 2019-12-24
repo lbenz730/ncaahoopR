@@ -14,7 +14,12 @@ You can install `ncaahoopR` from GitHub with:
 devtools::install_github("lbenz730/ncaahoopR")
 ```
 
-__NOTE:__ Recently, some users have encountered issues with certain dependencies failing to install properly. If asked the option to compile any packages from source rather than installing existing binaries, choose `'No'`.
+If you encounter installation issues, the following tips have helped a few users succesfull install the package.
+
+* If asked the option to compile any packages from source rather than installing existing binaries, choose `'No'`.
+* Windows users with trouble installing the package should try running the following command before reinstalling the package: `Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS = "true")`
+* Windows users with touble installing the `devtools` should try installing the `backports` package first via `install.packages("backports")`.
+
 
 ## Functions
 Several functions use ESPN game_ids. You can find the game_id in the URL for the game summary, 
@@ -150,7 +155,7 @@ There are currently three functions for scraping and plotting shot location data
  * ```link```: link; used in ESPN URLs
  
  
- ```ncaa_colors``` A data frame of team color hex codes, pulled from [teamcolorcodes.com](https://teamcolorcodes.com/). Note that hexcodes are only available for 248 of 353 Division 1 teams.
+ ```ncaa_colors``` A data frame of team color hex codes, pulled from [teamcolorcodes.com](https://teamcolorcodes.com/). Additional data coverage provided by [Luke Morris](https://lukesmorris.com).
  
 
 * `ncaa_name`: The name of the team, as listed on the NCAA website (same as `dict$NCAA`)
@@ -163,7 +168,7 @@ There are currently three functions for scraping and plotting shot location data
 * `color_6`: Hexcode for team's 6th color, when available.
 
 ![Available Colors](figures/colors.png)
-_Primary and secondary colors for available teams._
+_Primary and secondary colors for all 353 teams._
 
 
 These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`, or ```data("dict")```, respectively.

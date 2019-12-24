@@ -4,10 +4,13 @@
 \alias{average_win_prob}
 \title{Average Win Probability}
 \usage{
-average_win_prob(game_id)
+average_win_prob(game_id, include_spread = T)
 }
 \arguments{
 \item{game_id}{ESPN game_id for which to compute average win probability}
+
+\item{include_spread}{Logical, whether to include pre-game spread in Win Probability
+calculations. Default = True.}
 }
 \value{
 Average Win Probability

@@ -4,10 +4,13 @@
 \alias{game_excitement_index}
 \title{Game Excitement Index}
 \usage{
-game_excitement_index(game_id)
+game_excitement_index(game_id, include_spread = T)
 }
 \arguments{
 \item{game_id}{ESPN game_id for which to compute GEI}
+
+\item{include_spread}{Logical, whether to include pre-game spread in Win Probability
+calculations. Default = True.}
 }
 \value{
 GEI--Game Exictement Index

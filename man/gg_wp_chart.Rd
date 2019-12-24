@@ -4,14 +4,18 @@
 \alias{gg_wp_chart}
 \title{Win Probability Charts in ggplot}
 \usage{
-gg_wp_chart(game_id, home_col, away_col, show_labels = T)
+gg_wp_chart(game_id, home_col, away_col, include_spread = T,
+  show_labels = T)
 }
 \arguments{
 \item{game_id}{ESPN game_id for which to render chart}
 
 \item{home_col}{Color of home team for chart}
 
-\item{away_col}{Color of away team for chart}
+\item{away_col}{Color of away team for chart#'}
+
+\item{include_spread}{Logical, whether to include pre-game spread in Win Probability
+calculations. Default = True.}
 
 \item{show_labels}{Logical whether Game Exictement Index and Minimum
 Win Probability metrics should be displayed on the plot. Default = TRUE.}
