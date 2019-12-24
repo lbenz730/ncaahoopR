@@ -83,12 +83,12 @@ coeffs$estimate[coeffs$max_time <= 2 & coeffs$coefficient == "favored_by"] <- 0
 ### Fit Loess Models to get smooth functions of coefficient estimate over time
 score_diff_smooth <-
   loess(estimate ~ max_time,
-        data = filter(coeffs, coefficient == "score_diff"),
+        data = dplyr::filter(coeffs, coefficient == "score_diff"),
         span = 0.5)
 
 favored_by_smooth <-
   loess(estimate ~ max_time,
-        data = filter(coeffs, coefficient == "favored_by"),
+        data = dplyr::filter(coeffs, coefficient == "favored_by"),
         span = 0.5)
 
 ### Win Probability Function

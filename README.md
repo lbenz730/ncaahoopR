@@ -47,6 +47,7 @@ There are two functions for plotting win probability charts, one that uses base 
 * ```game_id``` ESPN game_id for the desired win probability chart.
 * ```home_col``` Chart color for home team.
 * ```away_col```: Chart color for away team.
+* `include_spread`: Logical, whether to include pre-game spread in Win Probability calculations. Default = `TRUE`.
 * ```show_legend```: Logical, whether or not to show legend/text on chart. Default = `TRUE`.
 
 
@@ -55,6 +56,7 @@ There are two functions for plotting win probability charts, one that uses base 
 * ```game_id``` ESPN game_id for the desired win probability chart.
 * ```home_col``` Chart color for home team.
 * ```away_col```: Chart color for away team.
+* `include_spread`: Logical, whether to include pre-game spread in Win Probability calculations. Default = `TRUE`.
 * `show_labels`: Logical whether Game Excitement Index and Minimum Win Probability metrics should be displayed on the plot. Default = `TRUE`.
 
 __Game Flow Charts__
@@ -67,18 +69,24 @@ __Game Flow Charts__
 
 __Game Excitement Index__
 
-```game_exciment_index(game_id)```
+```game_exciment_index(game_id, include_spread)```
+
+* `include_spread`: Logical, whether to include pre-game spread in Win Probability calculations. Default = `TRUE`.
 
 Returns ```GEI``` (Game Excitement Index) for given ESPN game_id. For more information about how these win-probability charts are fit and how Game Excitement Index is calculated, check out the below links
 
-* [Model Methodology](https://sports.sites.yale.edu/ncaa-basketball-win-probability-model)
-* [Game Excitement Index](https://sports.sites.yale.edu/game-excitement-index-part-ii)
+
+
+
+* [Model Methodology](https://lukebenz.com/post/ncaahoopr_win_prob/ncaahoopr_win_prob/)
+* [Game Excitement Index](https://lukebenz.com/post/gei/)
 
 __Game Control Measures__
 
-```average_win_prob(game_id)```
+```average_win_prob(game_id, include_spread)```
 
 * ESPN game_id for which to compute time-based average win probability (from perspective of home team).
+* `include_spread`: Logical, whether to include pre-game spread in Win Probability calculations. Default = `TRUE`.
 
 ```average_score_diff(game_id)```
 
