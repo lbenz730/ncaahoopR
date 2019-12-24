@@ -432,38 +432,36 @@ get_roster <- function(team) {
 #'
 #' Gets schedule for all games on a given date
 #'
-#' @param year year for which to get master schedule
-#' @param month month for which to get master schedule
-#' @param day day for which to get master schedule
+#' @param date Date for which to get schedule (YYYY-MM-DD)
 #' @return A data-frame of the day's schedule of games
 #' @export
-get_master_schedule <- function(year, month, day) {
+get_master_schedule <- function(date) {
   ### Error Testing
-  if(is.na(year)) {
-    stop("year is missing with no default")
-  }
-  if(is.na(month)) {
-    stop("month is missing with no default")
-  }
-  if(is.na(day)) {
-    stop("day is missing with no default")
+  if(is.na(date)) {
+    stop("date is missing with no default")
   }
 
-  tmp <- try(as.Date(paste(year, month, day, sep = "-")))
+  tmp <- try(as.Date(date))
   if(class(tmp) == "try-error") {
-    stop("Please enter valid date")
+    stop("Please enter valid date in the form YYYY-MM-DD")
   }
 
-  date <- paste0(year, ifelse(nchar(month) == 1, paste0("0", month), month),
-                 ifelse(nchar(day) == 1, paste0("0", day), day))
-  url <- paste0("https://www.espn.com/mens-college-basketball/schedule/_/date/", date)
+
+  date_ <- gsub("-", "", as.character(date))
+  url <- paste0("https://www.espn.com/mens-college-basketball/schedule/_/date/", date_)
+
   z <- XML::readHTMLTable(RCurl::getURL(url))
   if(length(z) > 1) {
     schedule <- as.data.frame(z[[1]])[,c(1,2)]
     completed <- as.data.frame(z[[2]][-1,1:3])
     names(completed) <- c("away", "home", "result")
     names(schedule) <- c("away", "home")
-  }else{
+  } else {
+    ### No Games Scheduled
+    if(z[[1]][1,1] == "No games scheduled") {
+      cat("No games on", date, "\n")
+      return(NULL)
+    }
     completed <- as.data.frame(z[[1]][,1:3])
     names(completed) <- c("away", "home", "result")
     schedule <- NA
