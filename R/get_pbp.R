@@ -6,9 +6,10 @@
 #' dataframe.
 #'
 #' @param team Team to get Play-by-Play data for
-#' @return A data-frame of the team's Play-by-Play data for the current season
+#' @param season Season to get schedule for in form "2019-20". Default equals current season.
+#' @return A data-frame of the team's Play-by-Play data for the specified season.
 #' @export
-get_pbp <- function(team) {
+get_pbp <- function(team, season = current_season) {
   ### Error Testing
   if(is.na(team)) {
     stop("team is missing with no default")
@@ -19,17 +20,21 @@ get_pbp <- function(team) {
   if(!team %in% ids$team) {
     stop("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
   }
-  
+
   message(paste("Getting Game IDs: ", team, sep = ""))
-  
+
   ### Get Game IDs
-  game_ids <- get_schedule(team) %>%
-    dplyr::filter(date < Sys.Date()) %>%
-    pull(game_id)
-  
-  
+  if(season == current_season) {
+    game_ids <- get_schedule(team) %>%
+      dplyr::filter(date < Sys.Date()) %>%
+      pull(game_id)
+  } else {
+    game_ids <- get_game_ids(team, season)
+  }
+
+
   ### Get PBP Data
   pbp_season <- get_pbp_game(game_ids)
-  
+
   return(pbp_season)
 }

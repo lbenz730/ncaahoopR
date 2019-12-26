@@ -4,10 +4,12 @@
 \alias{get_schedule}
 \title{Get Team Schedule}
 \usage{
-get_schedule(team)
+get_schedule(team, season = current_season)
 }
 \arguments{
 \item{team}{Team to get schedule for}
+
+\item{season}{Season to get schedule for in form "2019-20". Default equals current season.}
 }
 \value{
 A data-frame of the team's schedule for current season

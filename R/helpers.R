@@ -235,14 +235,6 @@ get_date <- function(game_id) {
   return(date)
 }
 
-### Recreate ggplot2 colors
-### Copied from https://stackoverflow.com/questions/8197559/emulate-ggplot2-default-color-palette
-gg_color_hue <- function(n) {
-  hues = seq(15, 375, length = n + 1)
-  hcl(h = hues, l = 65, c = 100)[1:n]
-}
-
-
 ### Define Logit Function
 logit <- function(x) {
   tmp <- exp(x)
@@ -252,3 +244,6 @@ logit <- function(x) {
     T ~ tmp/(1 + tmp)
   )
 }
+
+### Current Season Constant
+current_season <- "2019-20"

@@ -27,12 +27,12 @@ as shown in the URL for the summary of the UMBC-Virginia game below.
 ![game_id](figures/espn.png)
 
 ### Scraping Data
-* ```get_pbp(team)```: Game entire current season's worth of play-by-play data for a given team.
+* ```get_pbp(team, season)```: Game entire current season's worth of play-by-play data for a given team and season. `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_pbp_game(game_ids)```:  Get play-by-play data for a specific vector of ESPN game_ids. 
 * ```get_roster(team)```: Get a particular team's roster. 
-* ```get_schedule(team)```: Get a team's schedule.
-* ```get_game_ids(team)```: Get a vector of ESPN game_ids for all games in which ```team``` plays in.
-* ```get_master_schedule(year, month, day)```: Get schedule of all games for given date.
+* ```get_schedule(team, season)```: Get a team's schedule. `season` defaults to current season, but can be specified in "2019-20" form. 
+* ```get_game_ids(team, season)```: Get a vector of ESPN game_ids for all games in which ```team``` plays in. `season` defaults to current season, but can be specified in "2019-20" form. 
+* ```get_master_schedule(date)```: Get schedule of all games for given date.
 
 The `team` parameter in the above functions must be a valid team name from the `ids` dataset built into the package. See the __Datasets__ section below for more details.
 

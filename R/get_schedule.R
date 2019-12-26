@@ -4,9 +4,10 @@
 #' Gets team schedule for current season.
 #'
 #' @param team Team to get schedule for
+#' @param season Season to get schedule for in form "2019-20". Default equals current season.
 #' @return A data-frame of the team's schedule for current season
 #' @export
-get_schedule <- function(team) {
+get_schedule <- function(team, season = current_season) {
   ### Error Testing
   if(is.na(team)) {
     stop("team is missing with no default")
@@ -17,25 +18,31 @@ get_schedule <- function(team) {
   if(!team %in% ids$team) {
     stop("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
   }
-  
+
   ### Scrape Team Schedule
   base_url <- "https://www.espn.com/mens-college-basketball/team/schedule/_/id/"
-  url <- paste(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team], sep = "")
+  if(season == current_season) {
+    url <- paste0(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team])
+  } else {
+    url <- paste0(base_url, ids$id[ids$team == team], "/season/", as.numeric(substring(season, 1, 4)) + 1)
+  }
   schedule <- XML::readHTMLTable(RCurl::getURL(url))[[1]][-1,]
   schedule <- schedule[,1:4]
   names(schedule) <- c("date", "opponent", "result", "record")
   schedule <- schedule[!is.na(schedule$opponent) & schedule$opponent != "Opponent",]
-  
+  schedule <- schedule[schedule$result != "Postponed",]
+  schedule <- schedule[schedule$result != "Cancelled",]
+
   ### Locations
   schedule$location <- ifelse(grepl("[*]", schedule$opponent), "N",
                               ifelse(grepl("^vs", schedule$opponent), "H", "A"))
-  
+
   ### Clean Opponent Names
   schedule$opponent <- gsub("^vs", "", schedule$opponent)
   schedule$opponent <- gsub("[@#*()]", "", schedule$opponent)
   schedule$opponent <- gsub("[0-9]*", "", schedule$opponent)
   schedule$opponent <- stripwhite(gsub("^ ", "", schedule$opponent))
-  
+
   ### Scores/Results
   schedule$result[grep(":", schedule$result)] <- NA
   schedule$result[grep("TBD", schedule$result)] <- NA
@@ -50,7 +57,8 @@ get_schedule <- function(team) {
   tmp <- schedule$team_score[index]
   schedule$team_score[index] <- schedule$opp_score[index]
   schedule$opp_score[index] <- tmp
-  
+
+
   ### Dates
   schedule$day <- as.numeric(gsub("[^0-9]*", "", schedule$date))
   schedule$month <- substring(schedule$date, 6, 8)
@@ -61,14 +69,15 @@ get_schedule <- function(team) {
   schedule$month[schedule$month == "Mar"] <- 3
   schedule$month[schedule$month == "Apr"] <- 4
   schedule$month <- as.numeric(schedule$month)
-  schedule$year <- ifelse(schedule$month <= 4, 20, 19)
+  yy <- as.numeric(substring(season, 3, 4))
+  schedule$year <- ifelse(schedule$month <= 4, yy + 1, yy)
   schedule$date <- paste(schedule$month, schedule$day, schedule$year, sep = "/")
-  
+
   ### Game IDs
   schedule$date <- as.Date(schedule$date, "%m/%d/%y")
   schedule <- dplyr::arrange(schedule, date)
-  schedule$game_id <- get_game_ids(team)
-  
+  schedule$game_id <- get_game_ids(team, season)
+
   ### Return Schedule
   return(schedule[,c("game_id", "date", "opponent", "location",
                      "team_score", "opp_score", "record" )])

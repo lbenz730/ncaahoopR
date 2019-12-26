@@ -4,13 +4,15 @@
 \alias{get_pbp}
 \title{Get Team Play-by-Play Data}
 \usage{
-get_pbp(team)
+get_pbp(team, season = current_season)
 }
 \arguments{
 \item{team}{Team to get Play-by-Play data for}
+
+\item{season}{Season to get schedule for in form "2019-20". Default equals current season.}
 }
 \value{
-A data-frame of the team's Play-by-Play data for the current season
+A data-frame of the team's Play-by-Play data for the specified season.
 }
 \description{
 Scrapes the current season's Play-by-Play data for desired team. Team
