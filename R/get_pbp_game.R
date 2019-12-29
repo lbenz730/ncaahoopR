@@ -160,10 +160,13 @@ get_pbp_game <- function(game_ids) {
 
     ### Time Outs
     timeout <- dplyr::filter(pbp, sapply(pbp$description, grepl, pattern = "Timeout")) %>%
-      dplyr::filter(description != "Official TV Timeout")
+      dplyr::filter(description != "Official TV Timeout") %>%
+      dplyr::filter(description != "Official TV Timeout.")
 
     timeout$team <- sapply(timeout$description, function(z) gsub("\\s* Timeout", "", z))
     timeout$team <- sapply(timeout$team, function(z) gsub("\\s* Official TV.", "", z))
+    timeout$team <- sapply(timeout$team, function(z) gsub("\\s* 30 Second.", "", z))
+    timeout$team <- sapply(timeout$team, function(z) gsub("\\s* 20 Second.", "", z))
     timeout$team <- stripwhite(sapply(timeout$team, function(z) gsub("\\s* Full.", "", z)))
     timeout$tmp <- paste(timeout$team, timeout$secs_remaining)
     timeout <- dplyr::filter(timeout, !duplicated(tmp))
