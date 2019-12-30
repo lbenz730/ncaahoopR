@@ -27,7 +27,7 @@ create_ids_df <- function() {
   test <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops_Play_By_Play/master/ids.csv",
                    as.is = T)
   teams_url <- "http://www.espn.com/mens-college-basketball/teams"
-  x <- scan(teams_url, what = "", sep = "\n")
+  x <- scan(teams_url, what = "", sep = "\n", quiet = T)
   x <- x[grep("mens-college-basketball/team/schedule/_/id/", x)][2]
   x <- strsplit(x, "Clubhouse")[[1]]
 
@@ -56,7 +56,7 @@ create_ids_df <- function() {
 ################################# Checks if Game is in NIT #####################
 is.nit <- function(game_id) {
   url <- paste("http://www.espn.com/mens-college-basketball/playbyplay?gameId=", game_id, sep = "")
-  y <- scan(url, what = "", sep = "\n")
+  y <- scan(url, what = "", sep = "\n", quiet = T)
   if(any(grepl("NIT SEASON TIP-OFF", y))) {
     return(F)
   }
@@ -228,7 +228,7 @@ get_line <- function(data) {
 ### Get Date of Given Game
 get_date <- function(game_id) {
   url <- paste("http://www.espn.com/mens-college-basketball/playbyplay?gameId=", game_id, sep = "")
-  y <- scan(url, what = "", sep = "\n")[9]
+  y <- scan(url, what = "", sep = "\n", quiet = T)[9]
   y <- unlist(strsplit(y, "-"))
   date <-  stripwhite(y[length(y) - 1])
   date <- as.Date(date, "%B %d, %Y")

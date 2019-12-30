@@ -21,7 +21,7 @@ get_game_ids <- function(team, season = current_season) {
     base_url <- "https://www.espn.com/mens-college-basketball/team/_/id/"
     url <- paste0(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team])
 
-    x <- scan(url, what = "", sep = "\n")
+    x <- scan(url, what = "", sep = "\n", quiet = T)
     x <- x[grep("club-schedule", x)]
     x <- unlist(strsplit(x, "gameId="))
     x <- x[-1]
@@ -37,7 +37,7 @@ get_game_ids <- function(team, season = current_season) {
   } else { ### Old Season (Get Them from Schedule)
     base_url <- "https://www.espn.com/mens-college-basketball/team/schedule/_/id/"
     url <- paste0(base_url, ids$id[ids$team == team], "/season/", as.numeric(substring(season, 1, 4)) + 1)
-    x <- scan(url, what = "", sep = "\n")
+    x <- scan(url, what = "", sep = "\n", quiet = T)
     y <- unlist(strsplit(x[65], "href=\"http://www.espn.com/mens-college-basketball/game\\?gameId="))
     game_ids <- gsub("\".*", "", y)[-1]
 

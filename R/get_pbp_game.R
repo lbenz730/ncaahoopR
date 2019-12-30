@@ -109,7 +109,7 @@ get_pbp_game <- function(game_ids) {
     home_abv <- as.character(as.data.frame(tmp[[1]])[2,1])
 
     ### Get Game Line
-    y <- scan(url2, what = "", sep = "\n")
+    y <- scan(url2, what = "", sep = "\n", quiet = T)
     y <- y[grep("Line:", y)]
     if(length(y) > 0) {
       y <- gsub("<[^<>]*>", "", y)
@@ -222,14 +222,77 @@ get_pbp_game <- function(game_ids) {
       pbp$secs_remaining[1:(nrow(pbp)-1)] -
       pbp$secs_remaining[2:nrow(pbp)]
 
+    ### Link Shot Data
+    pbp <- dplyr::mutate(pbp, "shot_x" = NA, "shot_y" = NA, "shot_team" = NA,
+                         "shot_outcome" = NA, "three_pt" = NA, "free_throw" = NA,
+                         "shooter" = NA, "assist" = NA)
+
+    shots <- get_shot_locs(game_ids[i])
+
+    if(class(shots) != "NULL") {
+      ### Break Each Team's Shots Down Individually
+      df1 <- dplyr::filter(shots, team_name == unique(shots$team_name)[1])
+      df2 <- dplyr::filter(shots, team_name == unique(shots$team_name)[2])
+      n1 <- nrow(df1)
+      n2 <- nrow(df2)
+      ix1 <- 1
+      ix2 <- 1
+
+      # Make sure that when you link shots you flip the shots from full court
+      # coordinates to half court coordinates
+      shots$pbp[shots$y > 47] <- 50 - shots$pbp[shots$y > 47]
+      shots$pbp[shots$y > 47] <- 94 - shots$y[shots$y > 47]
+
+      ### Match Shots w/ PBP Data
+      for(i in 1:nrow(pbp)) {
+        if((ix1 <= n1) & (pbp$description[i] == df1$shot_text[ix1])) {
+          pbp$shot_x[i] <- df1$pbp[ix1]
+          pbp$shot_y[i] <- df1$y[ix1]
+          pbp$shot_team[i] <- df1$team_name[ix1]
+          pbp$shot_outcome[i] <- df1$outcome[ix1]
+          pbp$three_pt[i] <- df1$three_pt[ix1]
+          pbp$shooter[i] <- df1$shooter[ix1]
+          pbp$assist[i] <- df1$assisted[ix1]
+          ix1 <- ix1 + 1
+        } else if((ix2 <= n2) & (pbp$description[i] == df2$shot_text[ix2])) {
+          pbp$shot_x[i] <- df2$pbp[ix2]
+          pbp$shot_y[i] <- df2$y[ix2]
+          pbp$shot_team[i] <- df2$team_name[ix2]
+          pbp$shot_outcome[i] <- df2$outcome[ix2]
+          pbp$three_pt[i] <- df2$three_pt[ix2]
+          pbp$shooter[i] <- df2$shooter[ix2]
+          pbp$assist[i] <- df2$assisted[ix2]
+          ix2 <- ix2 + 1
+        }
+      }
+    } else { ### Manually Annotate what we can
+      made_shots <- grepl("Made|made", pbp$description)
+      missed_shots <- grepl("Missed|missed", pbp$description)
+      pbp$shot_outcome[made_shots] <- "made"
+      pbp$shot_outcome[missed_shots] <- "missed"
+      pbp$three_pt[made_shots | missed_shots] <-
+        grepl("Three Point Jumper", pbp$description[made_shots | missed_shots])
+      pbp$shooter[made_shots]  <- gsub(" made.*", "", pbp$description[made_shots])
+      pbp$shooter[missed_shots]  <- gsub(" missed.*", "", pbp$description[missed_shots])
+      ix_ast <- made_shots & grepl("Assisted", pbp$description)
+      pbp$assist[ix_ast] <- gsub("\\.", "", gsub(".*Assisted by ", "", pbp$description[ix_ast]))
+    }
+
+    ### Tag Free Throws
+    pbp$free_throw[!is.na(pbp$shooter)] <- grepl("Free Throw", pbp$description[!is.na(pbp$shooter)])
+
+    ### Final Selection of Columns
     pbp <- dplyr::select(pbp, -pre_game_prob)
-    pbp <- dplyr::select(pbp, play_id, half, time_remaining_half,
+    pbp <- dplyr::select(pbp, game_id, date, home, away, play_id, half, time_remaining_half,
                          secs_remaining_relative, secs_remaining, description,
                          home_score, away_score, score_diff, play_length,
-                         win_prob, naive_win_prob, home, away, home_time_out_remaining,
-                         away_time_out_remaining, home_favored_by, game_id, date) %>%
+                         win_prob, naive_win_prob, home_time_out_remaining,
+                         away_time_out_remaining, home_favored_by, shot_x,
+                         shot_y, shot_team, shot_outcome, shooter, assist,
+                         three_pt, free_throw) %>%
       dplyr::rename("secs_remaining_absolute" = secs_remaining,
                     "secs_remaining" = secs_remaining_relative)
+
 
     if(!exists("pbp_all")) {
       pbp_all <- pbp
