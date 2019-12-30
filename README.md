@@ -29,7 +29,7 @@ as shown in the URL for the summary of the UMBC-Virginia game below.
 ### Scraping Data
 * ```get_pbp(team, season)```: Game entire current season's worth of play-by-play data for a given team and season. `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_pbp_game(game_ids)```:  Get play-by-play data for a specific vector of ESPN game_ids. 
-* ```get_roster(team)```: Get a particular team's roster. 
+* ```get_roster(team, season)```: Get a particular team's roster, `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_schedule(team, season)```: Get a team's schedule. `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_game_ids(team, season)```: Get a vector of ESPN game_ids for all games in which ```team``` plays in. `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_master_schedule(date)```: Get schedule of all games for given date.

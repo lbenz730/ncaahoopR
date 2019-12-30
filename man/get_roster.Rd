@@ -4,13 +4,13 @@
 \alias{get_roster}
 \title{Get Team Roster}
 \usage{
-get_roster(team)
+get_roster(team, season = current_season)
 }
 \arguments{
 \item{team}{Team to get roster for}
 }
 \value{
-A data-frame of the team's roster for current season
+A data-frame of the team's roster
 }
 \description{
 Gets team roster for current season.
