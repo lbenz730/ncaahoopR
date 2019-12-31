@@ -19,7 +19,9 @@ Imports:
          igraph,
          circlize,
          RCurl,
-         cowplot
+         cowplot,
+         rjson,
+         lubridate
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

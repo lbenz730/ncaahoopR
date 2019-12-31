@@ -21,16 +21,16 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_legen
   if(is.na(away_col)) {
     stop("away_col is missing with no default")
   }
-  
+
   ### Scrape Data from ESPN
-  data <- get_pbp_game(game_id)
+  data <- get_pbp_game(game_id, extra_parse = F)
   if(is.null(data)) {
     print("PBP Data Not Available for Win Probability Chart")
     return(NA)
   }
   date <- format(as.Date(data$date[1]), "%B %d, %Y")
   msec <- max(data$secs_remaining_absolute)
-  
+
   ### Cleaning
   data$scorediff <- data$home_score - data$away_score
   if(is.na(data$home_favored_by[1])) {
@@ -42,11 +42,11 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_legen
   }else{
     data$pre_game_prob <- 0.5
   }
-  
+
   if(!include_spread) {
     data$win_prob <- data$naive_win_prob
   }
-  
+
   ### Game Excitemant Index
   data$wp_delta <- 0
   for(i in 2:nrow(data)) {
@@ -55,7 +55,7 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_legen
   gei <- sum(data$wp_delta, na.rm = T)
   gei <- paste("Game Excitement Index:", round(gei, 2))
   gap <- 0.08
-  
+
   ### Plot Results
   data$secs_elapsed <- max(data$secs_remaining_absolute) - data$secs_remaining_absolute
   title <- paste("Win Probability Chart for", data$away[1], "vs.", data$home[1],"\n", date[1])
@@ -89,7 +89,7 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_legen
              cex = 0.5)
     }
   }
-  
+
   ### Min Win Prob
   if(data$score_diff[nrow(data)] > 0) {
     min_prob <- min(data$win_prob, na.rm = T)

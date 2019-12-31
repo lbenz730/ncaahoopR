@@ -17,9 +17,9 @@ game_flow <- function(game_id, home_col, away_col) {
   if(is.na(away_col)) {
     stop("away_col is missing with no default")
   }
-  
+
   ### Get Data
-  data <- get_pbp_game(game_id)
+  data <- get_pbp_game(game_id, extra_parse = F)
   if(is.null(data)) {
     warning("PBP Data Not Available for Game Flow Chart")
     return(NULL)
@@ -36,7 +36,7 @@ game_flow <- function(game_id, home_col, away_col) {
     ot_counter <- ot_counter + 1
   }
   date <- format(as.Date(data$date[1]), "%B %d, %Y")
-  
+
   ### Get in to Appropropriate Format
   x <- rbind(
     dplyr::select(data, secs_remaining_absolute, home_score) %>%
@@ -48,8 +48,8 @@ game_flow <- function(game_id, home_col, away_col) {
       dplyr::select(-away_score)
   ) %>%
     dplyr::mutate("secs_elapsed" = max(secs_remaining_absolute) - secs_remaining_absolute)
-  
-  
+
+
   ### Message
   avg_sd <- round(sum(data$play_length * data$score_diff/max(data$secs_remaining_absolute)), 2)
   home_win <- data$home_score[nrow(data)] > data$away_score[nrow(data)]
@@ -57,7 +57,7 @@ game_flow <- function(game_id, home_col, away_col) {
   avg_sd <- paste0("Average Score Differential for ",
                    ifelse(home_win, home_team, away_team), ": ", avg_sd)
   max_score <- max(c(data$home_score, data$away_score))
-  
+
   ### Make Plot
   ggplot2::ggplot(x, aes(x = secs_elapsed/60, y = score, group = team, col = team)) +
     ggplot2::geom_step(size = 1) +

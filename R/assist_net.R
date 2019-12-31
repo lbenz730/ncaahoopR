@@ -52,7 +52,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
 
   ### Read Play-by-Play File
   if(grepl("-", season[1])) {
-    x <- suppressWarnings(try(get_pbp(team, season[1])))
+    x <- suppressWarnings(try(get_pbp(team, season[1], extra_parse = F)))
     if(class(x) == "try-error" | class(x) == "NULL") {
       warning("Play-by-Play Data Not Available for Assist Network")
       return(NULL)
@@ -61,7 +61,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
     year <- season[1]
     factor <- 0.75
   }else {
-    x <- suppressWarnings(try(get_pbp_game(season), silent = T))
+    x <- suppressWarnings(try(get_pbp_game(season, extra_parse = F), silent = T))
     if(class(x) == "try-error" | class(x) == "NULL") {
       warning("Play-by-Play Data Not Available for Assist Network")
       return(NULL)

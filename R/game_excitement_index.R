@@ -12,12 +12,12 @@ game_excitement_index <- function(game_id, include_spread = T) {
   if(is.na(game_id)) {
     stop("game_id is missing with no default")
   }
-  
-  data <- get_pbp_game(game_id)
+
+  data <- get_pbp_game(game_id, extra_parse = F)
   if(is.null(data)) {
     return(NA)
   }
-  
+
   ### Compute Game Excitemant Index
   msec <- max(data$secs_remaining_absolute)
   data$wp_delta <- 0

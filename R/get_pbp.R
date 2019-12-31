@@ -7,9 +7,11 @@
 #'
 #' @param team Team to get Play-by-Play data for
 #' @param season Season to get schedule for in form "2019-20". Default equals current season.
+#' @param extra_parse Logical whether to link shot variables and possesion parsing
+#' (Default = TRUE).
 #' @return A data-frame of the team's Play-by-Play data for the specified season.
 #' @export
-get_pbp <- function(team, season = current_season) {
+get_pbp <- function(team, season = current_season, extra_parse = T) {
   ### Error Testing
   if(is.na(team)) {
     stop("team is missing with no default")

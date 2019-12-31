@@ -12,7 +12,7 @@ circle_assist_net(team, season, highlight_player = NA,
 \item{team}{Team to create network for}
 
 \item{season}{Season, as a character,  (e.g. "2018-19"), or vector of ESPN game_ids.
-for which data to use in network. Currently only handles the current season worth of data.}
+for which data to use in network.}
 
 \item{highlight_player}{Name of player to highlight in assist network. `NA` yields full team assist
 network with no player highlighting. Default = `NA`.}
