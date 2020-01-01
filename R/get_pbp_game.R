@@ -364,7 +364,9 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         next_shot <- max(c(ix_all_shot[ix_all_shot > i][1], nrow(pbp)), na.rm = T)
         rebound <- ix_all_rebounds[ix_all_rebounds > i][1]
 
-        if(rebound < next_shot & pbp$half[i] == pbp$half[rebound]) {
+        if(is.na(rebound)) {
+          return(NA)
+        } else if(rebound < next_shot & pbp$half[i] == pbp$half[rebound]) {
           return(rebound)
         } else {
           return(NA)
