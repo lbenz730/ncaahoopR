@@ -27,7 +27,7 @@ create_ids_df <- function() {
   test <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops_Play_By_Play/master/ids.csv",
                    as.is = T)
   teams_url <- "http://www.espn.com/mens-college-basketball/teams"
-  x <- scan(teams_url, what = "", sep = "\n")
+  x <- scan(teams_url, what = "", sep = "\n", quiet = T)
   x <- x[grep("mens-college-basketball/team/schedule/_/id/", x)][2]
   x <- strsplit(x, "Clubhouse")[[1]]
 
@@ -56,7 +56,7 @@ create_ids_df <- function() {
 ################################# Checks if Game is in NIT #####################
 is.nit <- function(game_id) {
   url <- paste("http://www.espn.com/mens-college-basketball/playbyplay?gameId=", game_id, sep = "")
-  y <- scan(url, what = "", sep = "\n")
+  y <- scan(url, what = "", sep = "\n", quiet = T)
   if(any(grepl("NIT SEASON TIP-OFF", y))) {
     return(F)
   }
@@ -83,12 +83,12 @@ coeffs$estimate[coeffs$max_time <= 2 & coeffs$coefficient == "favored_by"] <- 0
 ### Fit Loess Models to get smooth functions of coefficient estimate over time
 score_diff_smooth <-
   loess(estimate ~ max_time,
-        data = filter(coeffs, coefficient == "score_diff"),
+        data = dplyr::filter(coeffs, coefficient == "score_diff"),
         span = 0.5)
 
 favored_by_smooth <-
   loess(estimate ~ max_time,
-        data = filter(coeffs, coefficient == "favored_by"),
+        data = dplyr::filter(coeffs, coefficient == "favored_by"),
         span = 0.5)
 
 ### Win Probability Function
@@ -228,20 +228,12 @@ get_line <- function(data) {
 ### Get Date of Given Game
 get_date <- function(game_id) {
   url <- paste("http://www.espn.com/mens-college-basketball/playbyplay?gameId=", game_id, sep = "")
-  y <- scan(url, what = "", sep = "\n")[9]
+  y <- scan(url, what = "", sep = "\n", quiet = T)[9]
   y <- unlist(strsplit(y, "-"))
   date <-  stripwhite(y[length(y) - 1])
   date <- as.Date(date, "%B %d, %Y")
   return(date)
 }
-
-### Recreate ggplot2 colors
-### Copied from https://stackoverflow.com/questions/8197559/emulate-ggplot2-default-color-palette
-gg_color_hue <- function(n) {
-  hues = seq(15, 375, length = n + 1)
-  hcl(h = hues, l = 65, c = 100)[1:n]
-}
-
 
 ### Define Logit Function
 logit <- function(x) {
@@ -252,3 +244,14 @@ logit <- function(x) {
     T ~ tmp/(1 + tmp)
   )
 }
+
+### Current Season Constant
+current_season <- "2019-20"
+
+### Recreate ggplot2 colors
+### Copied from https://stackoverflow.com/questions/8197559/emulate-ggplot2-default-color-palette
+gg_color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  hcl(h = hues, l = 65, c = 100)[1:n]
+}
+

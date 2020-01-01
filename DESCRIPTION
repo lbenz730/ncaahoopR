@@ -1,7 +1,10 @@
 Package: ncaahoopR
 Title: NCAA Men's Basketball Play-By-Play Functionality
-Version: 1.4.9
-Authors@R: c(person("Luke", "Benz", email = "lukesbenz@gmail.com", role = c("aut", "cre")), person("Meyappan", "Subbaiah", email = "meysubb@gmail.com", role = c("ctb")))
+Version: 1.5.0
+Authors@R: c(person("Luke", "Benz", email = "lukesbenz@gmail.com", role = c("aut", "cre")), 
+             person("Meyappan", "Subbaiah", email = "meysubb@gmail.com", role = c("ctb")),
+             person("Luke", "Morris", role = c("ctb")))
+Maintainer: Luke Benz <lukesbenz@gmail.com>            
 Description: An R package for working with NCAA Men's Basketball Play-by-Play Data.
     This package allows users to scrape play-by-play data into a tidy format, create
     assist networks games of their choosing, and examine in-game win probability charts.
@@ -16,7 +19,9 @@ Imports:
          igraph,
          circlize,
          RCurl,
-         cowplot
+         cowplot,
+         rjson,
+         lubridate
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
