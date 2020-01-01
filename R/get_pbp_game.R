@@ -432,8 +432,8 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
 
       ### Assumption 6
       fouls <- which(grepl("Foul on", pbp$description))
-      for(i in 1:length(fouls)) {
-        foul <- fouls[i]
+      for(f in fouls) {
+        foul <- f
         home_f <- sapply(c(home_roster, home), grepl, pbp$description[foul])
         away_f <- sapply(c(away_roster, away), grepl, pbp$description[foul])
 
@@ -456,7 +456,9 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         rebound <- ix_unmapped_rebounds[pbp$secs_remaining[ix_unmapped_rebounds] <=
                                           pbp$secs_remaining[i]][1]
 
-        if(rebound < next_shot & pbp$half[i] == pbp$half[rebound]) {
+        if(is.na(rebound)) {
+          return(NA)
+        } else if(rebound < next_shot & pbp$half[i] == pbp$half[rebound]) {
           return(rebound)
         } else {
           return(NA)
