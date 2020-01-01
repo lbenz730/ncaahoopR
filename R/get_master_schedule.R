@@ -117,7 +117,7 @@ get_master_schedule <- function(date) {
 
   schedule <- dplyr::mutate(schedule, "game_id" = x)
   schedule <- dplyr::select(schedule, game_id, away, home, away_rank, home_rank, away_score, home_score)
-  schedule$date <- as.date(date)
+  schedule$date <- as.Date(date)
 
   return(schedule)
 }
