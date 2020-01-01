@@ -1,9 +1,5 @@
 # ncaahoopR <img src="figures/logo.png" align="right" />
-`ncaahoopR` is an R package for working with NCAA Basketball Play-by-Play Data. It scrapes play-by-play data 
-and returns it to the user in a tidy format and allows the user to explore the data with assist networks and in-game win-probability charts.
-
-__Note:__ `ncaahoopR` scrapes data from ESPN. Since ESPN is currently updating many college basketball pages, such as schedules and rosters,
-some functionality may be temporarily unavailable. Once we approach the beginning of the season, all functionality should work as desired.
+`ncaahoopR` is an R package for working with NCAA Basketball Play-by-Play Data. It scrapes play-by-play data and returns it to the user in a tidy format and allows the user to explore the data with assist networks and in-game win-probability charts.
 
 
 ## Installation
@@ -28,7 +24,7 @@ as shown in the URL for the summary of the UMBC-Virginia game below.
 
 ### Scraping Data
 * ```get_pbp(team, season)```: Game entire current season's worth of play-by-play data for a given team and season. `season` defaults to current season, but can be specified in "2019-20" form. 
-* ```get_pbp_game(game_ids)```:  Get play-by-play data for a specific vector of ESPN game_ids. 
+* ```get_pbp_game(game_ids, extra_parse)```:  Get play-by-play data for a specific vector of ESPN game_ids. `extra_parse` is a logical whether to link shot variables and attempt possesion parsing. Default =   `TRUE`.
 * ```get_roster(team, season)```: Get a particular team's roster, `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_schedule(team, season)```: Get a team's schedule. `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_game_ids(team, season)```: Get a vector of ESPN game_ids for all games in which ```team``` plays in. `season` defaults to current season, but can be specified in "2019-20" form. 
@@ -98,7 +94,7 @@ __Game Control Measures__
 
 __Traditional Assist Networks__
 
-```assist_net(team, season, node_col, three_weights, threshold, message = NA)```
+```assist_net(team, season, node_col, three_weights, threshold, message = NA, return_stats = T)```
 
 * ```team``` is the ESPN team name, as listed in the `ids` data frame.
 * ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
@@ -110,7 +106,7 @@ __Traditional Assist Networks__
 
 __Circle Assist Networks and Player Highlighting__
 
-```circle_assist_net(team, season, highlight_player, highlight_color, three_weights, message = NA)```
+```circle_assist_net(team, season, highlight_player, highlight_color, three_weights, message = NA, return_stats = T)```
 
 * ```team``` is the ESPN team name, as listed in the `ids` data frame.
 * ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
@@ -124,7 +120,7 @@ __Circle Assist Networks and Player Highlighting__
 ### Shot Charts
 There are currently three functions for scraping and plotting shot location data. These functions are written by [Meyappan Subbaiah](https://github.com/meysubb).
 
-`get_shot_locs(game_id)`: Returns data frame with shot location data when available.
+`get_shot_locs(game_id)`: Returns data frame with shot location data when available. Note that if the `extra_parse` flag in `get_pbp_game` is set to `TRUE`, shot location data will already be included in the play by play data (if available).
 
 * `game_id`: ESPN game_id from which shot locations should be scraped.
 
@@ -183,11 +179,13 @@ These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`,
 
 ## Examples
 #### Win Probability Charts
-![2018 NCAA Championship Game](figures/wp_chart.png)
-```wp_chart(game_id = 401025888, home_col = "navy", away_col = "goldenrod1")```
+
 
 ![ggwp](figures/gg_wp_chart.png)
 ```gg_wp_chart(game_id = 401082978, home_col = "gray", away_col = "orange")```
+
+![2018 NCAA Championship Game](figures/wp_chart.png)
+```wp_chart(game_id = 401025888, home_col = "navy", away_col = "goldenrod1")```
 
 #### Game Flow Chart
 ![game_flow](figures/game_flow.png)
@@ -222,6 +220,10 @@ __NOTE:__ The argument ```season = "2017-18"``` would be replaced with the curre
 ## Glossary
 Play-by-Play files contain the following variables:
 
+* ```game_id```: ESPN game_id for the game in question.
+* ```date```: Date of game.
+* ```home```: Name of the home team.
+* ```away```: Name of the away team.
 * ```play_id```: Unique identifier of play/event in sequence of game events.
 * ```half```: Period of action in the game. 1 and 2 denote the first and second halves of play, while 3 denotes OT1, 4 denotes OT2 etc.
 * ```time_remaining_half```: Time remaining in the period as it would appear on a scoreboard.
@@ -234,15 +236,23 @@ Play-by-Play files contain the following variables:
 * ```play_length```: Duration of the the given play, in seconds.
 * ```win_prob```: Win probability for the home team.
 * ```naive_win_prob```: Win probability for the home team not factoring in pre-game point spread. Useful for computation of win probability added (WPA).
-* ```home```: Name of the home team.
-* ```away```: Name of the away team.
 * ```home_timeout_remaining```: Number of timeouts remaining for the home team.
 * ```away_timeout_remaining```: Number of timeouts remaining for the away team.
 * ```home_favored_by```: Number of points by which the home team is favored, prior to tip-off. If Vegas point spread is available on ESPN, that is used as the default. When not available, an attempt is made to impute the pre-game point spread from derived team strengths. Imputed point spreads are not available for games prior to the 2016-17 season or when one of the teams is not in Division 1.
-* ```game_id```: ESPN game_id for the game in question.
-* ```date```: Date of game.
 
-Shot Location data frames contain the following variables.
+If `extra_parse = TRUE` in `get_pbp_game`, the following variables are also included.
+
+* `shot_x`: The half-court x coordinate of shot. 
+* `shot_y`: The half-court y coordinate of shot. (0,0) represents the bottom left corner and (50, 47) represents the top right corner (from persepective of standing under hoop).
+* `shot_team`: Name of team taking shot.
+* `shot_outcome`: Whether the shot was `made` or `missed`.
+* `shooter`: Name of player taking shot.
+* `assist`: Name of player asssisting shot (assisted shots only)
+* `three_pt`: Logical, if shot is 3-point field goal attempt.
+* `three_pt`: Logical, if shot is free throw attempt.
+
+---
+Stand along shot location data frames contain the following variables.
 
 * `team_name`: Name of shooting team.
 * `shot_text`: Description of shot.
