@@ -299,9 +299,9 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         pbp$shot_team[(made_shots | missed_shots) & tolower(pbp$shooter) %in% tolower(home_roster)] <- pbp$home[1]
         pbp$shot_team[(made_shots | missed_shots) & tolower(pbp$shooter) %in% tolower(away_roster)] <- pbp$away[1]
         if(is.null(home_roster[1]) & !is.null(away_roster[1])) {
-          pbp$shot_team[(made_shots | missed_shots) & !tolower(pbp$shooter) %in% tolower(home_roster)] <- pbp$away[1]
-        } else if(!is.null(home_roster[1]) & is.null(away_roster[1])) {
           pbp$shot_team[(made_shots | missed_shots) & !tolower(pbp$shooter) %in% tolower(away_roster)] <- pbp$home[1]
+        } else if(!is.null(home_roster[1]) & is.null(away_roster[1])) {
+          pbp$shot_team[(made_shots | missed_shots) & !tolower(pbp$shooter) %in% tolower(home_roster)] <- pbp$away[1]
         }
 
       }
