@@ -22,13 +22,13 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
   summary_url <- "https://www.espn.com/mens-college-basketball/game?gameId="
   j <- 0
 
-  for(i in 1:length(game_ids)) {
-    message(paste0("Scraping Data for Game: ", i, " of ", length(game_ids)))
-    if(is.nit(game_ids[i])) {
+  for(g in 1:length(game_ids)) {
+    message(paste0("Scraping Data for Game: ", g, " of ", length(game_ids)))
+    if(is.nit(game_ids[g])) {
       message("NIT Game--Play by Play Data Not Available at this time")
       next
     }
-    url <- paste(base_url, game_ids[i], sep = "")
+    url <- paste(base_url, game_ids[g], sep = "")
     tmp <- try(XML::readHTMLTable(RCurl::getURL(url)), silent = T)
 
     ### Check if PBP Data is Available
@@ -101,7 +101,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     pbp[these, c("home_score", "away_score")] <- pbp[these - 1 , c("home_score", "away_score")]
 
     ### Get full team names
-    url2 <- paste(summary_url, game_ids[i], sep = "")
+    url2 <- paste(summary_url, game_ids[g], sep = "")
     tmp <- XML::readHTMLTable(RCurl::getURL(url2))
     pbp$away <- as.character(as.data.frame(tmp[[2]])[1,1])
     pbp$home <- as.character(as.data.frame(tmp[[2]])[2,1])
@@ -126,8 +126,8 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
 
     pbp$home_favored_by <- line
     pbp$play_id <- 1:nrow(pbp)
-    pbp$game_id <- game_ids[i]
-    pbp$date <- get_date(game_ids[i])
+    pbp$game_id <- game_ids[g]
+    pbp$date <- get_date(game_ids[g])
     pbp$score_diff <- pbp$home_score - pbp$away_score
 
     ### Win Probability by Play
@@ -246,7 +246,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
                            "shooter" = NA, "assist" = NA, "possession_before" = NA,
                            "possession_after" = NA)
 
-      shots <- get_shot_locs(game_ids[i])
+      shots <- get_shot_locs(game_ids[g])
 
       if(class(shots) != "NULL") {
         ### Break Each Team's Shots Down Individually
@@ -259,13 +259,13 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
 
         # Make sure that when you link shots you flip the shots from full court
         # coordinates to half court coordinates
-        shots$pbp[shots$y > 47] <- 50 - shots$pbp[shots$y > 47]
-        shots$pbp[shots$y > 47] <- 94 - shots$y[shots$y > 47]
+        shots$x[shots$y > 47] <- 50 - shots$x[shots$y > 47]
+        shots$y[shots$y > 47] <- 94 - shots$y[shots$y > 47]
 
         ### Match Shots w/ PBP Data
         for(i in 1:nrow(pbp)) {
           if((ix1 <= n1) & (pbp$description[i] == df1$shot_text[ix1])) {
-            pbp$shot_x[i] <- df1$pbp[ix1]
+            pbp$shot_x[i] <- df1$x[ix1]
             pbp$shot_y[i] <- df1$y[ix1]
             pbp$shot_team[i] <- df1$team_name[ix1]
             pbp$shot_outcome[i] <- df1$outcome[ix1]
@@ -274,7 +274,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
             pbp$assist[i] <- df1$assisted[ix1]
             ix1 <- ix1 + 1
           } else if((ix2 <= n2) & (pbp$description[i] == df2$shot_text[ix2])) {
-            pbp$shot_x[i] <- df2$pbp[ix2]
+            pbp$shot_x[i] <- df2$x[ix2]
             pbp$shot_y[i] <- df2$y[ix2]
             pbp$shot_team[i] <- df2$team_name[ix2]
             pbp$shot_outcome[i] <- df2$outcome[ix2]
@@ -564,7 +564,9 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     rm <- which(pbp$score_diff != dplyr::lag(pbp$score_diff) &
                   !grepl("made", pbp$description) &
                   pbp$secs_remaining_absolute > 0)
-    pbp <- pbp[-rm,]
+    if(length(rm) > 1) {
+      pbp <- pbp[-rm,]
+    }
     pbp$home_score[pbp$secs_remaining_absolute == 0] <- max(pbp$home_score, na.rm = T)
     pbp$away_score[pbp$secs_remaining_absolute == 0] <- max(pbp$home_score, na.rm = T)
     pbp$score_diff[pbp$secs_remaining_absolute == 0] <-
