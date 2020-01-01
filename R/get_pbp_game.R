@@ -221,7 +221,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     pbp$play_length[2:nrow(pbp)] <-
       pbp$secs_remaining[1:(nrow(pbp)-1)] - pbp$secs_remaining[2:nrow(pbp)]
 
-    if(extra_parse) {
+    if(extra_parse & (pbp$date[1] >= "2007-11-01")) {
       ### Rosters for Player and Team Matching
       year <- lubridate::year(pbp$date[1])
       if(lubridate::month(pbp$date[1]) <= 5) {
@@ -233,7 +233,6 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       home_roster <- NULL
       away_roster <- NULL
 
-
       if(pbp$home[1] %in% dict$ESPN_PBP) {
         home_roster <- get_roster(dict$ESPN[dict$ESPN_PBP == pbp$home[1]], year)$name
       }
@@ -244,7 +243,8 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       ### Link Shot Data
       pbp <- dplyr::mutate(pbp, "shot_x" = NA, "shot_y" = NA, "shot_team" = NA,
                            "shot_outcome" = NA, "three_pt" = NA, "free_throw" = NA,
-                           "shooter" = NA, "assist" = NA)
+                           "shooter" = NA, "assist" = NA, "possession_before" = NA,
+                           "possession_after" = NA)
 
       shots <- get_shot_locs(game_ids[i])
 
@@ -296,12 +296,12 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         ix_ast <- made_shots & grepl("Assisted", pbp$description)
         pbp$assist[ix_ast] <- gsub("\\.", "", gsub(".*Assisted by ", "", pbp$description[ix_ast]))
 
-        pbp$shot_team[(made_shots | missed_shots) & pbp$shooter %in% home_roster] <- pbp$home[1]
-        pbp$shot_team[(made_shots | missed_shots) & pbp$shooter %in% away_roster] <- pbp$away[1]
+        pbp$shot_team[(made_shots | missed_shots) & tolower(pbp$shooter) %in% tolower(home_roster)] <- pbp$home[1]
+        pbp$shot_team[(made_shots | missed_shots) & tolower(pbp$shooter) %in% tolower(away_roster)] <- pbp$away[1]
         if(is.null(home_roster[1]) & !is.null(away_roster[1])) {
-          pbp$shot_team[(made_shots | missed_shots) & !pbp$shooter %in% home_roster] <- pbp$away[1]
+          pbp$shot_team[(made_shots | missed_shots) & !tolower(pbp$shooter) %in% tolower(home_roster)] <- pbp$away[1]
         } else if(!is.null(home_roster[1]) & is.null(away_roster[1])) {
-          pbp$shot_team[(made_shots | missed_shots) & !pbp$shooter %in% away_roster] <- pbp$home[1]
+          pbp$shot_team[(made_shots | missed_shots) & !tolower(pbp$shooter) %in% tolower(away_roster)] <- pbp$home[1]
         }
 
       }
@@ -310,17 +310,243 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       pbp$free_throw[!is.na(pbp$shooter)] <- grepl("Free Throw", pbp$description[!is.na(pbp$shooter)])
 
 
-    ### Final Selection of Columns
-    pbp <- dplyr::select(pbp, -pre_game_prob)
-    pbp <- dplyr::select(pbp, game_id, date, home, away, play_id, half, time_remaining_half,
-                         secs_remaining_relative, secs_remaining, description,
-                         home_score, away_score, score_diff, play_length,
-                         win_prob, naive_win_prob, home_time_out_remaining,
-                         away_time_out_remaining, home_favored_by, shot_x,
-                         shot_y, shot_team, shot_outcome, shooter, assist,
-                         three_pt, free_throw) %>%
-      dplyr::rename("secs_remaining_absolute" = secs_remaining,
-                    "secs_remaining" = secs_remaining_relative)
+      ########################## Possession Parsing ############################
+      home <- pbp$home[1]
+      away <- pbp$away[1]
+      message("Parsing Possessions")
+
+      ### Assumptions:
+      ###   1) Shooting teams have possesion on the play before they shoot
+      ###   2) On made shots (non-free throws), the possession after the play
+      ###      switches to the other team
+      ###   3) For missed shots, the correct rebound is the first possible
+      ###      rebound that is:
+      ###       - In the same half
+      ###       - Before any future shot
+      ###   4) All actions between a missed shot and rebound maintain the same
+      ###      before/after possession team
+      ###   5) Turnovers/Steals:
+      ###      - If steal, possesion go to stealing team from other team
+      ###      - If turnover, possesion goes from turnover team to other team
+      ###   6) Fouls: Foul gives possession to non-foul committing team
+      ###   7) Missed Free Throws are rebounded by the next unmapped rebound before
+      ###      next shot. Then proceed as assumption 4
+      ###   8) Deadball Team Rebounds implies possesion after for the deadball
+      ###      rebounding team
+      ###   9) All non-Free Throw sequences occuring at the same time not yet tagged
+      ###      get the same before possesion mapping as the first event at that
+      ###      time period and the same after possesion mapping as the last event
+      ###      at that time period.
+      ###   10) All Remaining sequences don't involve change of possession
+
+
+      ### Assumption 1
+      ix_home_shots <- which(pbp$shot_team == home)
+      ix_away_shots <- which(pbp$shot_team == away)
+
+      pbp$possession_before[ix_home_shots] <- home
+      pbp$possession_before[ix_away_shots] <- away
+
+      ### Assumption 2
+      ix_home_makes <- which(pbp$shot_team == home & pbp$shot_outcome == "made" & !pbp$free_throw)
+      ix_away_makes <- which(pbp$shot_team == away & pbp$shot_outcome == "made" & !pbp$free_throw)
+
+      pbp$possession_after[ix_home_makes] <- away
+      pbp$possession_after[ix_away_makes] <- home
+
+      ### Assumption 3
+      ix_all_shot <- which(!is.na(pbp$shot_outcome))
+      ix_missed_shot <- which(pbp$shot_outcome == "missed" & !pbp$free_throw)
+      ix_all_rebounds <- which(grepl("Rebound", pbp$description))
+
+
+      find_rebound <- function(i) {
+        next_shot <- max(c(ix_all_shot[ix_all_shot > i][1], nrow(pbp)), na.rm = T)
+        rebound <- ix_all_rebounds[ix_all_rebounds > i][1]
+
+        if(rebound < next_shot & pbp$half[i] == pbp$half[rebound]) {
+          return(rebound)
+        } else {
+          return(NA)
+        }
+      }
+
+      # Match Rebound to Missed Shots
+      rebound_pairs <- sapply(ix_missed_shot, find_rebound)
+
+      ### Assumption 4
+      for(i in 1:length(ix_missed_shot)) {
+        missed_shot <- ix_missed_shot[i]
+        rebound <- rebound_pairs[i]
+
+        if(!is.na(rebound)) {
+          pbp$possession_before[missed_shot:rebound] <- pbp$possession_before[missed_shot]
+          if(grepl("Offensive", pbp$description[rebound])) {
+            pbp$possession_after[missed_shot:rebound] <- pbp$possession_before[missed_shot]
+          } else if(grepl("Defensive", pbp$description[rebound])) {
+            pbp$possession_after[missed_shot:rebound] <-
+              ifelse(pbp$possession_before[missed_shot] == home, away, home)
+          } else if(grepl("Deadball", pbp$description[rebound])) {
+            pbp$possession_after[missed_shot:rebound] <-
+              ifelse(grepl(home, pbp$description[missed_shot]), home, away)
+          }
+        }
+      }
+
+      ### Assumption 5
+      steals <- which(grepl("Steal|steal", pbp$description))
+      turnovers <- which(grepl("Turnover|turnover", pbp$description))
+
+      # Turnovers
+      for(i in 1:length(turnovers)) {
+        turnover <- turnovers[i]
+        home_to <- sapply(c(home_roster, home), grepl, pbp$description[turnover])
+        away_to <- sapply(c(away_roster, away), grepl, pbp$description[turnover])
+
+        if(any(home_to) & !any(away_to)) {
+          pbp$possession_before[turnover] <- home
+          pbp$possession_after[turnover] <- away
+        } else if(any(away_to) & !any(home_to)) {
+          pbp$possession_before[turnover] <- away
+          pbp$possession_after[turnover] <- home
+        }
+      }
+
+      # Steals
+      for(i in 1:length(steals)) {
+        steal <- steals[i]
+        home_steal <- sapply(home_roster, grepl, pbp$description[steal])
+        away_steal <- sapply(away_roster, grepl, pbp$description[steal])
+
+        if(any(home_steal) & !any(away_steal)) {
+          pbp$possession_before[steal] <- away
+          pbp$possession_after[steal] <- home
+        } else if(any(away_steal) & !any(home_steal)) {
+          pbp$possession_before[steal] <- home
+          pbp$possession_after[steal] <- away
+        }
+      }
+
+
+      ### Assumption 6
+      fouls <- which(grepl("Foul on", pbp$description))
+      for(i in 1:length(fouls)) {
+        foul <- fouls[i]
+        home_f <- sapply(c(home_roster, home), grepl, pbp$description[foul])
+        away_f <- sapply(c(away_roster, away), grepl, pbp$description[foul])
+
+        if(any(home_f) & !any(away_f)) {
+          pbp$possession_after[foul] <- away
+        } else if(any(away_f) & !any(home_f)) {
+          pbp$possession_before[foul] <- home
+        }
+      }
+
+      ### Assumption 7
+      ix_non_ft <- which(!is.na(pbp$shot_outcome) & !pbp$free_throw)
+      ix_missed_ft <- which(pbp$shot_outcome == "missed" & pbp$free_throw)
+      ix_unmapped_rebounds <- which(grepl("Rebound", pbp$description) & is.na(pbp$possession_after))
+
+      find_rebound_ft <- function(i) {
+        next_shot <- max(c(nrow(pbp), ix_non_ft[pbp$secs_remaining[ix_non_ft] <
+                                                  pbp$secs_remaining[i]][1]), na.rm = T)
+
+        rebound <- ix_unmapped_rebounds[pbp$secs_remaining[ix_unmapped_rebounds] <=
+                                          pbp$secs_remaining[i]][1]
+
+        if(rebound < next_shot & pbp$half[i] == pbp$half[rebound]) {
+          return(rebound)
+        } else {
+          return(NA)
+        }
+      }
+
+      # Match Rebound to Missed Free Throws
+      rebound_pairs_ft <- sapply(ix_missed_ft, find_rebound_ft)
+
+      for(i in 1:length(ix_missed_ft)) {
+        missed_shot <- ix_missed_ft[i]
+        rebound <- rebound_pairs_ft[i]
+
+        if(!is.na(rebound)) {
+          pbp$possession_before[missed_shot:rebound] <- pbp$possession_before[missed_shot]
+          if(grepl("Offensive", pbp$description[rebound])) {
+            pbp$possession_after[missed_shot:rebound] <- pbp$possession_before[missed_shot]
+          } else if(grepl("Defensive", pbp$description[rebound])) {
+            pbp$possession_after[missed_shot:rebound] <-
+              ifelse(pbp$possession_before[missed_shot] == home, away, home)
+          } else if(grepl("Deadball", pbp$description[rebound])) {
+            pbp$possession_after[missed_shot:rebound] <-
+              ifelse(grepl(home, pbp$possession_before[missed_shot]), home, away)
+          }
+        }
+      }
+
+      ### Assumption 8
+      pbp$possession_after[pbp$free_throw & pbp$shot_outcome == "made"] <- NA
+      ix_deadball <- which(grepl("Deadball Team", pbp$description))
+      for(i in ix_deadball) {
+        pbp$possession_after[i] <- ifelse(grepl(home, pbp$description[i]), home, away)
+      }
+
+      ### Assumption 9
+      secs_u <- unique(pbp$secs_remaining[duplicated(pbp$secs_remaining)])
+      for(t in secs_u) {
+        ix <- which(pbp$secs_remaining == t & !grepl("Free Throw", pbp$description))
+        if(any(is.na(pbp$possession_before[ix])) & any(!is.na(pbp$possession_before[ix]))) {
+          pbp$possession_before[ix] <- pbp$possession_before[ix][!is.na(pbp$possession_before[ix])][1]
+        }
+        if(any(is.na(pbp$possession_after[ix])) & any(!is.na(pbp$possession_after[ix]))) {
+          vec <- pbp$possession_after[ix][!is.na(pbp$possession_after[ix])]
+          pbp$possession_after[ix] <- vec[length(vec)]
+        }
+
+      }
+
+      ### Assumption 10
+      bad_ix_before <- which(pbp$description == "PLAY")
+      bad_ix_after <- which(grepl("End of", pbp$description))
+      pbp$possession_before[c(bad_ix_before, bad_ix_after)] <- NA
+      pbp$possession_after[c(bad_ix_before, bad_ix_after)] <- NA
+      n <- nrow(pbp)
+
+      for(i in 1:n) {
+        if(is.na(pbp$possession_before[i]) & !(i %in% bad_ix_before)) {
+          ix <- which(!is.na(pbp$possession_after))
+          if(any(ix < i)) {
+            m <- max(ix[ix < i])
+            M <- i
+            while(M < n && is.na(pbp$possession_before[M+1]) && !(M+1 %in% bad_ix_before)) {
+              M <- M+1
+            }
+            pbp$possession_before[i:M] <- pbp$possession_after[m]
+          }
+        }
+
+        if(is.na(pbp$possession_after[i]) & !(i %in% bad_ix_after)) {
+          ix <- which(!is.na(pbp$possession_before))
+          if(any(ix > i)) {
+            m <- min(ix[ix > i])
+            M <- i
+            while(M > 1 && is.na(pbp$possession_after[M-1]) && !(M-1 %in% bad_ix_after)) {
+              M <- M-1
+            }
+            pbp$possession_after[M:i] <- pbp$possession_before[m]
+          }
+        }
+      }
+
+      ### Final Selection of Columns
+      pbp <- dplyr::select(pbp, -pre_game_prob)
+      pbp <- dplyr::select(pbp, game_id, date, home, away, play_id, half, time_remaining_half,
+                           secs_remaining_relative, secs_remaining, description,
+                           home_score, away_score, score_diff, play_length,
+                           win_prob, naive_win_prob, home_time_out_remaining,
+                           away_time_out_remaining, home_favored_by, shot_x,
+                           shot_y, shot_team, shot_outcome, shooter, assist,
+                           three_pt, free_throw, possession_before, possession_after) %>%
+        dplyr::rename("secs_remaining_absolute" = secs_remaining,
+                      "secs_remaining" = secs_remaining_relative)
     } else {
       ### Final Selection of Columns
       pbp <- dplyr::select(pbp, -pre_game_prob)
@@ -333,6 +559,16 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
                       "secs_remaining" = secs_remaining_relative)
 
     }
+
+    ### Remove buggy score rows
+    rm <- which(pbp$score_diff != dplyr::lag(pbp$score_diff) &
+                  !grepl("made", pbp$description) &
+                  pbp$secs_remaining_absolute > 0)
+    pbp <- pbp[-rm,]
+    pbp$home_score[pbp$secs_remaining_absolute == 0] <- max(pbp$home_score, na.rm = T)
+    pbp$away_score[pbp$secs_remaining_absolute == 0] <- max(pbp$home_score, na.rm = T)
+    pbp$score_diff[pbp$secs_remaining_absolute == 0] <-
+      pbp$home_score[pbp$secs_remaining_absolute == 0] - pbp$away_score[pbp$secs_remaining_absolute == 0]
 
     if(!exists("pbp_all")) {
       pbp_all <- pbp
