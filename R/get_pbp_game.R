@@ -400,8 +400,8 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       turnovers <- which(grepl("Turnover|turnover", pbp$description))
 
       # Turnovers
-      for(i in 1:length(turnovers)) {
-        turnover <- turnovers[i]
+      for(t in turnovers) {
+        turnover <- t
         home_to <- sapply(c(home_roster, home), grepl, pbp$description[turnover])
         away_to <- sapply(c(away_roster, away), grepl, pbp$description[turnover])
 
@@ -415,8 +415,8 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       }
 
       # Steals
-      for(i in 1:length(steals)) {
-        steal <- steals[i]
+      for(s in steals) {
+        steal <- s
         home_steal <- sapply(home_roster, grepl, pbp$description[steal])
         away_steal <- sapply(away_roster, grepl, pbp$description[steal])
 
