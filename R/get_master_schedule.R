@@ -30,7 +30,7 @@ get_master_schedule <- function(date) {
   } else {
     ### No Games Scheduled
     if(z[[1]][1,1] == "No games scheduled") {
-      cat("No games on", as.Date(date), "\n")
+      cat("No games on", as.character(date), "\n")
       return(NULL)
     }
     completed <- as.data.frame(z[[1]][,1:3])
