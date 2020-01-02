@@ -572,7 +572,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       pbp <- pbp[-rm,]
     }
     pbp$home_score[pbp$secs_remaining_absolute == 0] <- max(pbp$home_score, na.rm = T)
-    pbp$away_score[pbp$secs_remaining_absolute == 0] <- max(pbp$home_score, na.rm = T)
+    pbp$away_score[pbp$secs_remaining_absolute == 0] <- max(pbp$away_score, na.rm = T)
     pbp$score_diff[pbp$secs_remaining_absolute == 0] <-
       pbp$home_score[pbp$secs_remaining_absolute == 0] - pbp$away_score[pbp$secs_remaining_absolute == 0]
 
