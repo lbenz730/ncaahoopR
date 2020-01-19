@@ -30,6 +30,7 @@ as shown in the URL for the summary of the UMBC-Virginia game below.
 * ```get_schedule(team, season)```: Get a team's schedule. `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_game_ids(team, season)```: Get a vector of ESPN game_ids for all games in which ```team``` plays in. `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_master_schedule(date)```: Get schedule of all games for given date.
+* ```get_boxscore(game_id)```: Get boxscores for each team in a given game.
 
 The `team` parameter in the above functions must be a valid team name from the `ids` dataset built into the package. See the __Datasets__ section below for more details.
 
