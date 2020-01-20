@@ -32,6 +32,7 @@ get_schedule <- function(team, season = current_season) {
   schedule <- schedule[!is.na(schedule$opponent) & schedule$opponent != "Opponent",]
   schedule <- schedule[schedule$result != "Postponed",]
   schedule <- schedule[schedule$result != "Cancelled",]
+  schedule <- schedule[schedule$result != "Canceled",]
 
   ### Locations
   schedule$location <- ifelse(grepl("[*]", schedule$opponent), "N",
@@ -57,7 +58,6 @@ get_schedule <- function(team, season = current_season) {
   tmp <- schedule$team_score[index]
   schedule$team_score[index] <- schedule$opp_score[index]
   schedule$opp_score[index] <- tmp
-
 
   ### Dates
   schedule$day <- as.numeric(gsub("[^0-9]*", "", schedule$date))
