@@ -2,15 +2,15 @@
 #'
 #' Gets boxscores for each team for a given game.
 #'
-#' @param game_id ESPN game_id for which to scrape boxscore. 
+#' @param game_id ESPN game_id for which to scrape boxscore.
 #'
-#' @return A named list containing two dataframes with box score for each team. 
+#' @return A named list containing two dataframes with box score for each team.
 #'   First team in list is away team, second is home team.
 #' @export
 get_boxscore <- function(game_id) {
-	url <- paste0(c("https://www.espn.com/mens-college-basketball/boxscore?gameId=", game_id))
-	webpage <- xml2::read_html(webpage_url)
-	
+	url <- paste0("https://www.espn.com/mens-college-basketball/boxscore?gameId=", game_id)
+	webpage <- xml2::read_html(url)
+
 	# Grab team names. Away team is always listed first.
 	pagetext <- rvest::html_text(webpage)
 	matchup <- unlist(strsplit(pagetext, "-"))[[1]][1]
@@ -18,7 +18,7 @@ get_boxscore <- function(game_id) {
 	away_name <- stringr::str_trim(away_name)
 	home_name <- unlist(strsplit(matchup, " vs. "))[2]
 	home_name <- stringr::str_trim(home_name)
-	
+
 	# General tidying and splitting of columns.
 	away <- rvest::html_table(webpage)[[2]]
 	away <- away[1:(nrow(away) - 1),]
@@ -52,8 +52,18 @@ get_boxscore <- function(game_id) {
 	rownames(home) <- NULL
 	colnames(home)[1] <- "Players"
 	home <- home[, c(1, 18, 2:(ncol(home)-1))]
-	
+
+	for(i in 3:18) {
+	  home[,i] <- as.numeric(home[,i])
+	  away[,i] <- as.numeric(away[,i])
+	}
+
+	home$Position[home$Players == "TEAM"] <- NA
+	away$Position[away$Players == "TEAM"] <- NA
+
 	results <- list(away, home)
 	names(results) <- c(away_name, home_name)
+
+
 	return(results)
 }

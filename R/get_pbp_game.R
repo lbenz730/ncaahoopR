@@ -97,6 +97,31 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       pbp <- rbind(half_1, half_2, half_3, half_4, half_5, half_6)
     }
 
+    ### 5 OT
+    else if(ncol(tmp[[1]]) == 5 & ((n == 10 & ncol(tmp[[9]]) == 4) | (n == 9 & ncol(tmp[[8]]) == 5))) {
+      half_1 <- clean(as.data.frame(tmp[[2]]), 1, 5)
+      half_2 <- clean(as.data.frame(tmp[[3]]), 2, 5)
+      half_3 <- clean(as.data.frame(tmp[[4]]), 3, 5)
+      half_4 <- clean(as.data.frame(tmp[[5]]), 4, 5)
+      half_5 <- clean(as.data.frame(tmp[[6]]), 5, 5)
+      half_6 <- clean(as.data.frame(tmp[[7]]), 6, 5)
+      half_7 <- clean(as.data.frame(tmp[[8]]), 7, 5)
+      pbp <- rbind(half_1, half_2, half_3, half_4, half_5, half_6, half_7)
+    }
+
+    ### 6 OT
+    else if(ncol(tmp[[1]]) == 5 & ((n == 11 & ncol(tmp[[10]]) == 4) | (n == 10 & ncol(tmp[[9]]) == 5))) {
+      half_1 <- clean(as.data.frame(tmp[[2]]), 1, 6)
+      half_2 <- clean(as.data.frame(tmp[[3]]), 2, 6)
+      half_3 <- clean(as.data.frame(tmp[[4]]), 3, 6)
+      half_4 <- clean(as.data.frame(tmp[[5]]), 4, 6)
+      half_5 <- clean(as.data.frame(tmp[[6]]), 5, 6)
+      half_6 <- clean(as.data.frame(tmp[[7]]), 6, 6)
+      half_7 <- clean(as.data.frame(tmp[[8]]), 7, 6)
+      half_8 <- clean(as.data.frame(tmp[[9]]), 8, 6)
+      pbp <- rbind(half_1, half_2, half_3, half_4, half_5, half_6, half_7, half_8)
+    }
+
     these <- grep(T, is.na(pbp$home_score))
     pbp[these, c("home_score", "away_score")] <- pbp[these - 1 , c("home_score", "away_score")]
 
