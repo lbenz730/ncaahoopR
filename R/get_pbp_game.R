@@ -601,6 +601,14 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     pbp$score_diff[pbp$secs_remaining_absolute == 0] <-
       pbp$home_score[pbp$secs_remaining_absolute == 0] - pbp$away_score[pbp$secs_remaining_absolute == 0]
 
+    if(pbp$home_score[nrow(pbp)] > pbp$away_score[nrow(pbp)]) {
+     pbp$win_prob[pbp$secs_remaining_absolute == 0] <- 1
+     pbp$win_prob_naive[pbp$secs_remaining_absolute == 0] <- 1
+    } else if(pbp$home_score[nrow(pbp)] < pbp$away_score[nrow(pbp)]) {
+      pbp$win_prob[pbp$secs_remaining_absolute == 0] <- 0
+      pbp$win_prob_naive[pbp$secs_remaining_absolute == 0] <- 0
+    }
+
     if(!exists("pbp_all")) {
       pbp_all <- pbp
     }
