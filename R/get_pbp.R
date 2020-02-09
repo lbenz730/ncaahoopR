@@ -36,7 +36,7 @@ get_pbp <- function(team, season = current_season, extra_parse = T) {
 
 
   ### Get PBP Data
-  pbp_season <- get_pbp_game(game_ids)
+  pbp_season <- get_pbp_game(game_ids, extra_parse)
 
   return(pbp_season)
 }
