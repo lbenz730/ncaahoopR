@@ -139,6 +139,20 @@ secs_to_model <- function(sec, msec) {
       sec <- sec - 300
     }
   }
+  else if(offset == 1200) {
+    if(sec > 1200) {
+      sec <- sec - offset
+    }
+    else if (sec <= 1200 & sec > 900) {
+      sec <- sec - 900
+    }
+    else if (sec <= 900 & sec > 600) {
+      sec <- sec - 600
+    }
+    else if (sec <= 600 & sec > 300) {
+      sec <- sec - 300
+    }
+  }
   else if(offset == 1500) {
     if(sec > 1500) {
       sec <- sec - offset
