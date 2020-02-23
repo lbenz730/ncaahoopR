@@ -603,10 +603,10 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
 
     if(pbp$home_score[nrow(pbp)] > pbp$away_score[nrow(pbp)]) {
      pbp$win_prob[pbp$secs_remaining_absolute == 0] <- 1
-     pbp$win_prob_naive[pbp$secs_remaining_absolute == 0] <- 1
+     pbp$naive_win_prob[pbp$secs_remaining_absolute == 0] <- 1
     } else if(pbp$home_score[nrow(pbp)] < pbp$away_score[nrow(pbp)]) {
       pbp$win_prob[pbp$secs_remaining_absolute == 0] <- 0
-      pbp$win_prob_naive[pbp$secs_remaining_absolute == 0] <- 0
+      pbp$naive_win_prob[pbp$secs_remaining_absolute == 0] <- 0
     }
 
     if(!exists("pbp_all")) {
