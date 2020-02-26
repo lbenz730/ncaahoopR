@@ -75,6 +75,8 @@ get_shot_locs <- function(game_ids) {
           "y" = as.numeric(gsub('^.*left:\\s*|\\s*%;top.*$', '', total_df$shot_style)) * .94
         ) %>% select(-shot_style)
 
+      total_df$game_id <- game_ids[i]
+
       if(!exists("total_df_all")) {
         total_df_all <- total_df
       }else{
