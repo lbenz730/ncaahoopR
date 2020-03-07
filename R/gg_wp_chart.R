@@ -78,7 +78,9 @@ gg_wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_la
                               paste0(round(100 * min_prob), "%")))
   }
 
-
+  home_score <- data$home_score[nrow(data)]
+  away_score <- data$away_score[nrow(data)]
+  st <- paste0(home_team, ": ", home_score, "  ", away_team, ": ", away_score, "\n", date)
 
   p <- ggplot2::ggplot(x, aes(x = secs_elapsed/60, y = win_prob, group = team, col = team)) +
     ggplot2::geom_line(size = 1) +
@@ -87,11 +89,12 @@ gg_wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_la
     ggplot2::labs(x = "Minutes Elapsed",
                   y = "Win Probability",
                   col = "",
-                  title = paste0(ifelse(include_spread, "", "Naive "), "Win Probability Chart for ", home_team, " vs. ", away_team),
-                  subtitle = date,
+                  title = paste0(ifelse(include_spread, "", "Naive "), "Win Probability Chart for ", home_team,
+                                 " vs. ", away_team),
+                  subtitle = st,
                   caption = "Luke Benz (@recspecs730) Data Accessed via ncaahoopR") +
     ggplot2::theme(plot.title = element_text(size = 16, hjust = 0.5),
-                   plot.subtitle = element_text(size = 12, hjust = 0.5),
+                   plot.subtitle = element_text(size = 12, hjust = 0.5, face = "italic"),
                    axis.title = element_text(size = 14),
                    plot.caption = element_text(size = 8, hjust = 0),
                    legend.position = "bottom",) +
