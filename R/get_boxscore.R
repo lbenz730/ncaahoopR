@@ -13,7 +13,7 @@ get_boxscore <- function(game_id) {
 
 	# Grab team names. Away team is always listed first.
 	pagetext <- rvest::html_text(webpage)
-	matchup <- unlist(strsplit(pagetext, "-"))[[1]][1]
+	matchup <- unlist(strsplit(pagetext, " - "))[[1]][1]
 	away_name <- unlist(strsplit(matchup, " vs. "))[1]
 	away_name <- stringr::str_trim(away_name)
 	home_name <- unlist(strsplit(matchup, " vs. "))[2]
