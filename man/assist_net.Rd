@@ -4,8 +4,15 @@
 \alias{assist_net}
 \title{Assist Network}
 \usage{
-assist_net(team, season, node_col, three_weights = T, threshold = 0,
-  message = NA, return_stats = T)
+assist_net(
+  team,
+  season,
+  node_col,
+  three_weights = T,
+  threshold = 0,
+  message = NA,
+  return_stats = T
+)
 }
 \arguments{
 \item{team}{Team to create network for}

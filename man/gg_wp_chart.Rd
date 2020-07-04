@@ -4,8 +4,7 @@
 \alias{gg_wp_chart}
 \title{Win Probability Charts in ggplot}
 \usage{
-gg_wp_chart(game_id, home_col, away_col, include_spread = T,
-  show_labels = T)
+gg_wp_chart(game_id, home_col, away_col, include_spread = T, show_labels = T)
 }
 \arguments{
 \item{game_id}{ESPN game_id for which to render chart}

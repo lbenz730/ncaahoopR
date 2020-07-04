@@ -4,8 +4,7 @@
 \alias{wp_chart}
 \title{Win Probability Chart}
 \usage{
-wp_chart(game_id, home_col, away_col, include_spread = T,
-  show_legend = T)
+wp_chart(game_id, home_col, away_col, include_spread = T, show_legend = T)
 }
 \arguments{
 \item{game_id}{ESPN game_id for which to create chart}

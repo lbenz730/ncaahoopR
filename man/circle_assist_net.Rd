@@ -4,9 +4,16 @@
 \alias{circle_assist_net}
 \title{Circle Assist Network}
 \usage{
-circle_assist_net(team, season, highlight_player = NA,
-  highlight_color = NA, three_weights = T, threshold = 0,
-  message = NA, return_stats = T)
+circle_assist_net(
+  team,
+  season,
+  highlight_player = NA,
+  highlight_color = NA,
+  three_weights = T,
+  threshold = 0,
+  message = NA,
+  return_stats = T
+)
 }
 \arguments{
 \item{team}{Team to create network for}
