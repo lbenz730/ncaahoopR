@@ -4,7 +4,7 @@
 #'
 #' @param game_id ESPN game_id for which to scrape boxscore.
 #'
-#' @return A named list containing two dataframes with box score for each team.
+#' @return A named list containing two dataframes with boxscore for each team.
 #'   First team in list is away team, second is home team.
 #' @export
 get_boxscore <- function(game_id) {
