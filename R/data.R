@@ -3,7 +3,7 @@
 #' @docType data
 #' @format A data frame with ESPN team names to be used in the ncaahoopR package.
 #' \describe{
-#'  \item{team}{the name of the team to be suplied to function in ncaahoopR package}
+#'  \item{team}{the name of the team to be supplied to function in ncaahoopR package}
 #'  \item{id}{team id; used in ESPN URLs}
 #'  \item{link}{team URL link; used in ESPN URLs}
 #' }
@@ -22,7 +22,7 @@
 #' @format A data frame with team names from various college basketball sites
 #' \describe{
 #'  \item{NCAA}{the name of the team, as listed on the NCAA website}
-#'  \item{ESPN}{the name of the team, as listed on the ESPN URLs}
+#'  \item{ESPN}{the name of the team, as listed in ESPN URLs}
 #'  \item{ESPN_PBP}{the name of the team, as listed on the ESPN Play-By-Play logs}
 #'  \item{Warren_Nolan}{the name of the team, as listed on WarrenNolan.com}
 #'  \item{Trank}{the name of the team, as listed on barttorvik.com}
@@ -42,7 +42,7 @@
 #' @format A data frame with team colors
 #' \describe{
 #'  \item{ncaa_name}{the name of the team, as listed on the NCAA website (same as dict$NCAA)}
-#'  \item{espn_name}{the name of the team, as listed on the ESPN URLs (same as dict$ESPN)}
+#'  \item{espn_name}{the name of the team, as listed in ESPN URLs (same as dict$ESPN)}
 #'  \item{primary_color}{hexcode for team's primary color}
 #'  \item{secondary_color}{hexcode for team's secondary color, when available}
 #'  \item{tertiary_color}{hexcode for team's tertiary color, when available}
