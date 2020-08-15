@@ -3,10 +3,10 @@
 #'
 #' Scrapes ESPN Play-by-Play data for the desired games.
 #'
-#' @param game_ids Vector of ESPN game-IDs
-#' @param extra_parse Logical whether to link shot variables and possesion parsing
+#' @param game_ids Vector of ESPN game_ids
+#' @param extra_parse Logical whether to link shot variables and possession parsing
 #' (Default = TRUE).
-#' @return A data-frame of the Play-by-Play data fror desired games.
+#' @return A data frame of the Play-by-Play data for desired games.
 #' @export
 get_pbp_game <- function(game_ids, extra_parse = T) {
   ### Error Testing
@@ -17,7 +17,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
   if(!"ncaahoopR" %in% .packages()) {
     ids <- create_ids_df()
   }
-  ### Get Play by Play Data
+  ### Get Play-by-Play Data
   base_url <- "https://www.espn.com/mens-college-basketball/playbyplay?gameId="
   summary_url <- "https://www.espn.com/mens-college-basketball/game?gameId="
   j <- 0
@@ -25,7 +25,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
   for(g in 1:length(game_ids)) {
     message(paste0("Scraping Data for Game: ", g, " of ", length(game_ids)))
     if(is.nit(game_ids[g])) {
-      message("NIT Game--Play by Play Data Not Available at this time")
+      message("NIT Game--Play-by-Play Data Not Available at this time")
       next
     }
     url <- paste(base_url, game_ids[g], sep = "")
@@ -33,19 +33,19 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
 
     ### Check if PBP Data is Available
     if(class(tmp) == "try-error") {
-      message("Play by Play Data Not Available")
+      message("Play-by-Play Data Not Available")
       next
     } else if(length(tmp) == 0) {
-      message("Play by Play Data Not Available")
+      message("Play-by-Play Data Not Available")
       next
     }else if(length(tmp) < ncol(tmp[[1]]) | length(tmp) == 0) {
-      message("Play by Play Data Not Available")
+      message("Play-by-Play Data Not Available")
       next
     }else{
       t1 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][2,1]), ":")))
       t2 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][5,1]), ":")))
       if(60 * t1[1] + t1[2] < 60 * t2[1] + t2[2]) {
-        message("Game In Progress--Play by Play Data Not Available. Please Check Back After the Game")
+        message("Game In Progress--Play-by-Play Data Not Available. Please Check Back After the Game")
         next
       }
       j <- j + 1
@@ -282,8 +282,8 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         ix1 <- 1
         ix2 <- 1
 
-        # Make sure that when you link shots you flip the shots from full court
-        # coordinates to half court coordinates
+        # Make sure that when you link shots you flip the shots from full-court
+        # coordinates to halfcourt coordinates
         shots$x[shots$y > 47] <- 50 - shots$x[shots$y > 47]
         shots$y[shots$y > 47] <- 94 - shots$y[shots$y > 47]
 
@@ -341,7 +341,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       message("Parsing Possessions")
 
       ### Assumptions:
-      ###   1) Shooting teams have possesion on the play before they shoot
+      ###   1) Shooting teams have possession on the play before they shoot
       ###   2) On made shots (non-free throws), the possession after the play
       ###      switches to the other team
       ###   3) For missed shots, the correct rebound is the first possible
@@ -351,7 +351,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       ###   4) All actions between a missed shot and rebound maintain the same
       ###      before/after possession team
       ###   5) Turnovers/Steals:
-      ###      - If steal, possesion go to stealing team from other team
+      ###      - If steal, possesion goes to stealing team from other team
       ###      - If turnover, possesion goes from turnover team to other team
       ###   6) Fouls: Foul gives possession to non-foul committing team
       ###   7) Missed Free Throws are rebounded by the next unmapped rebound before
