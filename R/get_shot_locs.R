@@ -3,7 +3,7 @@
 #' Extracts Shot location data for a specific game
 #'
 #' @param game_ids Vector of ESPN game_ids
-#' @return A data-frame with shot details (including location) for given game_ids
+#' @return A data frame with shot details (including location) for given game_ids
 #' @export
 get_shot_locs <- function(game_ids) {
   if(any(is.na(game_ids))) {
