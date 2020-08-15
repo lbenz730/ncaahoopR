@@ -1,5 +1,5 @@
 # ncaahoopR <img src="figures/logo.png" align="right" />
-`ncaahoopR` is an R package for working with NCAA Basketball Play-by-Play Data. It scrapes play-by-play data and returns it to the user in a tidy format and allows the user to explore the data with assist networks, shot charts, and in-game win-probability charts.
+`ncaahoopR` is an R package for working with NCAA Basketball Play-by-Play Data. It scrapes play-by-play data and returns it to the user in a tidy format, allowing the user to explore the data with assist networks, shot charts, and in-game win-probability charts.
 
 For pre-scraped schedules, rosters, box scores, and play-by-play data, check out the [ncaahoopR_data repository](https://github.com/lbenz730/ncaahoopR_data).
 
@@ -13,11 +13,11 @@ You can install `ncaahoopR` from GitHub with:
 devtools::install_github("lbenz730/ncaahoopR")
 ```
 
-If you encounter installation issues, the following tips have helped a few users succesfull install the package.
+If you encounter installation issues, the following tips have helped a few users succesfully install the package:
 
-* If asked the option to compile any packages from source rather than installing existing binaries, choose `'No'`.
+* If given the option to compile any packages from source rather than installing existing binaries, choose `'No'`.
 * Windows users with trouble installing the package should try running the following command before reinstalling the package: `Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS = "true")`
-* Windows users with touble installing the `devtools` should try installing the `backports` package first via `install.packages("backports")`.
+* Windows users with touble installing `devtools` should try first installing the `backports` package via `install.packages("backports")`.
 
 
 ## Functions
@@ -28,10 +28,10 @@ as shown in the URL for the summary of the UMBC-Virginia game below.
 ### Scraping Data
 * ```get_pbp(team, season)```: Game entire current season's worth of play-by-play data for a given team and season. `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_pbp_game(game_ids, extra_parse)```:  Get play-by-play data for a specific vector of ESPN game_ids. `extra_parse` is a logical whether to link shot variables and attempt possesion parsing. Default =   `TRUE`.
-* ```get_roster(team, season)```: Get a particular team's roster, `season` defaults to current season, but can be specified in "2019-20" form. 
+* ```get_roster(team, season)```: Get a particular team's roster. `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_schedule(team, season)```: Get a team's schedule. `season` defaults to current season, but can be specified in "2019-20" form. 
-* ```get_game_ids(team, season)```: Get a vector of ESPN game_ids for all games in which ```team``` plays in. `season` defaults to current season, but can be specified in "2019-20" form. 
-* ```get_master_schedule(date)```: Get schedule of all games for given date.
+* ```get_game_ids(team, season)```: Get a vector of ESPN game_ids for all games involving ```team``` specified. `season` defaults to current season, but can be specified in "2019-20" form.
+* ```get_master_schedule(date)```: Get schedule of all games for given date. Use `YYYY-MM-DD` date formatting.
 * ```get_boxscore(game_id)```: Get boxscores for each team in a given game.
 
 The `team` parameter in the above functions must be a valid team name from the `ids` dataset built into the package. See the __Datasets__ section below for more details.
@@ -44,7 +44,7 @@ There are two functions for plotting win probability charts, one that uses base 
 
 ```wp_chart(game_id, home_col, away_col, show_legend = T)```
 
-* ```game_id``` ESPN game_id for the desired win probability chart.
+* ```game_id``` ESPN game_id for the desired contest.
 * ```home_col``` Chart color for home team.
 * ```away_col```: Chart color for away team.
 * `include_spread`: Logical, whether to include pre-game spread in Win Probability calculations. Default = `TRUE`.
@@ -53,7 +53,7 @@ There are two functions for plotting win probability charts, one that uses base 
 
 ```gg_wp_chart(game_id, home_col, away_col, show_labels = T)```
 
-* ```game_id``` ESPN game_id for the desired win probability chart.
+* ```game_id``` ESPN game_id for the desired contest.
 * ```home_col``` Chart color for home team.
 * ```away_col```: Chart color for away team.
 * `include_spread`: Logical, whether to include pre-game spread in Win Probability calculations. Default = `TRUE`.
@@ -63,13 +63,13 @@ __Game Flow Charts__
 
 ```game_flow(game_id, home_col, away_col)```
 
-* ```game_id``` ESPN game_id for the desired game flow chart.
+* ```game_id``` ESPN game_id for the desired contest.
 * ```home_col``` Chart color for home team.
-* ```away_col```: Chart color for away team.
+* ```away_col``` Chart color for away team.
 
 __Game Excitement Index__
 
-```game_exciment_index(game_id, include_spread)```
+```game_exciment_index(game_id, include_spread = T)```
 
 * `include_spread`: Logical, whether to include pre-game spread in Win Probability calculations. Default = `TRUE`.
 
@@ -83,7 +83,7 @@ Returns ```GEI``` (Game Excitement Index) for given ESPN game_id. For more infor
 
 __Game Control Measures__
 
-```average_win_prob(game_id, include_spread)```
+```average_win_prob(game_id, include_spread = T)```
 
 * ESPN game_id for which to compute time-based average win probability (from perspective of home team).
 * `include_spread`: Logical, whether to include pre-game spread in Win Probability calculations. Default = `TRUE`.
@@ -98,67 +98,69 @@ __Game Control Measures__
 
 __Traditional Assist Networks__
 
-```assist_net(team, season, node_col, three_weights, threshold, message = NA, return_stats = T)```
+```assist_net(team, season, node_col, three_weights = T, threshold = T, message = NA, return_stats = T)```
 
 * ```team``` is the ESPN team name, as listed in the `ids` data frame.
-* ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
+* ```season``` Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
 * ```node_col``` is the node color for the graph.
-* ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three-point shots are given 1.5 weight. If FALSE, assisted three-point shots are given weight 1. In both cases, assisted two-point shots are given weight 1. 
-* `threshold`: Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
+* ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three-point shots are given a weight of 1.5. If FALSE, assisted three-point shots are given a weight of 1. In both cases, assisted two-point shots are given a weight of 1. 
+* `threshold` (default = 0) Number between 0-1 indicating minimum percentage of team's assisted baskets a player needs to be involved in to be included in network graph.
 * ```message``` (default = ```NA```) Option for custom message to replace graph title when using a subset of the season (e.g. conference play).
-* `return_stats`: Return Assist Network related statistics (default = `TRUE`)
+* `return_stats` (default = `TRUE`) Return Assist Network-related statistics
 
 __Circle Assist Networks and Player Highlighting__
 
-```circle_assist_net(team, season, highlight_player, highlight_color, three_weights, message = NA, return_stats = T)```
+```circle_assist_net(team, season, highlight_player = NA, highlight_color = NA, three_weights = T, threshold = 0, message = NA, return_stats = T)```
 
 * ```team``` is the ESPN team name, as listed in the `ids` data frame.
 * ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
-* ```highlight_player```: Name of player to highlight in assist network. `NA` yields full team assist network with no player highlighting. Default = `NA`.
-* ```highlight_color```: Color of player links to be highlighted. `NA` if ```highlight_player``` is `NA`.
-* ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three-point shots are given 1.5 weight. If FALSE, assisted three-point shots are given weight 1. In both cases, assisted two-point shots are given weight 1. 
-* `threshold`: Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
-* `message`: User supplied plot title to overwrite default plot title, if desired. Default = `NA`.
-* `return_stats`: Return Assist Network related statistics (default = `TRUE`)
+* ```highlight_player``` (default = `NA`) Name of player to highlight in assist network. `NA` yields full-team assist network with no player highlighting.
+* ```highlight_color``` (default = `NA`) Color of player links to be highlighted. `NA` if ```highlight_player``` is `NA`.
+* ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three-point shots are given a weight of 1.5. If FALSE, assisted three-point shots are given a weight of 1. In both cases, assisted two-point shots are given a weight of 1.  
+* `threshold` (default = 0) Number between 0-1 indicating minimum percentage of team's assisted baskets a player needs to be involved in to be included in network graph.
+* `message` (default = `NA`) User-supplied plot title to overwrite default plot title, if desired.
+* `return_stats` (default = `TRUE`) Return Assist Network-related statistics
 
 ### Shot Charts
 There are currently three functions for scraping and plotting shot location data. These functions are written by [Meyappan Subbaiah](https://github.com/meysubb).
 
-`get_shot_locs(game_id)`: Returns data frame with shot location data when available. Note that if the `extra_parse` flag in `get_pbp_game` is set to `TRUE`, shot location data will already be included in the play by play data (if available).
+`get_shot_locs(game_id)`: Returns data frame with shot location data when available. Note that if the `extra_parse` flag in `get_pbp_game` is set to `TRUE`, shot location data will already be included in the play-by-play data (if available).
 
 * `game_id`: ESPN game_id from which shot locations should be scraped.
 
 `game_shot_chart(game_id, heatmap = F)`: Plots shots for a given game.
 
 * `game_id`: ESPN game_id from which shot locations should be scraped.
-* `heatmap`: Logical, whether to use density-heat map or plot individual points. Default = `FALSE`.
+* `heatmap` (default = `FALSE`): Logical, whether to use density-heat map or plot individual points.
+* shot-plotting colors derived from team's primary color listed in `ncaa_colors` data frame.
 
 `team_shot_chart(game_ids, team, heatmap = F)`: Plots shots taken by team during a given set of game(s).
 
-* `game_ids`: Vector ESPN game_ids from which shot locations should be scraped.
+* `game_ids`: Vector of ESPN game_ids from which shot locations should be scraped.
 * `team`: Which team to chart shots for.
-* `heatmap`: Logical, whether to use density-heat map or plot individual points. Default = `FALSE`.
+* `heatmap` (default = `FALSE`): Logical, whether to use density-heat map or plot individual points.
+* shot-plotting colors derived from team's primary color listed in `ncaa_colors` data frame.
 
 `opp_shot_chart(game_ids, team, heatmap = F)`: Plots shots against a team during a given set of game(s).
 
-* `game_ids`: Vector ESPN game_ids from which shot locations should be scraped.
-* `team`: Which team to chart shots for.
-* `heatmap`: Logical, whether to use density-heat map or plot individual points. Default = `FALSE`.
+* `game_ids`: Vector of ESPN game_ids from which shot locations should be scraped.
+* `team`: Which team to chart opponents' shots for.
+* `heatmap` (default = `FALSE`): Logical, whether to use density-heat map or plot individual points.
 
 ## Datasets
 
-```dict``` A dataframe for converting between team names from various sites.
+```dict``` A data frame for converting between team names from various sites.
  
  * ```NCAA```: the name of the team, as listed on the NCAA website
- * ```ESPN```: the name of the team, as listed on the ESPN URLs
- * ```ESPN_PBP```: the name of the team, as listed on the ESPN Play-By-Play logs
+ * ```ESPN```: the name of the team, as listed in ESPN URLs
+ * ```ESPN_PBP```: the name of the team, as listed in the ESPN Play-By-Play logs
  * ```Warren_Nolan```: the name of the team, as listed on WarrenNolan.com
  * ```Trank```: the name of the team, as listed on barttorvik.com
  * ```name_247```: the name of the team, as listed on 247Sports.com
 
 ```ids``` A data frame for converting between team names from various sites.
  
- * ```team```: the name of the team to be supplied to function in ncaahoopR package
+ * ```team```: the name of the team to be supplied to functions in ncaahoopR package
  * ```id```: team id; used in ESPN URLs
  * ```link```: link; used in ESPN URLs
  
@@ -167,7 +169,7 @@ There are currently three functions for scraping and plotting shot location data
  
 
 * `ncaa_name`: The name of the team, as listed on the NCAA website (same as `dict$NCAA`)
-* `espn_name`: The name of the team, as listed on the ESPN URLs (same as dict$ESPN)}
+* `espn_name`: The name of the team, as listed in ESPN URLs (same as dict$ESPN)}
 * `primary_color`: Hexcode for team's primary color.
 * `secondary_color`: Hexcode for team's secondary color, when available.
 * `tertiary_color`: Hexcode for team's tertiary color, when available.
@@ -253,20 +255,20 @@ If `extra_parse = TRUE` in `get_pbp_game`, the following variables are also incl
 * `shooter`: Name of player taking shot.
 * `assist`: Name of player asssisting shot (assisted shots only)
 * `three_pt`: Logical, if shot is 3-point field goal attempt.
-* `three_pt`: Logical, if shot is free throw attempt.
+* `free_throw`: Logical, if shot is free throw attempt.
 
 ---
-Stand along shot location data frames contain the following variables.
+Stand-alone shot location data frames contain the following variables.
 
 * `team_name`: Name of shooting team.
 * `shot_text`: Description of shot.
 * `color`: Color hexcode used to render shot chart graphic on ESPN.
-* `date`: Date of game.
-* `outcome`: Whether the shot was made or missed.
-* `shooter`: Player attempting the shot.
-* `assister`: Playing assisting the shot.
-* `three_pt`: Logical, whether the shot is a 3-point attempt.
-* `x`: x-coordinate of shot location.
-* `y`: y-coordinate of shot location.
+* `date`: Date of game
+* `outcome`: Whether the shot was made or missed
+* `shooter`: Player attempting the shot
+* `assister`: Playing assisting the shot
+* `three_pt`: Logical, whether the shot is a 3-point attempt
+* `x`: x-coordinate of shot location
+* `y`: y-coordinate of shot location
 
 The court is 50 feet by 94 feet, with (0,0) always being placed in the bottom left corner of the shot chart. Any full-court shot chart rendered using `game_shot_chart()` preserves ESPN shot locations as they are found online, while halfcourt charts using `team_shot_chart()` convert all shot locations to to a 50 feet by 47 feet halfcourt. The perspective on the halfcourt shot charts is as if one is standing under the hoop, looking toward the opposition hoop. (0,0) again represents the bottom left corner and (50, 47) represents the top right corner. 
