@@ -6,11 +6,11 @@
 #' @param node_col Color of nodes in network
 #' @param season Season, as a character,  (e.g. "2019-20"), or vector of ESPN game_ids.
 #' for which data to use in network.
-#' @param three_weights Logical indicating whether to give extra weight for assisted three point shots.
+#' @param three_weights Logical indicating whether to give extra weight for assisted three-point shots.
 #' If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1). Default = `TRUE`.
 #' @param threshold Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.
-#' @param message User supplied plot title to overwrite default plot title, if desired. Default = `NA`.
-#' @param return_stats Return Assist Network related statistics (default = `TRUE`)
+#' @param message User-supplied plot title to overwrite default plot title, if desired. Default = `NA`.
+#' @param return_stats Return Assist Network-related statistics (default = `TRUE`)
 #' @return List with network statistics
 #' \itemize{
 #'  \item{"clust_coeff"} - Network Clustering Coefficient
