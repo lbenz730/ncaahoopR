@@ -37,7 +37,7 @@ game_flow <- function(game_id, home_col, away_col) {
   }
   date <- format(as.Date(data$date[1]), "%B %d, %Y")
 
-  ### Get in to Appropropriate Format
+  ### Get into Appropriate Format
   x <- rbind(
     dplyr::select(data, secs_remaining_absolute, home_score) %>%
       dplyr::mutate("score" = home_score, team = "home") %>%

@@ -5,7 +5,7 @@
 #'
 #' @param team Team to get roster for
 
-#' @return A data-frame of the team's roster
+#' @return A data frame of the team's roster
 #' @export
 get_roster <- function(team, season = current_season) {
   ### Error Testing

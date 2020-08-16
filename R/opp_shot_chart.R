@@ -4,7 +4,7 @@
 #'
 #' @param game_ids Vector of ESPN game_ids
 #' @param team Team Name
-#' @param heatmap Use a density type heatmap (Default = FALSE)
+#' @param heatmap Use a density-type heatmap (Default = FALSE)
 #' @export
 opp_shot_chart <- function(game_ids, team, heatmap = F) {
   if(any(is.na(game_ids))) {

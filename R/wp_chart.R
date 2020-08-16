@@ -47,7 +47,7 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_legen
     data$win_prob <- data$naive_win_prob
   }
 
-  ### Game Excitemant Index
+  ### Game Excitement Index
   data$wp_delta <- 0
   for(i in 2:nrow(data)) {
     data$wp_delta[i] <- abs(data$win_prob[i] - data$win_prob[i-1])

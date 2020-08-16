@@ -4,7 +4,7 @@
 #'
 #' @param game_id ESPN game_id for which to render chart
 #' @param home_col Color of home team for chart
-#' @param away_col Color of away team for chart#'
+#' @param away_col Color of away team for chart
 #' @param include_spread Logical, whether to include pre-game spread in Win Probability
 #' calculations. Default = True.
 #' @param show_labels Logical whether Game Exictement Index and Minimum
@@ -47,7 +47,7 @@ gg_wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_la
     data$win_prob <- data$naive_win_prob
   }
 
-  ### Get in to Appropropriate Format
+  ### Get into Appropriate Format
   x <- rbind(
     dplyr::select(data, secs_remaining_absolute, win_prob) %>%
       dplyr::mutate(team = "home"),
@@ -57,7 +57,7 @@ gg_wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_la
   ) %>%
     dplyr::mutate("secs_elapsed" = max(secs_remaining_absolute) - secs_remaining_absolute)
 
-  ### Game Excitemant Index
+  ### Game Excitement Index
   data$wp_delta <- 0
   for(i in 2:nrow(data)) {
     data$wp_delta[i] <- abs(data$win_prob[i] - data$win_prob[i-1])

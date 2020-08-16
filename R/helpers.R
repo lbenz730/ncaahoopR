@@ -114,7 +114,7 @@ wp_compute <- function(x) {
   return(logit(log_odds))
 }
 
-### Get Approiate Model for Time Remaining
+### Get Appropriate Model for Time Remaining
 secs_to_model <- function(sec, msec) {
   offset <- msec - 2400
   if(offset == 300 & sec > offset) {

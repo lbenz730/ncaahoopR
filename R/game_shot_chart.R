@@ -2,8 +2,8 @@
 #'
 #' Plots game shot locations from one game.
 #'
-#' @param game_id ESPN game_id
-#' @param heatmap Use a density type heatmap
+#' @param game_id ESPN game_id for which to render shot chart
+#' @param heatmap Logical, Use a density-type heatmap, Default = False
 #' @export
 #'
 #'

@@ -4,7 +4,7 @@
 #' Gets schedule for all games on a given date
 #'
 #' @param date Date for which to get schedule (YYYY-MM-DD)
-#' @return A data-frame of the day's schedule of games
+#' @return A data frame of the day's schedule of games
 #' @export
 get_master_schedule <- function(date) {
   ### Error Testing
