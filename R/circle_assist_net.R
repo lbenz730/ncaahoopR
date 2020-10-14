@@ -197,7 +197,7 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   network <- dplyr::filter(network, shot %in% keep, ast %in% keep)
 
 
-  if(any(season %in% c("2016-17", "2017-18", "2018-19"))) {
+  if(any(season %in% c("2016-17", "2017-18", "2018-19", "2019-20", "2020-21"))) {
     labs <- NA
   }
   else{
@@ -224,8 +224,11 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
     dplyr::pull(player)
 
   if(is.na(highlight_player)) {
-    circlize::chordDiagram(network[,-4], order = players,
-                           grid.col = gg_color_hue(length(players)),
+    cols <- gg_color_hue(length(players))
+    names(cols) <- players
+    circlize::chordDiagram(network[,-4], 
+                           order = players,
+                           grid.col = cols,
                            annotationTrack = "grid",
                            preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(network))))))
   }else {
@@ -236,10 +239,12 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
       return(sort(players))
     }
     cols[grepl(highlight_player, players)] <- highlight_color
+    names(cols) <- players
     borders <- filter(network, ast == highlight_player) %>%
       select(ast, shot) %>%
       mutate(graphical = 1)
-    circlize::chordDiagram(network[,-4], order = players,
+    circlize::chordDiagram(network[,-4], 
+                           order = players,
                            grid.col = cols,
                            link.lwd = 2,
                            link.border = borders,

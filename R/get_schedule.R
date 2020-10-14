@@ -26,13 +26,14 @@ get_schedule <- function(team, season = current_season) {
   } else {
     url <- paste0(base_url, ids$id[ids$team == team], "/season/", as.numeric(substring(season, 1, 4)) + 1)
   }
-  schedule <-  XML::readHTMLTable(RCurl::getURL(url))
+  schedule <-  XML::readHTMLTable( RCurl::getURL(url), header = F)
+  
   if(length(schedule) == 0) {
     stop(paste0("No team schedule available for ", team, " / ", season,
                 ". Current ESPN season = \"2020-21\". If you are trying to find the most recent season (2019-20),",
                 " please  supply season = \"2019-20\" argument."))
   }
-  schedule <- schedule[[1]][-1,]
+  schedule <- schedule[[1]][-c(1:2),]
   schedule <- schedule[,1:4]
   names(schedule) <- c("date", "opponent", "result", "record")
   schedule <- schedule[!is.na(schedule$opponent) & schedule$opponent != "Opponent" & schedule$opponent != "OPPONENT",]

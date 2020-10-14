@@ -13,7 +13,7 @@ You can install `ncaahoopR` from GitHub with:
 devtools::install_github("lbenz730/ncaahoopR")
 ```
 
-If you encounter installation issues, the following tips have helped a few users succesfully install the package:
+If you encounter installation issues, the following tips have helped a few users successfully install the package:
 
 * If given the option to compile any packages from source rather than installing existing binaries, choose `'No'`.
 * Windows users with trouble installing the package should try running the following command before reinstalling the package: `Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS = "true")`
@@ -40,7 +40,7 @@ The `team` parameter in the above functions must be a valid team name from the `
 
 __Win Probability Charts__
 
-There are two functions for plotting win probability charts, one that uses base graphics (`wp_chart`), and another that uses the ```ggplot2``` library (```gg_wp_chart```). Both are maintained, as graphics in base R have some nice concatenation principles. Personally, I think ```gg_wp_chart``` looks nicer and is eaiser to edit should additional post-processing be desired.
+A prior version of `wp_chart` used base R while `gg_wp_chart` used the `ggplot2` plotting library. As of the 2020-21 season, both functions call the same `ggplot2` library, and `gg_wp_chart` now simply aliases `wp_chart`
 
 ```wp_chart(game_id, home_col, away_col, show_legend = T)```
 
@@ -77,8 +77,7 @@ Returns ```GEI``` (Game Excitement Index) for given ESPN game_id. For more infor
 
 
 
-
-* [Model Methodology](https://lukebenz.com/post/ncaahoopr_win_prob/ncaahoopr_win_prob/)
+* [Model Methodology](https://lukebenz.com/post/ncaahoopr_win_prob/)
 * [Game Excitement Index](https://lukebenz.com/post/gei/)
 
 __Game Control Measures__
@@ -187,11 +186,11 @@ These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`,
 #### Win Probability Charts
 
 
-![ggwp](figures/gg_wp_chart.png)
-```gg_wp_chart(game_id = 401082978, home_col = "gray", away_col = "orange")```
+![wp](figures/wp_chart.png)
+```wp_chart(game_id = 401082978, home_col = "gray", away_col = "orange")```
 
-![2018 NCAA Championship Game](figures/wp_chart.png)
-```wp_chart(game_id = 401025888, home_col = "navy", away_col = "goldenrod1")```
+![wp2](figures/wp_chart_2.png)
+```wp_chart(game_id = 401168364, home_col = "#7BAFD4", away_col = "#001A57")```
 
 #### Game Flow Chart
 ![game_flow](figures/game_flow.png)
@@ -218,10 +217,10 @@ __NOTE:__ The argument ```season = "2017-18"``` would be replaced with the curre
 
 #### Shot Charts
 ![heatmap](figures/heat_map.png)
-```game_shot_chart(game_id = 401083557, heatmap = T)```
+```game_shot_chart(game_id = 401168364, heatmap = T)```
 
 ![shotchart](figures/shot_chart.png)
-`game_shot_chart(game_id = 401083557)`
+`game_shot_chart(game_id = 401168364)`
 
 ## Glossary
 Play-by-Play files contain the following variables:
