@@ -112,7 +112,7 @@ __Circle Assist Networks and Player Highlighting__
 ```circle_assist_net(team, season, highlight_player = NA, highlight_color = NA, three_weights = T, threshold = 0, message = NA, return_stats = T)```
 
 * ```team``` is the ESPN team name, as listed in the `ids` data frame.
-* ```season```: Options include "2018-19" (for entire season), or a vector of ESPN game IDs. 
+* ```season```: Options include "YYYY-YY" (for entire season), or a vector of ESPN game IDs. 
 * ```highlight_player``` (default = `NA`) Name of player to highlight in assist network. `NA` yields full-team assist network with no player highlighting.
 * ```highlight_color``` (default = `NA`) Color of player links to be highlighted. `NA` if ```highlight_player``` is `NA`.
 * ```three_weights``` (default = ```TRUE```): Logical. If TRUE, assisted three-point shots are given a weight of 1.5. If FALSE, assisted three-point shots are given a weight of 1. In both cases, assisted two-point shots are given a weight of 1.  
@@ -204,8 +204,6 @@ These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`,
 ![Assist All](figures/yale.png)
 ```assist_net(team = "Yale", node_col = "royalblue4", season = "2017-18")```
 
-
-__NOTE:__ The argument ```season = "2017-18"``` would be replaced with the current season. Backdated charts are currently not available.
 
 #### Circle Assist Networks
 ![UNC](figures/unc.png)
