@@ -206,6 +206,17 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       arena <- NA
     }
     
+      ### double check arena if null
+    if(is.na(arena)) {
+      arena <- game_info[grep("<span class=\"game-location\">(.*)</span>", game_info)]
+      if(length(arena) > 0) {  
+        arena <- gsub("\t", "", arena)
+        arena <- gsub("<[^<>]*>", "", arena)
+      } else {
+        arena <- NA
+      }  
+    }
+    
     pbp$arena_location <- locate
     pbp$arena <- arena
     pbp$capacity <- capacity
