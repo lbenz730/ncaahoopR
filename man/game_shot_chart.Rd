@@ -7,9 +7,9 @@
 game_shot_chart(game_id, heatmap = F)
 }
 \arguments{
-\item{game_id}{ESPN game_id}
+\item{game_id}{ESPN game_id for which to render shot chart}
 
-\item{heatmap}{Use a density type heatmap}
+\item{heatmap}{Logical, Use a density-type heatmap, Default = False}
 }
 \description{
 Plots game shot locations from one game.

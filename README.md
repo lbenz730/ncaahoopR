@@ -242,6 +242,12 @@ Play-by-Play files contain the following variables:
 * ```home_timeout_remaining```: Number of timeouts remaining for the home team.
 * ```away_timeout_remaining```: Number of timeouts remaining for the away team.
 * ```home_favored_by```: Number of points by which the home team is favored, prior to tip-off. If Vegas point spread is available on ESPN, that is used as the default. When not available, an attempt is made to impute the pre-game point spread from derived team strengths. Imputed point spreads are not available for games prior to the 2016-17 season or when one of the teams is not in Division 1.
+* ```total_line```: Total Vegas over/under for the game, where available.
+* ```referees``` Referees for the game.
+* `arena_location`: City in which the game was played
+* `arena`: Name of arena where game was played
+* `capacity`: Capacity of arena where game was played
+* `attendance`: Attendance of game, where available
 
 If `extra_parse = TRUE` in `get_pbp_game`, the following variables are also included.
 

@@ -10,7 +10,7 @@ get_master_schedule(date)
 \item{date}{Date for which to get schedule (YYYY-MM-DD)}
 }
 \value{
-A data-frame of the day's schedule of games
+A data frame of the day's schedule of games
 }
 \description{
 Gets schedule for all games on a given date

@@ -10,7 +10,7 @@ get_roster(team, season = current_season)
 \item{team}{Team to get roster for}
 }
 \value{
-A data-frame of the team's roster
+A data frame of the team's roster
 }
 \description{
 Gets team roster for current season.

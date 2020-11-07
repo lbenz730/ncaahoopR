@@ -11,7 +11,7 @@ gg_wp_chart(game_id, home_col, away_col, include_spread = T, show_labels = T)
 
 \item{home_col}{Color of home team for chart}
 
-\item{away_col}{Color of away team for chart#'}
+\item{away_col}{Color of away team for chart}
 
 \item{include_spread}{Logical, whether to include pre-game spread in Win Probability
 calculations. Default = True.}

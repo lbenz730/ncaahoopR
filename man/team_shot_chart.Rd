@@ -11,7 +11,7 @@ team_shot_chart(game_ids, team, heatmap = F)
 
 \item{team}{Team Name}
 
-\item{heatmap}{Use a density type heatmap (Default = FALSE)}
+\item{heatmap}{Use a density-type heatmap (Default = FALSE)}
 }
 \description{
 Plots team shot locations from one game or multiple games.

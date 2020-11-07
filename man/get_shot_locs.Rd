@@ -10,7 +10,7 @@ get_shot_locs(game_ids)
 \item{game_ids}{Vector of ESPN game_ids}
 }
 \value{
-A data-frame with shot details (including location) for given game_ids
+A data frame with shot details (including location) for given game_ids
 }
 \description{
 Extracts Shot location data for a specific game

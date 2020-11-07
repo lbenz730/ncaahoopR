@@ -10,7 +10,7 @@ get_boxscore(game_id)
 \item{game_id}{ESPN game_id for which to scrape boxscore.}
 }
 \value{
-A named list containing two dataframes with box score for each team.
+A named list containing two dataframes with boxscore for each team.
   First team in list is away team, second is home team.
 }
 \description{

@@ -7,13 +7,13 @@
 get_pbp_game(game_ids, extra_parse = T)
 }
 \arguments{
-\item{game_ids}{Vector of ESPN game-IDs}
+\item{game_ids}{Vector of ESPN game_ids}
 
-\item{extra_parse}{Logical whether to link shot variables and possesion parsing
+\item{extra_parse}{Logical whether to link shot variables and possession parsing
 (Default = TRUE).}
 }
 \value{
-A data-frame of the Play-by-Play data fror desired games.
+A data frame of the Play-by-Play data for desired games.
 }
 \description{
 Scrapes ESPN Play-by-Play data for the desired games.

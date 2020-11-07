@@ -22,14 +22,14 @@ for which data to use in network.}
 
 \item{node_col}{Color of nodes in network}
 
-\item{three_weights}{Logical indicating whether to give extra weight for assisted three point shots.
+\item{three_weights}{Logical indicating whether to give extra weight for assisted three-point shots.
 If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1). Default = `TRUE`.}
 
 \item{threshold}{Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.}
 
-\item{message}{User supplied plot title to overwrite default plot title, if desired. Default = `NA`.}
+\item{message}{User-supplied plot title to overwrite default plot title, if desired. Default = `NA`.}
 
-\item{return_stats}{Return Assist Network related statistics (default = `TRUE`)}
+\item{return_stats}{Return Assist Network-related statistics (default = `TRUE`)}
 }
 \value{
 List with network statistics

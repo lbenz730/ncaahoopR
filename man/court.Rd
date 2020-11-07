@@ -4,7 +4,9 @@
 \name{court}
 \alias{court}
 \title{A data frame with NCAA court dimensions.}
-\format{A data frame with NCAA court dimensions}
+\format{
+A data frame with NCAA court dimensions
+}
 \usage{
 court
 }

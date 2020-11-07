@@ -9,13 +9,13 @@ get_pbp(team, season = current_season, extra_parse = T)
 \arguments{
 \item{team}{Team to get Play-by-Play data for}
 
-\item{season}{Season to get schedule for in form "2019-20". Default equals current season.}
+\item{season}{Season for which to get schedule. In form "2019-20". Default equals current season.}
 
 \item{extra_parse}{Logical whether to link shot variables and possesion parsing
 (Default = TRUE).}
 }
 \value{
-A data-frame of the team's Play-by-Play data for the specified season.
+A data frame of the team's Play-by-Play data for the specified season.
 }
 \description{
 Scrapes the current season's Play-by-Play data for desired team. Team

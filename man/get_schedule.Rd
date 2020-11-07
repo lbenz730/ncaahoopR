@@ -9,11 +9,11 @@ get_schedule(team, season = current_season)
 \arguments{
 \item{team}{Team to get schedule for}
 
-\item{season}{Season to get schedule for in form "2019-20". Default equals current season.}
+\item{season}{Season to get schedule for. In form "2019-20". Default equals current season.}
 }
 \value{
-A data-frame of the team's schedule for current season
+A data frame of the team's schedule for requested season
 }
 \description{
-Gets team schedule for current season.
+Gets team schedule for requested season.
 }

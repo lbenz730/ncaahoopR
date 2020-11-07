@@ -21,19 +21,19 @@ circle_assist_net(
 \item{season}{Season, as a character,  (e.g. "2018-19"), or vector of ESPN game_ids.
 for which data to use in network.}
 
-\item{highlight_player}{Name of player to highlight in assist network. `NA` yields full team assist
+\item{highlight_player}{Name of player to highlight in assist network. `NA` yields full-team assist
 network with no player highlighting. Default = `NA`.}
 
 \item{highlight_color}{Color of player links to be highlighted. `NA` if ```highlight_player``` is `NA`.}
 
-\item{three_weights}{Logical indicating whether to give extra weight for assisted three point shots.
+\item{three_weights}{Logical indicating whether to give extra weight for assisted three-point shots.
 If TRUE, assisted three-point shots will be given weight 1.5 (as opposed to weight 1). Default = `TRUE`.}
 
 \item{threshold}{Number between 0-1 indicating minimum percentage of team assists/baskets a player needs to exceed to be included in network. Default = 0.}
 
-\item{message}{User supplied plot title to overwrite default plot title, if desired. Default = `NA`.}
+\item{message}{User-supplied plot title to overwrite default plot title, if desired. Default = `NA`.}
 
-\item{return_stats}{Return Assist Network related statistics (default = `TRUE`)}
+\item{return_stats}{Return Assist Network-related statistics (default = `TRUE`)}
 }
 \value{
 List with network statistics

@@ -7,9 +7,9 @@
 get_game_ids(team, season = current_season)
 }
 \arguments{
-\item{team}{Team to get game_ids}
+\item{team}{Team for which to get game_ids}
 
-\item{season}{Season to get schedule for in form "2019-20". Default equals current season.}
+\item{season}{Season for which to get schedule. In form "2019-20". Default equals current season.}
 }
 \value{
 A vector of the team's ESPN game_ids for current season

@@ -4,12 +4,14 @@
 \name{ids}
 \alias{ids}
 \title{A data frame with ESPN team names to be used in the ncaahoopR package.}
-\format{A data frame with ESPN team names to be used in the ncaahoopR package.
+\format{
+A data frame with ESPN team names to be used in the ncaahoopR package.
 \describe{
- \item{team}{the name of the team to be suplied to function in ncaahoopR package}
+ \item{team}{the name of the team to be supplied to function in ncaahoopR package}
  \item{id}{team id; used in ESPN URLs}
  \item{link}{team URL link; used in ESPN URLs}
-}}
+}
+}
 \usage{
 ids
 }
