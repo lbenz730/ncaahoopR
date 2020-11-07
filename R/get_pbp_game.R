@@ -134,8 +134,8 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     home_abv <- as.character(as.data.frame(tmp[[1]])[2,1])
 
     ### Get Game Line
-    y <- scan(url2, what = "", sep = "\n", quiet = T)
-    y <- y[grep("Line:", y)]
+    game_info <- scan(url2, what = "", sep = "\n", quiet = T)
+    y <- game_info[grep("Line:", game_info)]
     if(length(y) > 0) {
       y <- gsub("<[^<>]*>", "", y)
       y <- gsub("\t", "", y)
@@ -149,6 +149,80 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       line <- NA
     }
 
+    ### Get Total Line
+    total <- game_info[grep("Over/Under:", game_info)]
+    if(length(total) > 0) {
+      total <- gsub("\t", "", total)
+      total <- as.numeric(strsplit(total, " ")[[1]][2])
+    } else {
+      total <- NA
+    }
+
+    ### Get Attendance
+    attend <- game_info[grep("Attendance:", game_info)]
+    if(length(attend) > 0) {
+      attend <- gsub("<[^<>]*>", "", attend)
+      attend <- gsub("\t", "", attend)
+      attend <- gsub(",", "", attend)
+      attend <- as.numeric(strsplit(attend, " ")[[1]][2])
+    } else {
+      attend <- NA
+    }
+  
+    ### Get Capacity
+    capacity <- game_info[grep("Capacity: ", game_info)]
+    if(length(capacity) > 0) {
+      capacity <- gsub(".*Capacity: ", "", capacity)
+      capacity <- gsub("</div>.*", "", capacity)
+      capacity <- as.numeric(gsub(",", "", capacity))
+    } else {
+      capacity <- NA
+    }
+  
+    ### Get Referees
+    ref <- game_info[grep("Referees:", game_info)]
+    if(length(ref) > 0) {
+      ref <- gsub("<[^<>]*>", "", ref)
+      ref <- gsub("\t", "", ref)
+      ref <- gsub(".*Referees: ", "", ref)
+      ref <- strsplit(ref, ",")
+    } else {
+      ref <- NA
+    }
+    
+    ### Get City, State
+    locate <- game_info[grep("^([^,]+), ([A-Z]{2})", game_info)]
+    if(length(locate) > 0) {
+      locate <- gsub("\t", "", locate)
+    } else {
+      locate <- NA
+    }
+
+    ### Get Arena Name
+    arena <- game_info[grep("<div class=\"caption-wrapper\">", game_info)+1]
+    if(length(arena) > 0) {
+      arena <- gsub("\t", "", arena)
+    } else {
+      arena <- NA
+    }
+    
+      ### double check arena if null
+    if(is.na(arena)) {
+      arena <- game_info[grep("<span class=\"game-location\">(.*)</span>", game_info)]
+      if(length(arena) > 0) {  
+        arena <- gsub("\t", "", arena)
+        arena <- gsub("<[^<>]*>", "", arena)
+      } else {
+        arena <- NA
+      }  
+    }
+    
+    pbp$arena_location <- locate
+    pbp$arena <- arena
+    pbp$capacity <- capacity
+    pbp$attendance <- attend
+    pbp$total_line <- total
+    pbp$referees <- ref
     pbp$home_favored_by <- line
     pbp$play_id <- 1:nrow(pbp)
     pbp$game_id <- game_ids[g]
@@ -571,7 +645,8 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
                            secs_remaining_relative, secs_remaining, description,
                            home_score, away_score, score_diff, play_length,
                            win_prob, naive_win_prob, home_time_out_remaining,
-                           away_time_out_remaining, home_favored_by, shot_x,
+                           away_time_out_remaining, home_favored_by, total_line, referees,
+                           arena_location, arena, capacity, attendance, shot_x,
                            shot_y, shot_team, shot_outcome, shooter, assist,
                            three_pt, free_throw, possession_before, possession_after) %>%
         dplyr::rename("secs_remaining_absolute" = secs_remaining,
@@ -583,7 +658,8 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
                            secs_remaining_relative, secs_remaining, description,
                            home_score, away_score, score_diff, play_length,
                            win_prob, naive_win_prob, home_time_out_remaining,
-                           away_time_out_remaining, home_favored_by) %>%
+                           away_time_out_remaining, home_favored_by, total_line, referees,
+                           arena_location, arena, capacity, attendance) %>%
         dplyr::rename("secs_remaining_absolute" = secs_remaining,
                       "secs_remaining" = secs_remaining_relative)
 
