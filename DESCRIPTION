@@ -26,8 +26,7 @@ Imports:
          rjson,
          lubridate,
          tidyr,
-         rvest,
-         glue
+         rvest
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
