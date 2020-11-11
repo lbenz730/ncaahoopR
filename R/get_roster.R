@@ -37,49 +37,14 @@ get_roster <- function(team, season = current_season) {
     tmp <- dplyr::arrange(tmp, number)
     return(tmp)
   } else {
-    season <- as.numeric(substring(season, 1, 4)) + 1
-    x <- rjson::fromJSON(file = paste0("http://barttorvik.com/", season, "_rosters.json"))
-
-    numbers <- rep(NA, length(x))
-    players <- rep(NA, length(x))
-    teams <- rep(NA, length(x))
-    positions <- rep(NA, length(x))
-    heights <- rep(NA, length(x))
-    weights <- rep(NA, length(x))
-    classes <- rep(NA, length(x))
-    hometowns <- rep(NA, length(x))
-
-    for(i in 1:length(x)) {
-      numbers[i] <- unlist(x[[i]])[1]
-      players[i] <- unlist(x[[i]])[2]
-      teams[i] <- unlist(x[[i]])[3]
-      positions[i] <- unlist(x[[i]])[4]
-      heights[i] <- unlist(x[[i]])[5]
-      weights[i] <- unlist(x[[i]])[6]
-      classes[i] <-unlist(x[[i]])[7]
-      hometowns[i] <- unlist(x[[i]])[8]
+    roster <- 
+      suppressWarnings(try(readr::read_csv(paste0("https://raw.githubusercontent.com/lbenz730/ncaahoopR_data/master/",
+                                                  season,"/rosters/", gsub(" ", "_", team), "_roster.csv"))))
+    if(any(class(roster) == 'try-error')) {
+      warning('No Roster Available')
+      return(NULL) 
     }
-
-
-    y <- dplyr::tibble("number" = as.numeric(numbers),
-                       "name" = players,
-                       "position" = positions,
-                       "height" = paste0(gsub("-", "' ", heights), '"'),
-                       "weight" = paste(weights, "lbs"),
-                       "class" = toupper(classes),
-                       "hometown" = as.character(hometowns),
-                       "team" = teams)
-
-    y$weight[y$weight %in% c("0 lbs", " lbs")] <- NA
-    y$height[y$height %in% c("\' \"", "Fr\"", "So\"", "Jr\"" , "Sr\"", "\"")] <- NA
-    y$hometown[y$hometown %in% c("0", "Fr", "So", "Jr", "Sr", "")] <- NA
-
-    trank_team <- dict$Trank[dict$ESPN == team]
-
-    roster <- dplyr::filter(y, team == trank_team) %>%
-      dplyr::select(-team) %>%
-      dplyr::arrange(number)
-
+                             
     return(roster)
   }
 }
