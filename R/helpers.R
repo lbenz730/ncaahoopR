@@ -200,8 +200,8 @@ get_line <- function(data) {
   home <- data$home[1]
 
   ### Convert to NCAA Names
-  away <- dict$NCAA[dict$ESPN_PBP == away]
-  home <- dict$NCAA[dict$ESPN_PBP == home]
+  away <- dict$NCAA[which(dict$ESPN_PBP == away)]
+  home <- dict$NCAA[which(dict$ESPN_PBP == home)]
 
   ### Get Predicted Line
   if(length(home) == 0 | length(away) == 0) {
