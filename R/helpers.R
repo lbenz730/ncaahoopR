@@ -24,31 +24,8 @@ clean <- function(data, half, OTs) {
 
 ### Make ids df (only if package not loaded in memory)
 create_ids_df <- function() {
-  test <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops_Play_By_Play/master/ids.csv",
-                   as.is = T)
-  teams_url <- "http://www.espn.com/mens-college-basketball/teams"
-  x <- scan(teams_url, what = "", sep = "\n", quiet = T)
-  x <- x[grep("mens-college-basketball/team/schedule/_/id/", x)][2]
-  x <- strsplit(x, "Clubhouse")[[1]]
-
-  ids <- data.frame("team" = rep(NA, 353),
-                    "id" = rep(NA, 353),
-                    "link" = rep(NA, 353))
-
-  for(i in 2:length(x)) {
-    y <- strsplit(x[i], "mens-college-basketball/team/_/id/")[[1]][2]
-    y <- unlist(strsplit(y, "/"))
-    ids$id[i-1] <- y[1]
-    ids$link[i-1] <- gsub("\".*", "", y[2])
-    name <- test$team[ids$link[i-1] == test$link]
-    ids$team[i-1] <- ifelse(length(name) > 0, name, NA)
-  }
-
-  tofill <- which(is.na(ids$team))
-  for(i in 1:length(tofill)) {
-    k <- which.min(stringdist::stringdist(ids$link[tofill[i]], test$link[tofill]))
-    ids$team[tofill[i]] <- test$team[tofill[k]]
-  }
+  ids <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops_Play_By_Play/master/ids.csv",
+                   as.is = T) 
 
   return(ids)
 }
