@@ -383,6 +383,16 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
             ix2 <- ix2 + 1
           }
         }
+        
+        ### Free Throws
+        made_shots <- grepl("Made|made", pbp$description) & grepl("Free Throw", pbp$description)
+        missed_shots <- grepl("Missed|missed", pbp$description) & grepl("Free Throw", pbp$description)
+        pbp$shot_outcome[made_shots] <- "made"
+        pbp$shot_outcome[missed_shots] <- "missed"
+        pbp$shooter[made_shots]  <- gsub(" made.*", "", pbp$description[made_shots])
+        pbp$shooter[missed_shots]  <- gsub(" missed.*", "", pbp$description[missed_shots])
+        pbp$free_throw[!is.na(pbp$shooter)] <-  grepl("Free Throw", pbp$description[!is.na(pbp$shooter)])
+
       } else { ### Manually Annotate what we can
         made_shots <- grepl("Made|made", pbp$description)
         missed_shots <- grepl("Missed|missed", pbp$description)
@@ -402,11 +412,11 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         } else if(!is.null(home_roster[1]) & is.null(away_roster[1])) {
           pbp$shot_team[(made_shots | missed_shots) & !tolower(pbp$shooter) %in% tolower(home_roster)] <- pbp$away[1]
         }
-        
+        ### Tag Free Throws
+        pbp$free_throw[!is.na(pbp$shooter)] <- grepl("Free Throw", pbp$description[!is.na(pbp$shooter)])
       }
       
-      ### Tag Free Throws
-      pbp$free_throw[!is.na(pbp$shooter)] <- grepl("Free Throw", pbp$description[!is.na(pbp$shooter)])
+      
       
       
       ########################## Possession Parsing ############################
