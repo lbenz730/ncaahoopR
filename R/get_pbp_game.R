@@ -392,6 +392,14 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         pbp$shooter[made_shots]  <- gsub(" made.*", "", pbp$description[made_shots])
         pbp$shooter[missed_shots]  <- gsub(" missed.*", "", pbp$description[missed_shots])
         pbp$free_throw[!is.na(pbp$shooter)] <-  grepl("Free Throw", pbp$description[!is.na(pbp$shooter)])
+      
+        pbp$shot_team[(made_shots | missed_shots) & tolower(pbp$shooter) %in% tolower(home_roster)] <- pbp$home[1]
+        pbp$shot_team[(made_shots | missed_shots) & tolower(pbp$shooter) %in% tolower(away_roster)] <- pbp$away[1]
+        if(is.null(home_roster[1]) & !is.null(away_roster[1])) {
+          pbp$shot_team[(made_shots | missed_shots) & !tolower(pbp$shooter) %in% tolower(away_roster)] <- pbp$home[1]
+        } else if(!is.null(home_roster[1]) & is.null(away_roster[1])) {
+          pbp$shot_team[(made_shots | missed_shots) & !tolower(pbp$shooter) %in% tolower(home_roster)] <- pbp$away[1]
+        }
 
       } else { ### Manually Annotate what we can
         made_shots <- grepl("Made|made", pbp$description)
