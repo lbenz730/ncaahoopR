@@ -48,7 +48,8 @@ games_2016 <-
   dplyr::mutate("date" = as.Date(paste(year, month, day, sep = "-")))
 games_2017 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2017-18/training.csv", as.is = T)
 games_2018 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2018-19/2019_Final.csv", as.is = T)
-games_2019 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Predictions/predictions.csv", as.is = T)
+games_2019 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2019-20/NCAA_Hoops_Results_3_12_2020.csv", as.is = T)
+games_2020 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Predictions/predictions.csv", as.is = T)
 train <- rbind(select(games_2016, pred_score_diff, wins),
                select(games_2017, pred_score_diff, wins))
 prior <- glm(wins ~ pred_score_diff, data = train, family = binomial)
@@ -234,6 +235,12 @@ get_line <- function(data) {
   ### Impute from 2019-20 Season
   if(game_date >= "2019-11-01" & game_date <= "2020-05-01") {
     game <- dplyr::filter(games_2019, team == home, opponent == away, date == game_date)
+    return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
+  }
+  
+  ### Impute from 2020-21 Season
+  if(game_date >= "2020-11-01" & game_date <= "2021-05-01") {
+    game <- dplyr::filter(games_2020, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
 
