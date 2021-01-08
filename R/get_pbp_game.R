@@ -217,7 +217,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       }  
     }
     
-    pbp$arena_location <- locate
+    pbp$arena_location <- locate[1]
     pbp$arena <- arena
     pbp$capacity <- capacity
     pbp$attendance <- attend
