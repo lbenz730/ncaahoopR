@@ -13,7 +13,10 @@ average_win_prob <- function(game_id, include_spread = T) {
     stop("game_id is missing with no default")
   }
   
-  data <- get_pbp_game(game_id)
+  data <- 
+    get_pbp_game(game_id) %>% 
+    filter(!wrong_time)
+  
   if(is.null(data)) {
     return(NA)
   }

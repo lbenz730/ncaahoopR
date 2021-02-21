@@ -19,7 +19,9 @@ game_flow <- function(game_id, home_col, away_col) {
   }
 
   ### Get Data
-  data <- get_pbp_game(game_id, extra_parse = F)
+  data <- 
+    get_pbp_game(game_id, extra_parse = F) %>% 
+    filter(!wrong_time)
   if(is.null(data)) {
     warning("PBP Data Not Available for Game Flow Chart")
     return(NULL)

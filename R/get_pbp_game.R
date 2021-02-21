@@ -392,7 +392,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         pbp$shooter[made_shots]  <- gsub(" made.*", "", pbp$description[made_shots])
         pbp$shooter[missed_shots]  <- gsub(" missed.*", "", pbp$description[missed_shots])
         pbp$free_throw[!is.na(pbp$shooter)] <-  grepl("Free Throw", pbp$description[!is.na(pbp$shooter)])
-      
+        
         pbp$shot_team[(made_shots | missed_shots) & tolower(pbp$shooter) %in% tolower(home_roster)] <- pbp$home[1]
         pbp$shot_team[(made_shots | missed_shots) & tolower(pbp$shooter) %in% tolower(away_roster)] <- pbp$away[1]
         if(is.null(home_roster[1]) & !is.null(away_roster[1])) {
@@ -400,7 +400,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         } else if(!is.null(home_roster[1]) & is.null(away_roster[1])) {
           pbp$shot_team[(made_shots | missed_shots) & !tolower(pbp$shooter) %in% tolower(home_roster)] <- pbp$away[1]
         }
-
+        
       } else { ### Manually Annotate what we can
         made_shots <- grepl("Made|made", pbp$description)
         missed_shots <- grepl("Missed|missed", pbp$description)
@@ -424,8 +424,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         pbp$free_throw[!is.na(pbp$shooter)] <- grepl("Free Throw", pbp$description[!is.na(pbp$shooter)])
       }
       
-      
-      
+    
       
       ########################## Possession Parsing ############################
       home <- pbp$home[1]
@@ -661,8 +660,8 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       
       ### If we can't match the shooter, we'll assume it was who had 
       ### possession prior to the play
-      df$shot_team[is.na(df$shot_team) & !is.na(df$shot_outcome)] <- 
-        df$possession_before[is.na(df$shot_team) & !is.na(df$shot_outcome)]
+      pbp$shot_team[is.na(pbp$shot_team) & !is.na(pbp$shot_outcome)] <- 
+        pbp$possession_before[is.na(pbp$shot_team) & !is.na(pbp$shot_outcome)]
       
       ### Final Selection of Columns
       pbp <- dplyr::select(pbp, -pre_game_prob)
@@ -690,13 +689,12 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       
     }
     
-    ### Remove buggy score rows
-    rm <- which(pbp$score_diff != dplyr::lag(pbp$score_diff) &
-                  !grepl("made", pbp$description) &
-                  pbp$secs_remaining_absolute > 0)
-    if(length(rm) > 1) {
-      pbp <- pbp[-rm,]
-    }
+    ### Tag buggy score rows
+    pbp$wrong_time <- 
+      pbp$score_diff != dplyr::lag(pbp$score_diff) & 
+      !grepl("made", pbp$description) & 
+      pbp$secs_remaining_absolute > 0
+    
     pbp$home_score[pbp$secs_remaining_absolute == 0] <- max(pbp$home_score, na.rm = T)
     pbp$away_score[pbp$secs_remaining_absolute == 0] <- max(pbp$away_score, na.rm = T)
     pbp$score_diff[pbp$secs_remaining_absolute == 0] <-

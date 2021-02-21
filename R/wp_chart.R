@@ -24,7 +24,9 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_label
   }
   
   ### Get Data
-  data <- get_pbp_game(game_id, extra_parse = F)
+  data <- 
+    get_pbp_game(game_id, extra_parse = F) %>% 
+    filter(!wrong_time)
   if(is.null(data)) {
     warning("PBP Data Not Available for Win Probability Chart")
     return(NULL)
