@@ -222,7 +222,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     pbp$capacity <- capacity
     pbp$attendance <- attend
     pbp$total_line <- total
-    pbp$referees <- ref
+    pbp$referees <- paste(ref, sep = "/")
     pbp$home_favored_by <- line
     pbp$play_id <- 1:nrow(pbp)
     pbp$game_id <- game_ids[g]
@@ -658,6 +658,11 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
           }
         }
       }
+      
+      ### If we can't match the shooter, we'll assume it was who had 
+      ### possession prior to the play
+      df$shot_team[is.na(df$shot_team) & !is.na(df$shot_outcome)] <- 
+        df$possession_before[is.na(df$shot_team) & !is.na(df$shot_outcome)]
       
       ### Final Selection of Columns
       pbp <- dplyr::select(pbp, -pre_game_prob)
