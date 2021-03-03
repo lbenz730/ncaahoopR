@@ -37,7 +37,7 @@ as shown in the URL for the summary of the UMBC-Virginia game below.
 * `season_boxscore(team, season = current_season, aggregate = 'average')`: Returns (aggregated) player stats over the course of a season for a given team.
         * `team`: team to return player stats for.
         * `season`: of form YYYY-YY. Defaults to current season.
-        * `aggregate`: one of 'average' (per-game average statistics), 'total' (sums of season stats) or 'raw' (just return all box scores binded together). 'average' is the default.
+        * `aggregate`: one of 'average' (per-game average statistics), 'total' (sums of season stats) or 'raw' (just return all box scores binded together). 'average' is the default. Contributed in collaboration with [Kurt Wirth](https://github.com/kurtawirth)
 
 The `team` parameter in the above functions must be a valid team name from the `ids` dataset built into the package. See the __Datasets__ section below for more details.
 
