@@ -32,7 +32,12 @@ as shown in the URL for the summary of the UMBC-Virginia game below.
 * ```get_schedule(team, season)```: Get a team's schedule. `season` defaults to current season, but can be specified in "2019-20" form. 
 * ```get_game_ids(team, season)```: Get a vector of ESPN game_ids for all games involving ```team``` specified. `season` defaults to current season, but can be specified in "2019-20" form.
 * ```get_master_schedule(date)```: Get schedule of all games for given date. Use `YYYY-MM-DD` date formatting.
-* ```get_boxscore(game_id)```: Get boxscores for each team in a given game.
+* `get_boxscore(game_id)`: Returns list of 2 data frames, one with each teams' box score for the game in question. Written by [Jared Andrews](https://github.com/j-andrews7).
+
+* `season_boxscore(team, season = current_season, aggregate = 'average')`: Returns (aggregated) player stats over the course of a season for a given team.
+        * `team`: team to return player stats for.
+        * `season`: of form YYYY-YY. Defaults to current season.
+        * `aggregate`: one of 'average' (per-game average statistics), 'total' (sums of season stats) or 'raw' (just return all box scores binded together). 'average' is the default.
 
 The `team` parameter in the above functions must be a valid team name from the `ids` dataset built into the package. See the __Datasets__ section below for more details.
 
@@ -146,6 +151,7 @@ There are currently three functions for scraping and plotting shot location data
 * `team`: Which team to chart opponents' shots for.
 * `heatmap` (default = `FALSE`): Logical, whether to use density-heat map or plot individual points.
 
+
 ## Datasets
 
 ```dict``` A data frame for converting between team names from various sites.
@@ -244,10 +250,11 @@ Play-by-Play files contain the following variables:
 * ```home_favored_by```: Number of points by which the home team is favored, prior to tip-off. If Vegas point spread is available on ESPN, that is used as the default. When not available, an attempt is made to impute the pre-game point spread from derived team strengths. Imputed point spreads are not available for games prior to the 2016-17 season or when one of the teams is not in Division 1.
 * ```total_line```: Total Vegas over/under for the game, where available.
 * ```referees``` Referees for the game.
-* `arena_location`: City in which the game was played
-* `arena`: Name of arena where game was played
-* `capacity`: Capacity of arena where game was played
-* `attendance`: Attendance of game, where available
+* `arena_location`: City in which the game was played.
+* `arena`: Name of arena where game was played.
+* `capacity`: Capacity of arena where game was played.
+* `attendance`: Attendance of game, where available.
+* `wrong_time`: An attempt to label play-by-play events tagged at the wrong time. These are filtered out of all graphical and statistical helper functions, but may still be useful for certain analyses where time of event is of less importance.
 
 If `extra_parse = TRUE` in `get_pbp_game`, the following variables are also included.
 
