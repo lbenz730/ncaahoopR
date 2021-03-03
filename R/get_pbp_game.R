@@ -152,7 +152,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     ### Get Total Line
     total <- game_info[grep("Over/Under:", game_info)]
     if(length(total) > 0) {
-      total <- gsub("\t", "", total)
+      total <- gsub("</*li>", "", gsub("\t", "", total))
       total <- as.numeric(strsplit(total, " ")[[1]][2])
     } else {
       total <- NA
