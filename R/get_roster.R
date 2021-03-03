@@ -1,3 +1,12 @@
+################################  Get Roster #################################
+#' Get Team Roster
+#'
+#' Gets team Roster for requested season.
+#'
+#' @param team Team to get roster for
+#' @param season Season to get roster for. In form "2019-20". Default equals current season.
+#' @return A data frame of the team's roster for requested season
+#' @export
 get_roster <- function(team, season = current_season) {
   ### Error Testing
   if(is.na(team)) {
