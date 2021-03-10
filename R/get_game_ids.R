@@ -38,7 +38,8 @@ get_game_ids <- function(team, season = current_season) {
     base_url <- "https://www.espn.com/mens-college-basketball/team/schedule/_/id/"
     url <- paste0(base_url, ids$id[ids$team == team], "/season/", as.numeric(substring(season, 1, 4)) + 1)
     x <- scan(url, what = "", sep = "\n", quiet = T)
-    y <- unlist(strsplit(x[60], "href=\"http://www.espn.com/mens-college-basketball/game\\?gameId="))
+    ix <- which(grepl('gameId', x))[1]
+    y <- unlist(strsplit(x[ix], "href=\"http://www.espn.com/mens-college-basketball/game\\?gameId="))
     game_ids <- gsub("\".*", "", y)[-1]
 
     ### Postseason Games First
