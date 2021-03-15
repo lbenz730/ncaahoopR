@@ -29,6 +29,7 @@ get_game_ids <- function(team, season = current_season) {
     reg_flag <- grep("<h2>Regular Season</h2>", x)
 
     ### Move Postseason Games to End of Schedule
+    x <- x[!grepl('vs. TBD', x)]
     game_ids <- substring(x, 1, 9)
     if(length(reg_flag) > 0) {
       game_ids <- c(game_ids[-c(1:reg_flag)], game_ids[1:reg_flag])
