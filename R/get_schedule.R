@@ -37,7 +37,9 @@ get_schedule <- function(team, season = current_season) {
   schedule <- schedule[,1:4]
   names(schedule) <- c("date", "opponent", "result", "record")
   schedule <- schedule[!is.na(schedule$opponent) & schedule$opponent != "Opponent" & schedule$opponent != "OPPONENT",]
-  rm_ids <- which(schedule$result %in% c("Postponed", "Cancelled", "Canceled"))
+  ix <- which(grepl('TBD', schedule$opponent) & grepl('Mar|Apr', schedule$date))
+  schedule <- dplyr::bind_rows(schedule[-ix,], schedule[ix,])
+  rm_ids <- which(schedule$result %in% c("Postponed", "Cancelled", "Canceled") | grepl('TBD', schedule$opponent))
   schedule <- schedule[schedule$result != "Postponed",]
   schedule <- schedule[schedule$result != "Cancelled",]
   schedule <- schedule[schedule$result != "Canceled",]
@@ -95,3 +97,4 @@ get_schedule <- function(team, season = current_season) {
   return(schedule[,c("game_id", "date", "opponent", "location",
                      "team_score", "opp_score", "record" )])
 }
+
