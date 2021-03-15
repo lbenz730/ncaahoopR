@@ -37,10 +37,23 @@ get_schedule <- function(team, season = current_season) {
   schedule <- schedule[,1:4]
   names(schedule) <- c("date", "opponent", "result", "record")
   schedule <- schedule[!is.na(schedule$opponent) & schedule$opponent != "Opponent" & schedule$opponent != "OPPONENT",]
-  ix <- which(grepl('TBD', schedule$opponent) & grepl('Mar|Apr', schedule$date))
-  if(length(ix) > 0){
-    schedule <- dplyr::bind_rows(schedule[-ix,], schedule[ix,])
-  }
+  
+  ### Dates
+  schedule$day <- as.numeric(gsub("[^0-9]*", "", schedule$date))
+  schedule$month <- substring(schedule$date, 6, 8)
+  schedule$month[schedule$month == "Nov"] <- 11
+  schedule$month[schedule$month == "Dec"] <- 12
+  schedule$month[schedule$month == "Jan"] <- 1
+  schedule$month[schedule$month == "Feb"] <- 2
+  schedule$month[schedule$month == "Mar"] <- 3
+  schedule$month[schedule$month == "Apr"] <- 4
+  schedule$month <- as.numeric(schedule$month)
+  yy <- as.numeric(substring(season, 3, 4))
+  schedule$year <- ifelse(schedule$month <= 4, yy + 1, yy)
+  schedule$date <- paste(schedule$month, schedule$day, schedule$year, sep = "/")
+  schedule$date <- as.Date(schedule$date, "%m/%d/%y")
+  schedule <- dplyr::arrange(schedule, date)
+  
   rm_ids <- which(schedule$result %in% c("Postponed", "Cancelled", "Canceled") | grepl('TBD', schedule$opponent))
   schedule <- schedule[schedule$result != "Postponed",]
   schedule <- schedule[schedule$result != "Cancelled",]
@@ -72,23 +85,8 @@ get_schedule <- function(team, season = current_season) {
   schedule$team_score[index] <- schedule$opp_score[index]
   schedule$opp_score[index] <- tmp
   
-  ### Dates
-  schedule$day <- as.numeric(gsub("[^0-9]*", "", schedule$date))
-  schedule$month <- substring(schedule$date, 6, 8)
-  schedule$month[schedule$month == "Nov"] <- 11
-  schedule$month[schedule$month == "Dec"] <- 12
-  schedule$month[schedule$month == "Jan"] <- 1
-  schedule$month[schedule$month == "Feb"] <- 2
-  schedule$month[schedule$month == "Mar"] <- 3
-  schedule$month[schedule$month == "Apr"] <- 4
-  schedule$month <- as.numeric(schedule$month)
-  yy <- as.numeric(substring(season, 3, 4))
-  schedule$year <- ifelse(schedule$month <= 4, yy + 1, yy)
-  schedule$date <- paste(schedule$month, schedule$day, schedule$year, sep = "/")
-  
+
   ### Game IDs
-  schedule$date <- as.Date(schedule$date, "%m/%d/%y")
-  schedule <- dplyr::arrange(schedule, date)
   if(length(rm_ids) > 0) {
     schedule$game_id <- get_game_ids(team, season)[-rm_ids]
   } else {
