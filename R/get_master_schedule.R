@@ -70,9 +70,9 @@ get_master_schedule <- function(date) {
 
   x <- scan(url, sep = "\n", what = "")
   x <- x[grep("gameId", x)[1]]
-  x <- gsub("[A-z]", "", x)
-  x <- strsplit(x, "\\?=")[[1]]
+  x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
   x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
+  x <- x[-1]
   x <- x[!is.na(x) & !duplicated(x)]
   x <- x[1:(length(x) - n_canceled - n_postponed)]
 
