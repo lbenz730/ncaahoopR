@@ -23,7 +23,7 @@ get_game_ids <- function(team, season = current_season) {
 
     x <- scan(url, what = "", sep = "\n", quiet = T)
     x <- x[grep("club-schedule", x)]
-    x <- unlist(strsplit(x, "gameId="))
+    x <- unlist(strsplit(x, "/gameId/"))
     x <- x[-1]
     x <- x[1:(floor(length(x)/2))]
     reg_flag <- grep("<h2>Regular Season</h2>", x)
@@ -39,7 +39,7 @@ get_game_ids <- function(team, season = current_season) {
     url <- paste0(base_url, ids$id[ids$team == team], "/season/", as.numeric(substring(season, 1, 4)) + 1)
     x <- scan(url, what = "", sep = "\n", quiet = T)
     ix <- which(grepl('gameId', x))[1]
-    y <- unlist(strsplit(x[ix], "href=\"http://www.espn.com/mens-college-basketball/game\\?gameId="))
+    y <- unlist(strsplit(x[ix], "href=\"http://www.espn.com/mens-college-basketball/game/_/gameId/"))
     game_ids <- gsub("\".*", "", y)[-1]
 
     ### Postseason Games First
