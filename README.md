@@ -1,4 +1,5 @@
 # ncaahoopR <img src="figures/logo.png" align="right" />
+
 `ncaahoopR` is an R package for working with NCAA Basketball Play-by-Play Data. It scrapes play-by-play data and returns it to the user in a tidy format, allowing the user to explore the data with assist networks, shot charts, and in-game win-probability charts.
 
 For pre-scraped schedules, rosters, box scores, and play-by-play data, check out the [ncaahoopR_data repository](https://github.com/lbenz730/ncaahoopR_data).
