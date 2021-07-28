@@ -30,8 +30,8 @@ get_schedule <- function(team, season = current_season) {
   
   if(length(schedule) == 0) {
     stop(paste0("No team schedule available for ", team, " / ", season,
-                ". Current ESPN season = \"2020-21\". If you are trying to find the most recent season (2019-20),",
-                " please  supply season = \"2019-20\" argument."))
+                ". Current ESPN season = \"2021-22\". If you are trying to find the most recent season (2020-21),",
+                " please  supply season = \"2020-21\" argument."))
   }
   schedule <- schedule[[1]][-c(1:2),]
   schedule <- schedule[,1:4]
@@ -87,13 +87,14 @@ get_schedule <- function(team, season = current_season) {
   
 
   ### Game IDs
-  if(length(rm_ids) > 0) {
+  if(length(rm_ids) > 0 & season == current_season) {
     schedule$game_id <- get_game_ids(team, season)[-rm_ids]
   } else {
     schedule$game_id <- get_game_ids(team, season)
   }
   
   ### Return Schedule
+  rownames(schedule) <- NULL
   return(schedule[,c("game_id", "date", "opponent", "location",
                      "team_score", "opp_score", "record" )])
 }
