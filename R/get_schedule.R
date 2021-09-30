@@ -87,7 +87,7 @@ get_schedule <- function(team, season = current_season) {
   
 
   ### Game IDs
-  if(length(rm_ids) > 0 & season == current_season) {
+  if(length(rm_ids) > 0) {
     schedule$game_id <- get_game_ids(team, season)[-rm_ids]
   } else {
     schedule$game_id <- get_game_ids(team, season)
