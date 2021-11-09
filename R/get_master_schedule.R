@@ -69,9 +69,15 @@ get_master_schedule <- function(date) {
   }
 
   x <- RCurl::getURL(url)
+  in_progress <- strsplit(x, "/mens-college-basketball/game\\?gameId=")[[1]]
+  in_progress <- suppressWarnings(as.numeric(unname(sapply(in_progress, function(y){ substring(y, 1, 9) }))))
+  in_progress <- in_progress[-1]
+  in_progress <- in_progress[!is.na(in_progress) & !duplicated(in_progress)]
+  
   x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
   x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
   x <- x[-1]
+  x <- c(in_progress, x)
   x <- x[!is.na(x) & !duplicated(x)]
   x <- x[1:(length(x) - n_canceled - n_postponed)]
 
