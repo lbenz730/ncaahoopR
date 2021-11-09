@@ -37,7 +37,7 @@ get_game_ids <- function(team, season = current_season) {
   } else { ### Old Season (Get Them from Schedule)
     base_url <- "https://www.espn.com/mens-college-basketball/team/schedule/_/id/"
     url <- paste0(base_url, ids$id[ids$team == team], "/season/", as.numeric(substring(season, 1, 4)) + 1)
-
+    
     x <- RCurl::getURL(url)
     x <- strsplit(x, 'gameId')[[1]]
     
@@ -50,8 +50,17 @@ get_game_ids <- function(team, season = current_season) {
     played_dates <- played_dates[!is.na(played_dates)]
     
     unplayed_dates <- unlist(purrr::map(dates, ~setdiff(.x, dplyr::last(.x))))
+    if(length(unplayed_dates) == 0 & length(game_ids) > length(played_dates)) {
+      delta <- length(game_ids) - length(played_dates)
+      game_ids <- game_ids[c(1:(length(played_dates) - delta + 1), length(game_ids))]
+    } else {
+      game_ids <- 
+        unique(c(game_ids[1:length(played_dates)],
+                 game_ids[(length(game_ids)-length(unplayed_dates) + 1):length(game_ids)]))
+    }
     
-    df_id <- dplyr::tibble('game_id' = game_ids,'date' = c(played_dates, unplayed_dates)) 
+    df_id <- dplyr::tibble('game_id' = game_ids,
+                           'date' = c(played_dates, unplayed_dates)) 
     df_id <- dplyr::mutate(df_id, 'year' = ifelse(grepl('Nov|Dec', date), 
                                                   substring(season, 1, 4),
                                                   paste0('20', substring(season, 6, 7))))
