@@ -68,8 +68,7 @@ get_master_schedule <- function(date) {
                               "home_score" = NA)
   }
 
-  x <- scan(url, sep = "\n", what = "")
-  x <- x[grep("gameId", x)[1]]
+  x <- RCurl::getURL(url)
   x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
   x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
   x <- x[-1]
