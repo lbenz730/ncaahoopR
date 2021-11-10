@@ -23,13 +23,14 @@ get_game_ids <- function(team, season = current_season) {
     
     x <- scan(url, what = "", sep = "\n", quiet = T)
     x <- x[grep("club-schedule", x)]
+    x <- gsub('\\?gameId=', '/gameId/', x)
     x <- unlist(strsplit(x, "/gameId/"))
     x <- x[-1]
     x <- x[1:(floor(length(x)/2))]
     reg_flag <- grep("<h2>Regular Season</h2>", x)
+    game_ids <- substring(x, 1, 9)
     
     ### Move Postseason Games to End of Schedule
-    game_ids <- substring(x, 1, 9)
     if(length(reg_flag) > 0) {
       game_ids <- c(game_ids[-c(1:reg_flag)], game_ids[1:reg_flag])
     }
