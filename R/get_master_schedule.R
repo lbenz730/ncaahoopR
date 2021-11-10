@@ -121,7 +121,7 @@ get_master_schedule <- function(date) {
   }
 
   schedule <- dplyr::filter(schedule, !is.na(home), !is.na(away))
-  schedule <- dplyr::mutate(schedule, "game_id" = x)
+  schedule <- dplyr::mutate(schedule, "game_id" = x[1:nrow(schedule)])
   schedule <- dplyr::select(schedule, game_id, away, home, away_rank, home_rank, away_score, home_score)
   schedule$date <- as.Date(date)
 
