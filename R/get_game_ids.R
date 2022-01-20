@@ -54,7 +54,7 @@ get_game_ids <- function(team, season = current_season) {
     if(length(unplayed_dates) == 0 & length(game_ids) > length(played_dates)) {
       delta <- length(game_ids) - length(played_dates)
       game_ids <- game_ids[c(1:(length(played_dates) - delta + 1), length(game_ids))]
-    } else {
+    } else if(length(unplayed_dates) > 0) {
       game_ids <- 
         unique(c(game_ids[1:length(played_dates)],
                  game_ids[(length(game_ids)-length(unplayed_dates) + 1):length(game_ids)]))
