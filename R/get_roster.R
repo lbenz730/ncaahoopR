@@ -51,7 +51,7 @@ get_roster <- function(team, season = current_season) {
   } else {
     roster <-
       suppressWarnings(try(readr::read_csv(paste0("https://raw.githubusercontent.com/lbenz730/ncaahoopR_data/master/",
-                                                  season,"/rosters/", gsub(" ", "_", team), "_roster.csv"))))
+                                                  season,"/rosters/", gsub(" ", "_", team), "_roster.csv"), show_col_types = F)))
     if(any(class(roster) == 'try-error')) {
       warning('No Roster Available')
       return(NULL)
