@@ -50,8 +50,11 @@ get_master_schedule <- function(date) {
   
   ### Clean Team Name
   clean <- function(team) {
+    team <- gsub('Â', '', team)
+    team <- gsub('Ã©','é', team) 
+    team <- gsub('@','', team) 
     team <- gsub("[#0-9]", "", team)
-    team <- gsub("\\s[A-Z]*-*[A-Z]*$", "", team)
+    # team <- gsub("\\s[A-Z]*-*[A-Z]*$", "", team)
     team <- gsub("TA&M", "", team)
     team <- gsub("W&M", "", team)
     team <- gsub("\\s*$", "", gsub("^\\s*", "", team))
@@ -77,9 +80,10 @@ get_master_schedule <- function(date) {
   x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
   x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
   x <- x[-1]
-  if(date == Sys.Date()) {
-    x <- c(in_progress, x)
-  }
+  # if(date == Sys.Date()) {
+  #   x <- c(in_progress, x)
+  # }
+  x <- c(in_progress, x)
   x <- x[!is.na(x) & !duplicated(x)]
   x <- x[1:(length(x) - n_canceled - n_postponed)]
   
