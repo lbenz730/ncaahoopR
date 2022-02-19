@@ -30,7 +30,10 @@ get_game_ids <- function(team, season = current_season) {
   played_dates <- purrr::map_chr(dates, dplyr::last)
   played_dates <- played_dates[!is.na(played_dates)]
   
-  unplayed_dates <- unlist(purrr::map(dates, ~setdiff(.x, dplyr::last(.x))))
+  unplayed_dates <- unlist(purrr::map(dates, ~{
+    if(length(.x) > 1){
+      .x[1:(length(.x)-1)] 
+    }}))
   if(length(unplayed_dates) == 0 & length(game_ids) > length(played_dates)) {
     delta <- length(game_ids) - length(played_dates)
     game_ids <- game_ids[c(1:(length(played_dates) - delta + 1), length(game_ids))]
