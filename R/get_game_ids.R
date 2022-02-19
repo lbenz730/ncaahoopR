@@ -40,7 +40,7 @@ get_game_ids <- function(team, season = current_season) {
                game_ids[(length(game_ids)-length(unplayed_dates) + 1):length(game_ids)]))
   }
   
-  df_id <- dplyr::tibble('game_id' = game_ids,
+  df_id <- dplyr::tibble('game_id' = game_ids[1:length(c(played_dates, unplayed_dates))],
                          'date' = c(played_dates, unplayed_dates)) 
   df_id <- dplyr::mutate(df_id, 'year' = ifelse(grepl('Nov|Dec', date), 
                                                 substring(season, 1, 4),
