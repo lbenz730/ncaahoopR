@@ -73,8 +73,13 @@ get_master_schedule <- function(date) {
   
   x <- RCurl::getURL(url)
   in_progress <- strsplit(x, "/mens-college-basketball/game\\?gameId=")[[1]]
+  if(date == Sys.Date()) {
+    ix <- grepl('class=\"Schedule__liveLink ', in_progress) | grepl('^\\d+\">\\d+:\\d+\\s?PM', in_progress)
+  } else {
+   ix <- -1 
+  }
+  in_progress <- in_progress[ix]
   in_progress <- suppressWarnings(as.numeric(unname(sapply(in_progress, function(y){ substring(y, 1, 9) }))))
-  in_progress <- in_progress[-1]
   in_progress <- in_progress[!is.na(in_progress) & !duplicated(in_progress)]
   
   x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
@@ -108,6 +113,7 @@ get_master_schedule <- function(date) {
   
   winners <- unname(sapply(completed$result, function(y) { gsub("\\s[0-9]*.*", "", y) }))
   scores <- as.numeric(gsub("[^0-9]", "", gsub("\\(.*\\)", "", unlist(strsplit(completed$result, ",")))))
+  scores[completed$result == 'LIVE' | grepl('PM', completed$result)] <- NA
   
   if(length(scores) > 0) {
     winning_scores <- scores[seq(1, length(scores) - 1, 2)]
