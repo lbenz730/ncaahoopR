@@ -24,7 +24,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
   
   for(g in 1:length(game_ids)) {
     message(paste0("Scraping Data for Game: ", g, " of ", length(game_ids)))
-    if(is.nit(game_ids[g])) {
+    if(is.nit(game_ids[g]) & get_date(game_ids[g]) <= '2022-01-01') {
       message("NIT Game--Play-by-Play Data Not Available at this time")
       next
     }
