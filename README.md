@@ -48,7 +48,7 @@ __Win Probability Charts__
 
 The latest function for plotting win probability charts is `wp_chart_new`. Following the 2021-22 season other win probability chart functions will be deprecated and replaced by this function (it will be renamed to `wp_chart` but I don't want to break any existing pipelines during the season). It no longer requires users to input colors. For best results consider saving via ggsave(filename, height = 9/1.2, width = 16/1.2) (or some other 16/9 aspect ratio.) 
 
-```wp_chart_new(game_id, home_col = NULL, away_col = NULL, include_spread = T, show_legend = T)
+```wp_chart_new(game_id, home_col = NULL, away_col = NULL, include_spread = T, show_legend = T)```
 
 * ```game_id``` ESPN game_id for the desired contest.
 * ```home_col``` Chart color for home team (if NULL will default to `ncaa_colors` primary_color field).
