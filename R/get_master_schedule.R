@@ -58,6 +58,7 @@ get_master_schedule <- function(date) {
     team <- gsub("TA&M", "", team)
     team <- gsub("W&M", "", team)
     team <- gsub("\\s*$", "", gsub("^\\s*", "", team))
+    team <- gsub("Men's Basketball.*$", '', team)
     return(team)
   }
   
