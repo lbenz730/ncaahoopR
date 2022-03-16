@@ -106,8 +106,6 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
   }
   
   x$favored <- x$win_prob >= 0.5
-  x$winning_upper <- pmax(x$win_prob, 0.5)
-  x$losing_lower <- pmin(x$win_prob, 0.5)
   
   ix_switch <- which(x$favored != dplyr::lag(x$favored, 1))
   if(length(ix_switch) > 0) {
@@ -123,6 +121,10 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
     
     x <- dplyr::bind_rows(x, add)
   }
+  
+  
+  x$winning_upper <- pmax(x$win_prob, 0.5)
+  x$losing_lower <- pmin(x$win_prob, 0.5)
   
   cols <- c(losing_col, winning_col)
   if(all(x$favored)) {
