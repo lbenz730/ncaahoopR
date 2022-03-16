@@ -4,10 +4,20 @@
 \alias{wp_chart_new}
 \title{Win Probability Chart}
 \usage{
-wp_chart_new(game_id, include_spread = T, show_labels = T)
+wp_chart_new(
+  game_id,
+  home_col = NULL,
+  away_col = NULL,
+  include_spread = T,
+  show_labels = T
+)
 }
 \arguments{
 \item{game_id}{ESPN game_id for which to render chart}
+
+\item{home_col}{Color of home team for chart. Defaults to primary color if NULL}
+
+\item{away_col}{Color of away team for chart. Defaults to primary color if NULL}
 
 \item{include_spread}{Logical, whether to include pre-game spread in Win Probability
 calculations. Default = True.}

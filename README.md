@@ -18,7 +18,7 @@ If you encounter installation issues, the following tips have helped a few users
 
 * If given the option to compile any packages from source rather than installing existing binaries, choose `'No'`.
 * Windows users with trouble installing the package should try running the following command before reinstalling the package: `Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS = "true")`
-* Windows users with touble installing `devtools` should try first installing the `backports` package via `install.packages("backports")`.
+* Windows users with trouble installing `devtools` should try first installing the `backports` package via `install.packages("backports")`.
 
 
 ## Functions
@@ -46,9 +46,20 @@ The `team` parameter in the above functions must be a valid team name from the `
 
 __Win Probability Charts__
 
+The latest function for plotting win probability charts is `wp_chart_new`. Following the 2021-22 season other win probability chart functions will be deprecated and replaced by this function (it will be renamed to `wp_chart` but I don't want to break any existing pipelines during the season). It no longer requires users to input colors. For best results consider saving via ggsave(filename, height = 9/1.2, width = 16/1.2) (or some other 16/9 aspect ratio.) 
+
+```wp_chart_new(game_id, home_col = NULL, away_col = NULL, include_spread = T, show_legend = T)
+
+* ```game_id``` ESPN game_id for the desired contest.
+* ```home_col``` Chart color for home team (if NULL will default to `ncaa_colors` primary_color field).
+* ```away_col```: Chart color for away team (if NULL will default to `ncaa_colors` primary_color field).
+* `include_spread`: Logical, whether to include pre-game spread in Win Probability calculations. Default = `TRUE`.
+* ```show_legend```: Logical, whether or not to show legend/text on chart. Default = `TRUE`.
+
+
 A prior version of `wp_chart` used base R while `gg_wp_chart` used the `ggplot2` plotting library. As of the 2020-21 season, both functions call the same `ggplot2` library, and `gg_wp_chart` now simply aliases `wp_chart`
 
-```wp_chart(game_id, home_col, away_col, show_legend = T)```
+```wp_chart(game_id, home_col, away_col, include_spread = T, show_legend = T)```
 
 * ```game_id``` ESPN game_id for the desired contest.
 * ```home_col``` Chart color for home team.
@@ -192,6 +203,8 @@ These datasets can be loaded by typing ```data("ids")```, `data("ncaa_colors")`,
 ## Examples
 #### Win Probability Charts
 
+![wp3](figures/wp_chart_new.png)
+`wp_chart_new(401403405)`
 
 ![wp](figures/wp_chart.png)
 ```wp_chart(game_id = 401082978, home_col = "gray", away_col = "orange")```

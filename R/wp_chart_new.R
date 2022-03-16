@@ -3,13 +3,15 @@
 #' Renders Win Probability Charts in ggplot
 #'
 #' @param game_id ESPN game_id for which to render chart
+#' @param home_col Color of home team for chart. Defaults to primary color if NULL
+#' @param away_col Color of away team for chart. Defaults to primary color if NULL
 #' @param include_spread Logical, whether to include pre-game spread in Win Probability
 #' calculations. Default = True.
 #' @param show_labels Logical whether Game Exictement Index and Minimum
 #' Win Probability metrics should be displayed on the plot. Default = TRUE.
 #' @export
 #'
-wp_chart_new <- function(game_id, include_spread = T, show_labels = T) {
+wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spread = T, show_labels = T) {
   ### Error Testing
   if(is.na(game_id)) {
     stop("game_id is missing with no default")
@@ -28,9 +30,14 @@ wp_chart_new <- function(game_id, include_spread = T, show_labels = T) {
   home_team <- data$home[1]
   away_team <- data$away[1]
   
-  home_col <- ncaa_colors$primary_color[ ncaa_colors$espn_name == dict$ESPN[dict$ESPN_PBP == home_team][1] ]
+  if(is.null(home_col)) {
+    home_col <- ncaa_colors$primary_color[ ncaa_colors$espn_name == dict$ESPN[dict$ESPN_PBP == home_team][1] ]
+  }
+  if(is.null(away_col)) {
+    away_col <- ncaa_colors$primary_color[ ncaa_colors$espn_name == dict$ESPN[dict$ESPN_PBP == away_team][1] ] 
+  }
+  
   home_url <- ncaa_colors$logo_url[ ncaa_colors$espn_name == dict$ESPN[dict$ESPN_PBP == home_team][1] ]
-  away_col <- ncaa_colors$primary_color[ ncaa_colors$espn_name == dict$ESPN[dict$ESPN_PBP == away_team][1] ]
   away_url <- ncaa_colors$logo_url[ ncaa_colors$espn_name == dict$ESPN[dict$ESPN_PBP == away_team][1] ]
   
   plot_lines <- 1200
@@ -124,7 +131,7 @@ wp_chart_new <- function(game_id, include_spread = T, show_labels = T) {
   
   p <-
     ggplot2::ggplot(x, aes(x = secs_elapsed/60, y = win_prob)) +
-    ggplot2::geom_line(size = 1, aes(col = favored, group = 1)) +
+    ggplot2::geom_line(size = 1, aes(col = favored, group = 1), lineend = 'round') +
     ggplot2::geom_ribbon(ymin = 0.5,
                          aes(ymax = winning_upper),
                          fill = winning_col,
