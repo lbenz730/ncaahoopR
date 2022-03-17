@@ -31,10 +31,10 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
   away_team <- data$away[1]
   
   if(is.null(home_col)) {
-    home_col <- ncaa_colors$primary_color[ ncaa_colors$espn_name == dict$ESPN[dict$ESPN_PBP == home_team][1] ]
+    home_col <- ncaa_colors$primary_color[ ncaa_colors$espn_name == dict$ESPN[dict$ESPN_PBP == home_team  | dict$ESPN_PBP == gsub('State', 'St', home_team)][1] ]
   }
   if(is.null(away_col)) {
-    away_col <- ncaa_colors$primary_color[ ncaa_colors$espn_name == dict$ESPN[dict$ESPN_PBP == away_team][1] ] 
+    away_col <- ncaa_colors$primary_color[ ncaa_colors$espn_name == dict$ESPN[dict$ESPN_PBP == away_team | dict$ESPN_PBP == gsub('State', 'St', away_team)][1] ] 
   }
   
   home_url <- ncaa_colors$logo_url[ ncaa_colors$espn_name == dict$ESPN[dict$ESPN_PBP == home_team][1] ]
