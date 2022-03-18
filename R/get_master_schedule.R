@@ -24,7 +24,7 @@ get_master_schedule <- function(date) {
   z <- XML::readHTMLTable(RCurl::getURL(url))
   if(length(z) > 1) {
     schedule <- as.data.frame(z[[1]])[,c(1,2)]
-    completed <- as.data.frame(z[[2]][-1,1:3])
+    completed <- as.data.frame(z[[2]][, 1:3])
     names(completed) <- c("away", "home", "result")
     names(schedule) <- c("away", "home")
   } else {
@@ -41,10 +41,11 @@ get_master_schedule <- function(date) {
   n_canceled <- sum(grepl("Canceled", completed$result))
   n_postponed <- sum(grepl("Postponed", completed$result))
   completed <- dplyr::filter(completed, result != "Canceled", result != "Postponed")
+  n_completed <- nrow(completed)
   
   ### Extract Ranking
   ranking <- function(team) {
-    rank <- gsub("[^0-9]", "", team)
+    rank <- gsub("[^0-9]", "", gsub("Men's Basketball.*$", '', team))
     return(ifelse(rank == "", NA, rank))
   }
   
@@ -76,22 +77,46 @@ get_master_schedule <- function(date) {
   in_progress <- strsplit(x, "/mens-college-basketball/game\\?gameId=")[[1]]
   if(date == Sys.Date()) {
     ix <- grepl('class=\"Schedule__liveLink ', in_progress) | grepl('^\\d+\">\\d+:\\d+\\s?PM', in_progress)
+    ix_completed <- !ix
+    
+    
+    in_progress <- in_progress[ix]
+    in_progress <- suppressWarnings(as.numeric(unname(sapply(in_progress, function(y){ substring(y, 1, 9) }))))
+    in_progress <- in_progress[!is.na(in_progress) & !duplicated(in_progress)]
+    
+    x <- RCurl::getURL(url)
+    x<- strsplit(x, "/mens-college-basketball/game\\?gameId=")[[1]]
+    x <- x[ix_completed]
+    x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
+    x <- x[!is.na(x) & !duplicated(x)]
   } else {
    ix <- -1 
+   
+   in_progress <- in_progress[ix]
+   in_progress <- suppressWarnings(as.numeric(unname(sapply(in_progress, function(y){ substring(y, 1, 9) }))))
+   in_progress <- in_progress[!is.na(in_progress) & !duplicated(in_progress)]
+   
+   x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
+   x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
+   x <- x[-1]
+   
   }
-  in_progress <- in_progress[ix]
-  in_progress <- suppressWarnings(as.numeric(unname(sapply(in_progress, function(y){ substring(y, 1, 9) }))))
-  in_progress <- in_progress[!is.na(in_progress) & !duplicated(in_progress)]
+  n_scheduled <- 0
+  if(any(class(schedule) == 'data.frame')) {
+    n_scheduled <- nrow(schedule)
+  }
   
-  x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
-  x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
-  x <- x[-1]
+
+  
+  # x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
+  # x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
+  # x <- x[-1]
   # if(date == Sys.Date()) {
   #   x <- c(in_progress, x)
   # }
   x <- c(in_progress, x)
   x <- x[!is.na(x) & !duplicated(x)]
-  x <- x[1:(length(x) - n_canceled - n_postponed)]
+  x <- x[1:(n_scheduled + n_completed - n_canceled - n_postponed)]
   
   ### Add in Completed Games
   find_anchor <- function(team) {
