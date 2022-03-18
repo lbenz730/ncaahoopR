@@ -34,7 +34,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
     stop("node_col is missing with no default")
   }
 
-  text_team <- dict$ESPN_PBPc[dict$ESPN == team]
+  text_team <- dict$ESPN_PBP[dict$ESPN == team]
   text_team <- text_team[!is.na(text_team)]
 
   ### Warnings
