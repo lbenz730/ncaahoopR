@@ -114,9 +114,9 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
         dplyr::slice(x, ix_switch) %>% dplyr::mutate(id = 1:length(ix_switch)),
         dplyr::slice(x, ix_switch - 1) %>% dplyr::mutate(id = 1:length(ix_switch))) %>% 
       dplyr::group_by(id) %>% 
-      dplyr::summarise('win_prob' = 0.5,
-                       'favored' = favored[1],
-                       'secs_elapsed' = mean(secs_elapsed))
+      dplyr::summarise('secs_elapsed' = secs_elapsed[1] + (secs_elapsed[2] - secs_elapsed[1]) * abs(win_prob[1] - 0.5)/abs(win_prob[1] - win_prob[2]),
+                       'win_prob' = 0.5,
+                       'favored' = favored[1])
     
     
     x <- dplyr::bind_rows(x, add)
