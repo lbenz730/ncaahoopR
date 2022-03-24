@@ -174,9 +174,14 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
     ggplot2::scale_color_manual(values = cols) + 
     ggimage::geom_image(x = 5, y = 0.1, image = losing_url, asp = 16/9, size = 0.08) + 
     ggimage::geom_image(x = 5, y = 0.9, image = winning_url, asp = 16/9, size = 0.08) + 
-    scale_size_identity() + 
-    ggplot2::annotate("text", x = 35, y = 0.05, label = gei, size = 3.5) +
-    ggplot2::annotate("text", x = 35, y = 0.025, label = min_prob, size = 3.5)
+    scale_size_identity() 
+  
+  if(show_labels) {
+    p <- 
+      p + 
+      ggplot2::annotate("text", x = 35, y = 0.05, label = gei, size = 3.5) +
+      ggplot2::annotate("text", x = 35, y = 0.025, label = min_prob, size = 3.5)
+  }
   
   p
 }
