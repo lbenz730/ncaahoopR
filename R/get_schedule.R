@@ -30,8 +30,8 @@ get_schedule <- function(team, season = current_season) {
   
   if(length(schedule) == 0) {
     stop(paste0("No team schedule available for ", team, " / ", season,
-                ". Current ESPN season = \"2021-22\". If you are trying to find the most recent season (2020-21),",
-                " please  supply season = \"2020-21\" argument."))
+                ". Current ESPN season = \"2022-23\". If you are trying to find the most recent season (2021-22),",
+                " please  supply season = \"2021-22\" argument."))
   }
   schedule <- schedule[[1]][-c(1:2),]
   schedule <- schedule[,1:4]
