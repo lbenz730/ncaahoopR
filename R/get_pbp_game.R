@@ -694,6 +694,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       pbp$score_diff != dplyr::lag(pbp$score_diff) & 
       !grepl("made", pbp$description) & 
       pbp$secs_remaining_absolute > 0
+    pbp$wrong_time[1] <- F
     
     pbp$home_score[pbp$secs_remaining_absolute == 0] <- max(pbp$home_score, na.rm = T)
     pbp$away_score[pbp$secs_remaining_absolute == 0] <- max(pbp$away_score, na.rm = T)
