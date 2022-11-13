@@ -60,6 +60,7 @@ get_master_schedule <- function(date) {
     team <- gsub("W&M", "", team)
     team <- gsub("\\s*$", "", gsub("^\\s*", "", team))
     team <- gsub("Men's Basketball.*$", '', team)
+    team <- gsub('^[^[:alnum:]]*', '', team)
     return(team)
   }
   
@@ -90,23 +91,23 @@ get_master_schedule <- function(date) {
     x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
     x <- x[!is.na(x) & !duplicated(x)]
   } else {
-   ix <- -1 
-   
-   in_progress <- in_progress[ix]
-   in_progress <- suppressWarnings(as.numeric(unname(sapply(in_progress, function(y){ substring(y, 1, 9) }))))
-   in_progress <- in_progress[!is.na(in_progress) & !duplicated(in_progress)]
-   
-   x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
-   x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
-   x <- x[-1]
-   
+    ix <- -1 
+    
+    in_progress <- in_progress[ix]
+    in_progress <- suppressWarnings(as.numeric(unname(sapply(in_progress, function(y){ substring(y, 1, 9) }))))
+    in_progress <- in_progress[!is.na(in_progress) & !duplicated(in_progress)]
+    
+    x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
+    x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
+    x <- x[-1]
+    
   }
   n_scheduled <- 0
   if(any(class(schedule) == 'data.frame')) {
     n_scheduled <- nrow(schedule)
   }
   
-
+  
   
   # x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
   # x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
@@ -145,7 +146,26 @@ get_master_schedule <- function(date) {
     winning_scores <- scores[seq(1, length(scores) - 1, 2)]
     losing_scores <- scores[seq(2, length(scores), 2)]
     
-    index <- sapply(completed$away_anchor, function(y) { y %in% winners })
+    # index <- sapply(completed$away_anchor, function(y) { y %in% winners })
+    index <- c()
+    for(i in 1:length(winning_scores)) {
+      if(grepl(tolower(winners[i]), tolower(completed$home[i])) & !grepl(tolower(winners[i]), tolower(completed$away[i]))) {
+        index <- c(index, F) 
+      } else if(!grepl(tolower(winners[i]), tolower(completed$home[i])) & grepl(tolower(winners[i]), tolower(completed$away[i]))) {
+        index <- c(index, T)  
+      } else if(tolower(substr(winners[i], 1, 1)) == tolower(substr(completed$home[i], 1,1)) & 
+                tolower(substr(winners[i], 1, 1)) != tolower(substr(completed$away[i], 1,1))) {
+        index <- c(index, F) 
+      } else if(tolower(substr(winners[i], 1, 1)) != tolower(substr(completed$home[i], 1,1)) & 
+                tolower(substr(winners[i], 1, 1)) == tolower(substr(completed$away[i], 1,1))) {
+        index <- c(index, T) 
+      } else if(sum(tolower(unlist(strsplit(completed$home[i], ''))) %in% tolower(unlist(strsplit(winners[i], '')))) > 
+                sum(tolower(unlist(strsplit(completed$away[i], ''))) %in% tolower(unlist(strsplit(winners[i], ''))))) {
+        index <- c(index, F)
+      } else {
+        index <- c(index, stringdist::stringdist(completed$home[i], winners[i]) > stringdist::stringdist(completed$away[i], winners[i]))
+      }
+    }
     completed$home_score[index] <- losing_scores[index]
     completed$home_score[!index] <- winning_scores[!index]
     completed$away_score[!index] <- losing_scores[!index]
