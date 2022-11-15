@@ -180,6 +180,7 @@ There are currently three functions for scraping and plotting shot location data
  * ```team```: the name of the team to be supplied to functions in ncaahoopR package
  * ```id```: team id; used in ESPN URLs
  * ```link```: link; used in ESPN URLs
+ * ```espn_abbrv`: Short 3-4 character code used in ESPN abbreviations
  
  
  ```ncaa_colors``` A data frame of team color hex codes, pulled from [teamcolorcodes.com](https://teamcolorcodes.com/). Additional data coverage provided by [Luke Morris](https://lukesmorris.com).
