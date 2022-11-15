@@ -139,6 +139,7 @@ get_master_schedule <- function(date) {
                              "home_score" = NA)
   
   winners <- unname(sapply(completed$result, function(y) { gsub("\\s[0-9]*.*", "", y) }))
+  losers <-  unname(sapply(completed$result, function(y) { gsub('\\s*$', '', gsub('\\(OT\\)', '', gsub('[0-9]*', '', gsub(".*,\\s", "", y)))) }))
   scores <- as.numeric(gsub("[^0-9]", "", gsub("\\(.*\\)", "", unlist(strsplit(completed$result, ",")))))
   scores[completed$result == 'LIVE' | grepl('PM', completed$result)] <- NA
   
@@ -149,7 +150,21 @@ get_master_schedule <- function(date) {
     # index <- sapply(completed$away_anchor, function(y) { y %in% winners })
     index <- c()
     for(i in 1:length(winning_scores)) {
-      if(grepl(tolower(winners[i]), tolower(completed$home[i])) & !grepl(tolower(winners[i]), tolower(completed$away[i]))) {
+      home_abbv <- ids$espn_abbrv[ids$team == completed$home[i] ]
+      away_abbv <- ids$espn_abbrv[ids$team == completed$away[i] ]
+      
+      if(length(home_abbv) == 0) {
+        home_abbv <- '---'
+      } 
+      if(length(away_abbv) == 0) {
+        away_abbv <- '---'
+      }
+      
+      if(home_abbv == winners[i] | away_abbv == losers[i]) {
+        index <- c(index, F) 
+      } else if(away_abbv == winners[i] | home_abbv == losers[i]) {
+        index <- c(index, T)
+      } else if(grepl(tolower(winners[i]), tolower(completed$home[i])) & !grepl(tolower(winners[i]), tolower(completed$away[i]))) {
         index <- c(index, F) 
       } else if(!grepl(tolower(winners[i]), tolower(completed$home[i])) & grepl(tolower(winners[i]), tolower(completed$away[i]))) {
         index <- c(index, T)  
