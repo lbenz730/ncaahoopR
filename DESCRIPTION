@@ -1,6 +1,6 @@
 Package: ncaahoopR
 Title: NCAA Men's Basketball Play-By-Play Functionality
-Version: 1.6.6.1
+Version: 1.7
 Authors@R: c(person("Luke", "Benz", email = "lukesbenz@gmail.com", role = c("aut", "cre")), 
              person("Meyappan", "Subbaiah", role = c("ctb")),
              person("Luke", "Morris", role = c("ctb")), 
