@@ -126,6 +126,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     timeout$tmp <- paste(timeout$team, timeout$secs_remaining)
     timeout <- dplyr::filter(timeout, !duplicated(tmp))
     teams <- unique(timeout$team)
+    teams <- teams[teams != 'Official TV']
     pos_teams <- c(pbp$home[1], pbp$away[1])
     if(nrow(timeout) > 0) {
       home <- pos_teams[which.min(stringdist::stringdist(teams, pbp$home[1]))]
