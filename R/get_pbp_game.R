@@ -41,7 +41,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       tmp <- jsonlite::fromJSON(x, flatten = T) 
       n <- length(tmp)
     }
-   
+    
     ### Clean PBP
     pbp <- purrr::map2_dfr(tmp, 1:n, ~clean(.x, .y, n-2))
     these <- grep(T, is.na(pbp$home_score))
@@ -128,47 +128,51 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     teams <- unique(timeout$team)
     teams <- teams[teams != 'Official TV']
     pos_teams <- c(pbp$home[1], pbp$away[1])
-    if(nrow(timeout) > 0) {
-      home <- pos_teams[which.min(stringdist::stringdist(teams, pbp$home[1]))]
-      away <- setdiff(pos_teams, home)
-    }else{
-      home <- pos_teams[1]
-      away <- pos_teams[2]
-    }
+    
     pbp$home_time_out_remaining <- 4
     pbp$away_time_out_remaining <- 4
-    nplay <- nrow(pbp)
-    if(nrow(timeout) > 0) {
-      for(j in 1:nrow(timeout)) {
-        play_id <- timeout$play_id[j]
-        secs_remaining <- timeout$secs_remaining_relative[j]
-        half <- timeout$half[j]
-        
-        if(timeout$team[j] == home) {
-          pbp$home_time_out_remaining[play_id:nplay] <- pbp$home_time_out_remaining[play_id:nplay] - 1
+    
+    if(length(teams) > 0) {
+      if(nrow(timeout) > 0) {
+        home <- pos_teams[which.min(stringdist::stringdist(teams, pbp$home[1]))]
+        away <- setdiff(pos_teams, home)
+      }else{
+        home <- pos_teams[1]
+        away <- pos_teams[2]
+      }
+      nplay <- nrow(pbp)
+      if(nrow(timeout) > 0) {
+        for(j in 1:nrow(timeout)) {
+          play_id <- timeout$play_id[j]
+          secs_remaining <- timeout$secs_remaining_relative[j]
+          half <- timeout$half[j]
           
-        }else {
-          pbp$away_time_out_remaining[play_id:nplay] <- pbp$away_time_out_remaining[play_id:nplay] - 1
-          
+          if(timeout$team[j] == home) {
+            pbp$home_time_out_remaining[play_id:nplay] <- pbp$home_time_out_remaining[play_id:nplay] - 1
+            
+          }else {
+            pbp$away_time_out_remaining[play_id:nplay] <- pbp$away_time_out_remaining[play_id:nplay] - 1
+            
+          }
         }
       }
-    }
-    pbp$home_time_out_remaining[pbp$half > 2] <-
-      pbp$home_time_out_remaining[pbp$half > 2] + (pbp$half[pbp$half > 2] - 2)
-    pbp$away_time_out_remaining[pbp$half > 2] <-
-      pbp$away_time_out_remaining[pbp$half > 2] + (pbp$half[pbp$half > 2] - 2)
-    
-    if(any(pbp$home_time_out_remaining < 0) | any(pbp$away_time_out_remaining < 0)) {
-      pbp$home_time_out_remaining <- pbp$home_time_out_remaining + 2
-      pbp$away_time_out_remaining <- pbp$away_time_out_remaining + 2
-    }else{
-      if(max(pbp$home_time_out_remaining[pbp$half == 2]) < 4) {
-        pbp$home_time_out_remaining[pbp$half >= 2] <-
-          pbp$home_time_out_remaining[pbp$half >= 2] + 1
-      }
-      if(max(pbp$away_time_out_remaining[pbp$half == 2]) < 4) {
-        pbp$away_time_out_remaining[pbp$half >= 2] <-
-          pbp$away_time_out_remaining[pbp$half >= 2] + 1
+      pbp$home_time_out_remaining[pbp$half > 2] <-
+        pbp$home_time_out_remaining[pbp$half > 2] + (pbp$half[pbp$half > 2] - 2)
+      pbp$away_time_out_remaining[pbp$half > 2] <-
+        pbp$away_time_out_remaining[pbp$half > 2] + (pbp$half[pbp$half > 2] - 2)
+      
+      if(any(pbp$home_time_out_remaining < 0) | any(pbp$away_time_out_remaining < 0)) {
+        pbp$home_time_out_remaining <- pbp$home_time_out_remaining + 2
+        pbp$away_time_out_remaining <- pbp$away_time_out_remaining + 2
+      }else{
+        if(max(pbp$home_time_out_remaining[pbp$half == 2]) < 4) {
+          pbp$home_time_out_remaining[pbp$half >= 2] <-
+            pbp$home_time_out_remaining[pbp$half >= 2] + 1
+        }
+        if(max(pbp$away_time_out_remaining[pbp$half == 2]) < 4) {
+          pbp$away_time_out_remaining[pbp$half >= 2] <-
+            pbp$away_time_out_remaining[pbp$half >= 2] + 1
+        }
       }
     }
     
