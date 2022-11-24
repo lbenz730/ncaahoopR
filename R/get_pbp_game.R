@@ -35,11 +35,16 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       next
     } else {
       x <- strsplit(txt, '"pbp":\\{"playGrps"')[[1]]
+      if(length(x) > 1) {
       x <- x[2]
       x <- gsub(',\"tms\":.*$', '', x)
       x <- gsub('^:', '', x)
       tmp <- jsonlite::fromJSON(x, flatten = T) 
       n <- length(tmp)
+      } else {
+        message('No play-by-play available')
+        return(NULL)
+      }
     }
     
     ### Clean PBP
