@@ -9,63 +9,72 @@
 #' @export
 get_boxscore <- function(game_id) {
   url <- paste0("https://www.espn.com/mens-college-basketball/boxscore?gameId=", game_id)
-  webpage <- xml2::read_html(url)
+  txt <- RCurl::getURL(url)
   
-  # Grab team names. Away team is always listed first.
-  pagetext <- rvest::html_text(webpage)
-  matchup <- unlist(strsplit(pagetext, " - "))[[1]][1]
-  away_name <- unlist(strsplit(matchup, " vs. "))[1]
-  away_name <- stringr::str_trim(away_name)
-  home_name <- unlist(strsplit(matchup, " vs. "))[2]
-  home_name <- stringr::str_trim(home_name)
+  x <- strsplit(gsub(',"sbpg".*$', '', txt), 'bxscr')[[1]]
+  x <- x[3]
+  x <- gsub('^\":', '', x)
+  stats <- jsonlite::fromJSON(x, flatten = T)
   
-  # General tidying and splitting of columns.
-  away <- rvest::html_table(webpage)[[2]]
-  away <- away[1:(nrow(away) - 1),]
-  away <- away[-6,]
-  away <- tidyr::separate(away, 'FG', c("FGM", "FGA"), sep = "-")
-  away <- tidyr::separate(away, '3PT', c("3PTM", "3PTA"), sep = "-")
-  away <- tidyr::separate(away, 'FT', c("FTM", "FTA"), sep = "-")
-  away_totals <- away[nrow(away):nrow(away),]
-  away_totals$Position <- NA
-  away <- head(away, -1)
-  away$Position <- substr(away$Starters, nchar(away$Starters), nchar(away$Starters))
-  away$Starters <- substr(away$Starters, 0, (nchar(away$Starters)-1)/2)
-  away <- rbind(away, away_totals)
-  rownames(away) <- NULL
-  colnames(away)[1] <- "player"
-  colnames(away)[18] <- "position"
-  away <- away[, c(1, 18, 2:(ncol(away)-1))]
-  away$starter <- F
-  away$starter[1:5] <- T
+  info <- 
+    stats %>% 
+    dplyr::select(-stats)
   
-  home <- rvest::html_table(webpage)[[3]]
-  home <- home[1:(nrow(home) - 1),]
-  home <- home[-6,]
-  home <- tidyr::separate(home, 'FG', c("FGM", "FGA"), sep = "-")
-  home <- tidyr::separate(home, '3PT', c("3PTM", "3PTA"), sep = "-")
-  home <- tidyr::separate(home, 'FT', c("FTM", "FTA"), sep = "-")
-  home_totals <- home[nrow(home):nrow(home),]
-  home_totals$Position <- NA
-  home <- head(home, -1)
-  home$Position <- substr(home$Starters, nchar(home$Starters), nchar(home$Starters))
-  home$Starters <- substr(home$Starters, 0, (nchar(home$Starters)-1)/2)
-  home <- rbind(home, home_totals)
-  rownames(home) <- NULL
-  colnames(home)[1] <- "player"
-  colnames(home)[18] <- "position"
-  home <- home[, c(1, 18, 2:(ncol(home)-1))]
-  home$starter <- F
-  home$starter[1:5] <- T
+  away_labs <- stats$stats[[1]]$lbls[[1]]
+  home_labs <- stats$stats[[2]]$lbls[[2]]
+  away_ttls <- stats$stats[[1]]$ttls[[3]]
+  home_ttls <- stats$stats[[2]]$ttls[[3]]
   
-  for(i in 3:18) {
-    home[,i] <- as.numeric(home %>% dplyr::pull(i))
-    away[,i] <- as.numeric(away %>% dplyr::pull(i))
-  }
+  away <- 
+    stats$stats[[1]]$athlts %>% 
+    dplyr::bind_rows() %>% 
+    dplyr::select('player_id' = athlt.id,
+                  'player' = athlt.shrtNm,
+                  'position' = athlt.pos,
+                  'stat_values' = stats) %>% 
+    tidyr::unnest(cols = 'stat_values') %>% 
+    dplyr::mutate('stat_category' = rep(away_labs, n()/length(away_labs))) %>% 
+    dplyr::bind_rows(dplyr::tibble('player' = 'TEAM',
+                                   'stat_category' = away_labs,
+                                   'stat_values' = away_ttls)) %>% 
+    tidyr::pivot_wider(names_from = 'stat_category',
+                       values_from = 'stat_values') %>% 
+    tidyr::separate('FG', c("FGM", "FGA"), sep = "-") %>% 
+    tidyr::separate('3PT', c("3PTM", "3PTA"), sep = "-") %>% 
+    tidyr::separate('FT', c("FTM", "FTA"), sep = "-") %>% 
+    dplyr::mutate('team' = info$tm.nm[1],
+                  'opponent' = info$tm.nm[2],
+                  'home' = info$tm.hm[1]) %>% 
+    dplyr::mutate('starter' = ifelse(1:n() <= 5, T, F)) %>% 
+    dplyr::mutate_at(dplyr::vars(dplyr::any_of(c(away_labs, 'FTA', 'FTM', '3PTM', '3PTA'))), ~as.numeric(.x))
+  
+  home <- 
+    stats$stats[[2]]$athlts %>% 
+    dplyr::bind_rows() %>% 
+    dplyr::mutate('starter' = ifelse(1:n() <= 5, T, F)) %>% 
+    dplyr::select('player_id' = athlt.id,
+                  'player' = athlt.shrtNm,
+                  'position' = athlt.pos,
+                  'stat_values' = stats) %>% 
+    tidyr::unnest(cols = 'stat_values') %>% 
+    dplyr::mutate('stat_category' = rep(home_labs, n()/length(home_labs))) %>% 
+    dplyr::bind_rows(dplyr::tibble('player' = 'TEAM',
+                                   'stat_category' = home_labs,
+                                   'stat_values' = home_ttls)) %>% 
+    tidyr::pivot_wider(names_from = 'stat_category',
+                       values_from = 'stat_values') %>% 
+    tidyr::separate('FG', c("FGM", "FGA"), sep = "-") %>% 
+    tidyr::separate('3PT', c("3PTM", "3PTA"), sep = "-") %>% 
+    tidyr::separate('FT', c("FTM", "FTA"), sep = "-") %>% 
+    dplyr::mutate('team' = info$tm.nm[2],
+                  'opponent' = info$tm.nm[1],
+                  'home' = info$tm.hm[2]) %>% 
+    dplyr::mutate('starter' = ifelse(1:n() <= 5, T, F)) %>% 
+    dplyr::mutate_at(dplyr::vars(dplyr::any_of(c(home_labs, 'FTA', 'FTM', '3PTM', '3PTA'))), ~as.numeric(.x))
+  
   
   results <- list(away, home)
-  names(results) <- c(away_name, home_name)
-  
+  names(results) <- info$tm.nm
   
   return(results)
 }

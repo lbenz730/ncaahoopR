@@ -1,27 +1,6 @@
 ################################ Helper Functions #############################
 stripwhite <- function(x) gsub("\\s*$", "", gsub("^\\s*", "", x))
 
-### Function to clean PBP data
-clean <- function(data, half, OTs) {
-  cleaned <- data %>% dplyr::mutate(play_id = 1:nrow(data),
-                                    half = half,
-                                    time_remaining_half = as.character(V1),
-                                    description = as.character(V3),
-                                    away_score = suppressWarnings(as.numeric(gsub("-.*", "", V4))),
-                                    home_score = suppressWarnings(as.numeric(gsub(".*-", "", V4))))
-  cleaned$time_remaining_half[1] <- ifelse(half <= 2, "20:00", "5:00")
-  mins <- suppressWarnings(as.numeric(gsub(":.*","", cleaned$time_remaining_half)))
-  secs <- suppressWarnings(as.numeric(gsub(".*:","", cleaned$time_remaining_half)))
-  cleaned$secs_remaining <- max(20 * (2 - half), 0) * 60 +
-    5 * 60 * max((OTs * as.numeric(half <= 2)), ((OTs + 2 - half) * as.numeric(half > 2))) + 60 * mins + secs
-  if(half == 1) {
-    cleaned[1, c("home_score", "away_score")] <- c(0,0)
-  }
-  cleaned <- select(cleaned, play_id, half, time_remaining_half, secs_remaining, description,
-                    home_score, away_score)
-  return(cleaned)
-}
-
 ### Make ids df (only if package not loaded in memory)
 create_ids_df <- function() {
   ids <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops_Play_By_Play/master/ids.csv",
@@ -49,7 +28,9 @@ games_2016 <-
 games_2017 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2017-18/training.csv", as.is = T)
 games_2018 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2018-19/2019_Final.csv", as.is = T)
 games_2019 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/6a40b6c37c8b888f5d01add9b68b60747e1953c1/3.0_Files/Predictions/predictions.csv", as.is = T)
-games_2020 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Predictions/predictions.csv", as.is = T)
+games_2020 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/2ee90d21234392649cefd2bf9d23a4926aa9ed64/3.0_Files/Predictions/predictions.csv", as.is = T)
+games_2021 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/d7cf98801b93190a24e8528a70a1edb97a4df16e/3.0_Files/Predictions/predictions.csv", as.is = T)
+games_2022 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Predictions/predictions.csv", as.is = T)
 train <- rbind(select(games_2016, pred_score_diff, wins),
                select(games_2017, pred_score_diff, wins))
 prior <- glm(wins ~ pred_score_diff, data = train, family = binomial)
@@ -243,17 +224,28 @@ get_line <- function(data) {
     game <- dplyr::filter(games_2020, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
+  
+  ### Impute from 2021-22 Season
+  if(game_date >= "2021-11-01" & game_date <= "2022-05-01") {
+    game <- dplyr::filter(games_2021, team == home, opponent == away, date == game_date)
+    return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
+  }
+  
+  ### Impute from 2022-23 Season
+  if(game_date >= "2022-11-01" & game_date <= "2023-05-01") {
+    game <- dplyr::filter(games_2022, team == home, opponent == away, date == game_date)
+    return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
+  }
 
   return(NA)
 }
 
 ### Get Date of Given Game
 get_date <- function(game_id) {
-  url <- paste("http://www.espn.com/mens-college-basketball/playbyplay?gameId=", game_id, sep = "")
-  y <- scan(url, what = "", sep = "\n", quiet = T)[9]
-  y <- unlist(strsplit(y, "-"))
-  date <-  stripwhite(y[length(y) - 1])
-  date <- as.Date(date, "%B %d, %Y")
+  url <- paste0("https://www.espn.com/mens-college-basketball/playbyplay?gameId=", game_id)
+  txt <- try(RCurl::getURL(url), silent = T)
+  x <- strsplit(txt, 'Men&#x27;s College Basketball Play-By-Play')[[1]]
+  date <- as.Date(stripwhite(gsub('^.*-\\s+', '', gsub('\\|.*$', '', x[2]))), '%b %d, %Y')
   return(date)
 }
 

@@ -20,213 +20,69 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
   ### Get Play-by-Play Data
   base_url <- "https://www.espn.com/mens-college-basketball/playbyplay?gameId="
   summary_url <- "https://www.espn.com/mens-college-basketball/game?gameId="
-  j <- 0
   
   for(g in 1:length(game_ids)) {
     message(paste0("Scraping Data for Game: ", g, " of ", length(game_ids)))
-    if(is.nit(game_ids[g]) & get_date(game_ids[g]) <= '2022-01-01') {
-      message("NIT Game--Play-by-Play Data Not Available at this time")
-      next
-    }
+    
     url <- paste(base_url, game_ids[g], sep = "")
-    tmp <- try(XML::readHTMLTable(RCurl::getURL(url)), silent = T)
+    
+    ### Try and get PBP data
+    txt <- try(RCurl::getURL(url), silent = T)
     
     ### Check if PBP Data is Available
-    if(class(tmp) == "try-error") {
+    if(class(txt) == "try-error") {
       message("Play-by-Play Data Not Available")
       next
-    } else if(length(tmp) == 0) {
-      message("Play-by-Play Data Not Available")
-      next
-    }else if(length(tmp) < ncol(tmp[[1]]) | length(tmp) == 0) {
-      message("Play-by-Play Data Not Available")
-      next
-    }else{
-      t1 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][2,1]), ":")))
-      t2 <- as.numeric(unlist(strsplit(as.character(tmp[[2]][5,1]), ":")))
-      if(60 * t1[1] + t1[2] < 60 * t2[1] + t2[2]) {
-        message("Game In Progress--Play-by-Play Data Not Available. Please Check Back After the Game")
-        next
-      }
-      j <- j + 1
+    } else {
+      x <- strsplit(txt, '"pbp":\\{"playGrps"')[[1]]
+      x <- x[2]
+      x <- gsub(',\"tms\":.*$', '', x)
+      x <- gsub('^:', '', x)
+      tmp <- jsonlite::fromJSON(x, flatten = T) 
+      n <- length(tmp)
     }
-    
-    n <- length(tmp)
-    
-    if(ncol(tmp[[1]]) == 4) {
-      half_1 <- clean(as.data.frame(tmp[[2]]), 1, 0)
-      half_2 <- clean(as.data.frame(tmp[[3]]), 2, 0)
-      pbp <- rbind(half_1, half_2)
-    }
-    
-    ### 1 OT
-    else if(ncol(tmp[[1]]) == 5 & ((n == 6 & ncol(tmp[[5]]) == 4) | (n == 5 & ncol(tmp[[4]]) == 5))) {
-      half_1 <- clean(as.data.frame(tmp[[2]]), 1, 1)
-      half_2 <- clean(as.data.frame(tmp[[3]]), 2, 1)
-      half_3 <- clean(as.data.frame(tmp[[4]]), 3, 1)
-      pbp <- rbind(half_1, half_2, half_3)
-    }
-    
-    ### 2 OT
-    else if(ncol(tmp[[1]]) == 5 & ((n == 7 & ncol(tmp[[6]]) == 4) | (n == 6 & ncol(tmp[[5]]) == 5))) {
-      half_1 <- clean(as.data.frame(tmp[[2]]), 1, 2)
-      half_2 <- clean(as.data.frame(tmp[[3]]), 2, 2)
-      half_3 <- clean(as.data.frame(tmp[[4]]), 3, 2)
-      half_4 <- clean(as.data.frame(tmp[[5]]), 4, 2)
-      pbp <- rbind(half_1, half_2, half_3, half_4)
-    }
-    
-    ### 3 OT
-    else if(ncol(tmp[[1]]) == 5 & ((n == 8 & ncol(tmp[[7]]) == 4) | (n == 7 & ncol(tmp[[6]]) == 5))){
-      half_1 <- clean(as.data.frame(tmp[[2]]), 1, 3)
-      half_2 <- clean(as.data.frame(tmp[[3]]), 2, 3)
-      half_3 <- clean(as.data.frame(tmp[[4]]), 3, 3)
-      half_4 <- clean(as.data.frame(tmp[[5]]), 4, 3)
-      half_5 <- clean(as.data.frame(tmp[[6]]), 5, 3)
-      pbp <- rbind(half_1, half_2, half_3, half_4, half_5)
-    }
-    
-    ### 4 OT
-    else if(ncol(tmp[[1]]) == 5 & ((n == 9 & ncol(tmp[[8]]) == 4) | (n == 8 & ncol(tmp[[7]]) == 5))) {
-      half_1 <- clean(as.data.frame(tmp[[2]]), 1, 4)
-      half_2 <- clean(as.data.frame(tmp[[3]]), 2, 4)
-      half_3 <- clean(as.data.frame(tmp[[4]]), 3, 4)
-      half_4 <- clean(as.data.frame(tmp[[5]]), 4, 4)
-      half_5 <- clean(as.data.frame(tmp[[6]]), 5, 4)
-      half_6 <- clean(as.data.frame(tmp[[7]]), 6, 4)
-      pbp <- rbind(half_1, half_2, half_3, half_4, half_5, half_6)
-    }
-    
-    ### 5 OT
-    else if(ncol(tmp[[1]]) == 5 & ((n == 10 & ncol(tmp[[9]]) == 4) | (n == 9 & ncol(tmp[[8]]) == 5))) {
-      half_1 <- clean(as.data.frame(tmp[[2]]), 1, 5)
-      half_2 <- clean(as.data.frame(tmp[[3]]), 2, 5)
-      half_3 <- clean(as.data.frame(tmp[[4]]), 3, 5)
-      half_4 <- clean(as.data.frame(tmp[[5]]), 4, 5)
-      half_5 <- clean(as.data.frame(tmp[[6]]), 5, 5)
-      half_6 <- clean(as.data.frame(tmp[[7]]), 6, 5)
-      half_7 <- clean(as.data.frame(tmp[[8]]), 7, 5)
-      pbp <- rbind(half_1, half_2, half_3, half_4, half_5, half_6, half_7)
-    }
-    
-    ### 6 OT
-    else if(ncol(tmp[[1]]) == 5 & ((n == 11 & ncol(tmp[[10]]) == 4) | (n == 10 & ncol(tmp[[9]]) == 5))) {
-      half_1 <- clean(as.data.frame(tmp[[2]]), 1, 6)
-      half_2 <- clean(as.data.frame(tmp[[3]]), 2, 6)
-      half_3 <- clean(as.data.frame(tmp[[4]]), 3, 6)
-      half_4 <- clean(as.data.frame(tmp[[5]]), 4, 6)
-      half_5 <- clean(as.data.frame(tmp[[6]]), 5, 6)
-      half_6 <- clean(as.data.frame(tmp[[7]]), 6, 6)
-      half_7 <- clean(as.data.frame(tmp[[8]]), 7, 6)
-      half_8 <- clean(as.data.frame(tmp[[9]]), 8, 6)
-      pbp <- rbind(half_1, half_2, half_3, half_4, half_5, half_6, half_7, half_8)
-    }
-    
+   
+    ### Clean PBP
+    pbp <- purrr::map2_dfr(tmp, 1:n, ~clean(.x, .y, n-2))
     these <- grep(T, is.na(pbp$home_score))
     pbp[these, c("home_score", "away_score")] <- pbp[these - 1 , c("home_score", "away_score")]
     
     ### Get full team names
     url2 <- paste(summary_url, game_ids[g], sep = "")
     tmp <- XML::readHTMLTable(RCurl::getURL(url2))
-    pbp$away <- as.character(as.data.frame(tmp[[2]])[1,1])
-    pbp$home <- as.character(as.data.frame(tmp[[2]])[2,1])
     away_abv <- as.character(as.data.frame(tmp[[1]])[1,1])
     home_abv <- as.character(as.data.frame(tmp[[1]])[2,1])
     
+    x <- strsplit(txt, 'Men&#x27;s College Basketball Play-By-Play')[[1]]
+    pbp$away <- extract_teams(x[1])[1]
+    pbp$home <- extract_teams(x[1])[2]
+    
+    ### Game Info
+    game_info <- jsonlite::fromJSON(gsub('^.*"gmInfo":', '', gsub(',"sbpg".*$', '', txt)))
+    
+    pbp$arena_location <- ifelse(is.null(game_info$locAddr), NA, unlist(paste(game_info$locAddr, collapse = ', ')))
+    pbp$arena <- ifelse(is.null(game_info$loc), NA, game_info$loc)
+    pbp$capacity <- ifelse(is.null(game_info$cpcty), NA, game_info$cpcty)
+    pbp$attendance <- ifelse(is.null(game_info$attnd), NA, game_info$attnd)
+    pbp$total_line <- ifelse(is.null(game_info$ovUnd), NA, game_info$ovUnd)
+    pbp$referees <- paste(game_info$refs$dspNm, collapse = "/")
+    
     ### Get Game Line
-    game_info <- scan(url2, what = "", sep = "\n", quiet = T)
-    y <- game_info[grep("Line:", game_info)]
+    y <- game_info$lne
     if(length(y) > 0) {
-      y <- gsub("<[^<>]*>", "", y)
-      y <- gsub("\t", "", y)
-      y <- strsplit(y, ": ")[[1]][2]
       line <- as.numeric(strsplit(y, " ")[[1]][2])
       abv <- strsplit(y, " ")[[1]][1]
       if(abv == home_abv) {
         line <- line * -1
       }
-    }else {
+    } else {
       line <- NA
     }
     
-    ### Get Total Line
-    total <- game_info[grep("Over/Under:", game_info)]
-    if(length(total) > 0) {
-      total <- gsub("</*li>", "", gsub("\t", "", total))
-      total <- as.numeric(strsplit(total, " ")[[1]][2])
-    } else {
-      total <- NA
-    }
-    
-    ### Get Attendance
-    attend <- game_info[grep("Attendance:", game_info)]
-    if(length(attend) > 0) {
-      attend <- gsub("<[^<>]*>", "", attend)
-      attend <- gsub("\t", "", attend)
-      attend <- gsub(",", "", attend)
-      attend <- as.numeric(strsplit(attend, " ")[[1]][2])
-    } else {
-      attend <- NA
-    }
-    
-    ### Get Capacity
-    capacity <- game_info[grep("Capacity: ", game_info)]
-    if(length(capacity) > 0) {
-      capacity <- gsub(".*Capacity: ", "", capacity)
-      capacity <- gsub("</div>.*", "", capacity)
-      capacity <- as.numeric(gsub(",", "", capacity))
-    } else {
-      capacity <- NA
-    }
-    
-    ### Get Referees
-    ref <- game_info[grep("Referees:", game_info)]
-    if(length(ref) > 0) {
-      ref <- gsub("<[^<>]*>", "", ref)
-      ref <- gsub("\t", "", ref)
-      ref <- gsub(".*Referees: ", "", ref)
-      ref <- strsplit(ref, ",")
-    } else {
-      ref <- NA
-    }
-    
-    ### Get City, State
-    locate <- game_info[grep("^([^,]+), ([A-Z]{2})", game_info)]
-    if(length(locate) > 0) {
-      locate <- gsub("\t", "", locate)
-    } else {
-      locate <- NA
-    }
-    
-    ### Get Arena Name
-    arena <- game_info[grep("<div class=\"caption-wrapper\">", game_info)+1]
-    if(length(arena) > 0) {
-      arena <- gsub("\t", "", arena)
-    } else {
-      arena <- NA
-    }
-    
-    ### double check arena if null
-    if(is.na(arena)) {
-      arena <- game_info[grep("<span class=\"game-location\">(.*)</span>", game_info)]
-      if(length(arena) > 0) {  
-        arena <- gsub("\t", "", arena)
-        arena <- gsub("<[^<>]*>", "", arena)
-      } else {
-        arena <- NA
-      }  
-    }
-    
-    pbp$arena_location <- locate[1]
-    pbp$arena <- arena
-    pbp$capacity <- capacity
-    pbp$attendance <- attend
-    pbp$total_line <- total
-    pbp$referees <- paste(ref, sep = "/")
     pbp$home_favored_by <- line
     pbp$play_id <- 1:nrow(pbp)
     pbp$game_id <- game_ids[g]
-    pbp$date <- get_date(game_ids[g])
+    pbp$date <- as.Date(stripwhite(gsub('^.*-\\s+', '', gsub('\\|.*$', '', x[2]))), '%b %d, %Y')
     pbp$score_diff <- pbp$home_score - pbp$away_score
     
     ### Win Probability by Play
@@ -270,6 +126,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     timeout$tmp <- paste(timeout$team, timeout$secs_remaining)
     timeout <- dplyr::filter(timeout, !duplicated(tmp))
     teams <- unique(timeout$team)
+    teams <- teams[teams != 'Official TV']
     pos_teams <- c(pbp$home[1], pbp$away[1])
     if(nrow(timeout) > 0) {
       home <- pos_teams[which.min(stringdist::stringdist(teams, pbp$home[1]))]
@@ -424,7 +281,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         pbp$free_throw[!is.na(pbp$shooter)] <- grepl("Free Throw", pbp$description[!is.na(pbp$shooter)])
       }
       
-    
+      
       
       ########################## Possession Parsing ############################
       home <- pbp$home[1]
