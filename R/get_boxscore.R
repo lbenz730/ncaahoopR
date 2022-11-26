@@ -46,7 +46,7 @@ get_boxscore <- function(game_id) {
                   'opponent' = info$tm.nm[2],
                   'home' = info$tm.hm[1]) %>% 
     dplyr::mutate('starter' = ifelse(1:n() <= 5, T, F)) %>% 
-    dplyr::mutate_at(dplyr::vars(dplyr::any_of(c(away_labs, 'FTA', 'FTM', '3PTM', '3PTA'))), ~as.numeric(.x))
+    dplyr::mutate_at(dplyr::vars(dplyr::any_of(c(away_labs, 'FGA', 'FGM', 'FTA', 'FTM', '3PTM', '3PTA'))), ~as.numeric(.x))
   
   home <- 
     stats$stats[[2]]$athlts %>% 
@@ -70,7 +70,7 @@ get_boxscore <- function(game_id) {
                   'opponent' = info$tm.nm[1],
                   'home' = info$tm.hm[2]) %>% 
     dplyr::mutate('starter' = ifelse(1:n() <= 5, T, F)) %>% 
-    dplyr::mutate_at(dplyr::vars(dplyr::any_of(c(home_labs, 'FTA', 'FTM', '3PTM', '3PTA'))), ~as.numeric(.x))
+    dplyr::mutate_at(dplyr::vars(dplyr::any_of(c(home_labs, 'FGA', 'FGM', 'FTA', 'FTM', '3PTM', '3PTA'))), ~as.numeric(.x))
   
   
   results <- list(away, home)
