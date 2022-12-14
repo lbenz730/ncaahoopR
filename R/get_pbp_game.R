@@ -44,13 +44,13 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         
         if(x == '[]') {
           message('No play-by-play available')
-          return(NULL)
+          next
         }
         
         
       } else {
         message('No play-by-play available')
-        return(NULL)
+        next
       }
     }
     
