@@ -41,6 +41,13 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
         x <- gsub('^:', '', x)
         tmp <- jsonlite::fromJSON(x, flatten = T) 
         n <- length(tmp)
+        
+        if(x == '[]') {
+          message('No play-by-play available')
+          return(NULL)
+        }
+        
+        
       } else {
         message('No play-by-play available')
         return(NULL)
