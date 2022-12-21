@@ -8,9 +8,15 @@ clean <- function(data, half, OTs) {
                   'home_score' = homeScore,
                   'away_score' = awayScore,
                   'action_team' = homeAway,
-                  'foul' = isFoul,
                   'scoring_play' = scoringPlay)
+  if('isFoul' %in% names(cleaned)) {
+    cleaned$foul <- cleaned$isFoul 
+    cleaned$foul[is.na(cleaned$foul)] <- F
+  } else {
+    cleaned$foul <- F 
+  }
   
+  cleaned$scoring_play[is.na(cleaned$scoring_play)] <- F
   cleaned$time_remaining_half[1] <- ifelse(half <= 2, "20:00", "5:00")
   mins <- suppressWarnings(as.numeric(gsub(":.*","", cleaned$time_remaining_half)))
   secs <- suppressWarnings(as.numeric(gsub(".*:","", cleaned$time_remaining_half)))
@@ -22,7 +28,7 @@ clean <- function(data, half, OTs) {
   
   cleaned <- 
     cleaned %>% 
-    dplyr::select(half, time_remaining_half, secs_remaining, description, home_score, away_score)
+    dplyr::select(half, time_remaining_half, secs_remaining, description, home_score, away_score, foul, scoring_play, action_team)
   
   return(cleaned)
 }

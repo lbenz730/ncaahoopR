@@ -539,8 +539,8 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
       ### Final Selection of Columns
       pbp <- dplyr::select(pbp, -pre_game_prob)
       pbp <- dplyr::select(pbp, game_id, date, home, away, play_id, half, time_remaining_half,
-                           secs_remaining_relative, secs_remaining, description,
-                           home_score, away_score, score_diff, play_length,
+                           secs_remaining_relative, secs_remaining, description, action_team,
+                           home_score, away_score, score_diff, play_length, scoring_play, foul,
                            win_prob, naive_win_prob, home_time_out_remaining,
                            away_time_out_remaining, home_favored_by, total_line, referees,
                            arena_location, arena, capacity, attendance, shot_x,

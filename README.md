@@ -254,10 +254,13 @@ Play-by-Play files contain the following variables:
 * ```secs_remaining```: Time remaining in regulation, in seconds.
 * ```secs_remaining_absolute```: The time remaining until the game is over, in seconds. For example a game that goes to overtime would begin with 2700 seconds remaining (2400 for regulation and 300 for overtime), and regulation would end with 300 seconds remaining.
 * ```description```: A description of the play/game event.
+* `action_team`: home/away indicating action
 * ```home_score```: Home team's score.
 * ```away_score```: Away team's score.
 * ```score_diff```: Score differential from the home team's perspective (```home_score``` - ```away_score```)
 * ```play_length```: Duration of the the given play, in seconds.
+* `scoring_play`: Boolean indicating scoring play.
+* `foul`: Boolean indicating foul.
 * ```win_prob```: Win probability for the home team.
 * ```naive_win_prob```: Win probability for the home team not factoring in pre-game point spread. Useful for computation of win probability added (WPA).
 * ```home_timeout_remaining```: Number of timeouts remaining for the home team.
