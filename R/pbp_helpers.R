@@ -17,7 +17,7 @@ clean <- function(data, half, OTs) {
   }
   
   cleaned$scoring_play[is.na(cleaned$scoring_play)] <- F
-  cleaned$time_remaining_half[1] <- ifelse(half <= 2, "20:00", "5:00")
+  # cleaned$time_remaining_half[1] <- ifelse(half <= 2, "20:00", "5:00")
   mins <- suppressWarnings(as.numeric(gsub(":.*","", cleaned$time_remaining_half)))
   secs <- suppressWarnings(as.numeric(gsub(".*:","", cleaned$time_remaining_half)))
   cleaned$secs_remaining <- max(20 * (2 - half), 0) * 60 +
