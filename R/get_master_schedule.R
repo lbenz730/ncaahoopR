@@ -22,7 +22,11 @@ get_master_schedule <- function(date) {
   url <- paste0("https://www.espn.com/mens-college-basketball/schedule/_/date/", date_)
   
   z <- XML::readHTMLTable(RCurl::getURL(url))
-  if(length(z) > 1) {
+  
+  if(length(z) == 0) {
+    cat("No games on", as.character(date), "\n")
+    return(NULL)
+  } else if(length(z) > 1) {
     schedule <- as.data.frame(z[[1]])[,c(1,2)]
     completed <- as.data.frame(z[[2]][, 1:3])
     names(completed) <- c("away", "home", "result")
