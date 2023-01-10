@@ -25,6 +25,16 @@ get_boxscore <- function(game_id) {
   away_ttls <- stats$stats[[1]]$ttls[[3]]
   home_ttls <- stats$stats[[2]]$ttls[[3]]
   
+  if(any(unlist(purrr::map(stats$stats[[1]]$athlts, class)) == 'list')) {
+    message('Boxscore not available')
+    return(NULL) 
+  }
+  
+  if(any(unlist(purrr::map(stats$stats[[2]]$athlts, class)) == 'list')) {
+    message('Boxscore not available')
+    return(NULL) 
+  }
+  
   away <- 
     stats$stats[[1]]$athlts %>% 
     dplyr::bind_rows() %>% 
