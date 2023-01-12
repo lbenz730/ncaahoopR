@@ -11,9 +11,9 @@ get_boxscore <- function(game_id) {
   url <- paste0("https://www.espn.com/mens-college-basketball/boxscore?gameId=", game_id)
   txt <- RCurl::getURL(url)
   
-  x <- strsplit(gsub(',"sbpg".*$', '', txt), 'bxscr')[[1]]
+  x <- strsplit(txt, 'bxscr')[[1]]
   x <- x[3]
-  x <- gsub('^\":', '', x)
+  x <- gsub(',"meta":.*$', '', gsub('^\":', '', x))
   stats <- jsonlite::fromJSON(x, flatten = T)
   
   info <- 

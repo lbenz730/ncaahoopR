@@ -51,18 +51,20 @@ season_boxscore <- function(team, season = current_season, aggregate = 'average'
       season_box %>% 
       dplyr::mutate('GP' = 1,
                     'GS' = as.numeric(starter)) %>% 
-      dplyr::group_by(player, position) %>% 
-      dplyr::summarise_if(is.numeric, sum)
+      dplyr::group_by(player_id, player, player, position) %>% 
+      dplyr::summarise_if(is.numeric, sum) %>% 
+      dpyr::ungroup()
   }
   
   ### Return Averages
   if(aggregate == 'average') {
     season_box <- 
       season_box %>% 
-      dplyr::group_by(player, position) %>% 
+      dplyr::group_by(player_id, player, position) %>% 
       dplyr::mutate('GP' = n(),
                     'GS' = sum(starter)) %>% 
-      dplyr::summarise_if(is.numeric, mean)
+      dplyr::summarise_if(is.numeric, mean) %>% 
+      dpyr::ungroup()
   }
   
   return(season_box)
