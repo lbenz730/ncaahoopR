@@ -26,7 +26,7 @@ season_boxscore <- function(team, season = current_season, aggregate = 'average'
   
   ### Team Schedule
   schedule <- get_schedule(team, season)
-  schedule <- dplyr::filter(schedule, date <= Sys.Date())
+  schedule <- dplyr::filter(schedule, date <= Sys.Date() & !is.na(game_id))
   game_ids <- schedule$game_id
   
   ### Team PBP Name
