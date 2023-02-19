@@ -110,7 +110,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     
     ### Relative Time
     pbp$secs_remaining_relative <- NA
-    msec <- max(pbp$secs_remaining)
+    msec <- plyr::round_any(max(pbp$secs_remaining), 300)
     for(k in 1:nrow(pbp)) {
       pbp$secs_remaining_relative[k] <-
         secs_to_model(pbp$secs_remaining[k], msec)[2]
