@@ -32,7 +32,8 @@ Imports:
          rvest,
          readr,
          purrr,
-         ggimage
+         ggimage,
+         plyr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
