@@ -53,7 +53,7 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
                                                                                                              dict$ESPN_PBP == gsub('State', 'St', away_team)][1] ]] 
   
   plot_lines <- 1200
-  msec <- max(data$secs_remaining_absolute)
+  msec <- plyr::round_any(max(data$secs_remaining_absolute), 300)
   sec <- msec - 2400
   ot_counter <- 0
   while(sec > 0) {
