@@ -8,6 +8,7 @@
 #'
 #'
 game_shot_chart <- function(game_id, heatmap = F){
+  
   if(any(is.na(game_id))) {
     error("game_id missing with no default")
   }
