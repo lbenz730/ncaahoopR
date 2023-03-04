@@ -76,7 +76,30 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
       dplyr::mutate("win_prob" = 1 - win_prob,
                     team = "away")
   ) %>%
-    dplyr::mutate("secs_elapsed" = max(secs_remaining_absolute) - secs_remaining_absolute)
+    dplyr::mutate("secs_elapsed" = msec - secs_remaining_absolute)
+  
+  if(min(secs_elapsed) != 0) {
+    spread <- data$home_favored_by[1]
+    if(is.na(spread)) {
+      p0 <- 0.5
+    } else {
+      ### Get Coefficient Values for Current Game
+      fb <- predict(favored_by_smooth, newdata = 0)
+      
+      ### Compute log odds of winningt(fb * spread))
+      p0 <- logit(fb * spread)
+    }
+    
+    
+    x <- 
+      x %>% 
+      bind_rows(
+        tibble('secs_remaining_absolute' = msec,
+               'secs_elapsed' = 0,
+               'win_prob' = (p0, 1-p0),
+               'team' = c('home', 'away'))
+      )
+  }
   
   ### Game Excitement Index
   data$wp_delta <- 0
