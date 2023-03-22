@@ -99,7 +99,7 @@ opp_shot_chart <- function(game_ids, team, heatmap = F) {
         ) +
         ggplot2::labs(
           title = paste(team, "Shots Against"),
-          caption = "meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR"
+          caption = "Meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR"
         )
       p1 <- gginnards::move_layers(p1, "GeomPolygon", position = "top")
       return(p1)
@@ -164,7 +164,7 @@ opp_shot_chart <- function(game_ids, team, heatmap = F) {
           ggplot2::labs(
             title = paste(team, "Shots Against"),
             shape = "Shot Outcome",
-            caption = "meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR"
+            caption = "Meyappan Subbaiah (@msubbaiah1) Data Accessed via ncaahoopR"
           )
       )
     return(p1)
