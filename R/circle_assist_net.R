@@ -115,7 +115,7 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
     return(list("shot_maker" = shot_maker, "assister" = assister))
   }
 
-  x <- mutate(x, "ast" = NA, "shot" = NA)
+  x <- dplyr::mutate(x, "ast" = NA, "shot" = NA)
   for(i in 1:nrow(x)) {
     play <- splitplay(x$description[i])
     x$ast[i] <- play$assister
@@ -226,7 +226,7 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
   if(is.na(highlight_player)) {
     cols <- gg_color_hue(length(players))
     names(cols) <- players
-    circlize::chordDiagram(network[,-4], 
+    circlize::chordDiagram(network[,-4],
                            order = players,
                            grid.col = cols,
                            annotationTrack = "grid",
@@ -240,10 +240,10 @@ circle_assist_net <- function(team, season, highlight_player = NA, highlight_col
     }
     cols[grepl(highlight_player, players)] <- highlight_color
     names(cols) <- players
-    borders <- filter(network, ast == highlight_player) %>%
-      select(ast, shot) %>%
-      mutate(graphical = 1)
-    circlize::chordDiagram(network[,-4], 
+    borders <- dplyr::filter(network, ast == highlight_player) %>%
+      dplyr::select(ast, shot) %>%
+      dplyr::mutate(graphical = 1)
+    circlize::chordDiagram(network[,-4],
                            order = players,
                            grid.col = cols,
                            link.lwd = 2,

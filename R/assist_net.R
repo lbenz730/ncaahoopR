@@ -111,7 +111,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
     return(list("shot_maker" = shot_maker, "assister" = assister))
   }
 
-  x <- mutate(x, "ast" = NA, "shot" = NA)
+  x <- dplyr::mutate(x, "ast" = NA, "shot" = NA)
   for(i in 1:nrow(x)) {
     play <- splitplay(x$description[i])
     x$ast[i] <- play$assister
