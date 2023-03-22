@@ -43,6 +43,7 @@ get_shot_locs <- function(game_ids) {
                  'shot_text' = tmp$text,
                  'x' = tmp$coordinate$x,
                  'y' = tmp$coordinate$y,
+                 'shooting_team' = tmp$homeAway,
                  stringsAsFactors = F) %>%
       dplyr::mutate("outcome" = ifelse(grepl("made", shot_text), "made", "missed"),
                     "shooter" = stripwhite(gsub("made.*", "", shot_text)),
@@ -57,7 +58,7 @@ get_shot_locs <- function(game_ids) {
                     'y' = ifelse(tmp$homeAway == 'away', y_transformed, -1 * y_transformed)) %>%
       dplyr::mutate('color' = paste0('#', ifelse(tmp$homeAway == 'away', info$away$teamColor, info$home$teamColor)),
                     'team_name' = ifelse(tmp$homeAway == 'away', info$away$shortDisplayName, info$home$shortDisplayName)) %>%
-      dplyr::select(-x_transformed, y_transformed)
+      dplyr::select(-x_transformed, -y_transformed)
 
     if(!exists("total_df_all")) {
       total_df_all <- total_df
