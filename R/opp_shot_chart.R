@@ -16,8 +16,6 @@ opp_shot_chart <- function(game_ids, team, heatmap = F) {
   df <- get_shot_locs(game_ids)
 
   if(!is.null(df)) {
-    side_one <- court %>%
-      dplyr::filter(side == 1)
     team_shots <- df %>%
       dplyr::filter(
         !team_name %in% c(team, dict$ESPN_PBP[dict$ESPN == team])
