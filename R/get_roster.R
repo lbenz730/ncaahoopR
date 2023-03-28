@@ -46,8 +46,8 @@ get_roster <- function(team, season = current_season) {
     tmp$name <- gsub("[0-9]*", "", tmp$name)
     # player image is found at this link
     tmp$player_image <- paste0("https://a.espncdn.com/combiner/i?img=/i/headshots/mens-college-basketball/players/full/", player_ids, ".png")
-    tmp <- dplyr::arrange(tmp, number)
     tmp$player_id <- suppressWarnings(as.numeric(player_ids))
+    tmp <- dplyr::arrange(tmp, number)
     tmp <- dplyr::select(tmp, player_id, number, name, position, height, weight, class, hometown, player_image)
     
     return(tmp)
