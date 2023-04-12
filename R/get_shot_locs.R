@@ -7,7 +7,7 @@
 #' @export
 get_shot_locs <- function(game_ids) {
   if(any(is.na(game_ids))) {
-    error("game_ids missing with no default")
+    stop("game_ids missing with no default")
   }
   n <- length(game_ids)
   for(i in 1:n) {

@@ -10,10 +10,10 @@
 game_shot_chart <- function(game_id, heatmap = F){
 
   if(any(is.na(game_id))) {
-    error("game_id missing with no default")
+    stop("game_id missing with no default")
   }
   if(length(game_id) > 1) {
-    error("game_shot_chart only takes in a single game_id")
+    stop("game_shot_chart only takes in a single game_id")
   }
 
   shot_loc_df <- get_shot_locs(game_id)

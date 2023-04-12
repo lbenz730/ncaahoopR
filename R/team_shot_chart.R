@@ -8,10 +8,10 @@
 #' @export
 team_shot_chart <- function(game_ids, team, heatmap = F) {
   if(any(is.na(game_ids))) {
-    error("game_ids missing with no default")
+    stop("game_ids missing with no default")
   }
   if(any(is.na(team))) {
-    error("team missing with no default")
+    stop("team missing with no default")
   }
   df <- get_shot_locs(game_ids)
 
