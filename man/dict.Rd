@@ -13,6 +13,9 @@ A data frame with team names from various college basketball sites
  \item{Warren_Nolan}{the name of the team, as listed on WarrenNolan.com}
  \item{Trank}{the name of the team, as listed on barttorvik.com}
  \item{name_247}{the name of the team, as listed on 247Sports.com}
+ \item{conference}{the name of the conference of the team}
+ \item{sref_link}{the slug for a team on sports reference}
+ \item{sref_name}{the name of the team on sports reference}
 }
 }
 \usage{
