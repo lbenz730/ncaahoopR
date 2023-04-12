@@ -31,10 +31,10 @@ game_shot_chart <- function(game_id, heatmap = F){
         cowplot::draw_label(full_title,
                             fontface = 'bold')
       p <- team_shot_chart(game_id, teams[1], heatmap = T) +
-        theme(legend.position = "bottom")
+        ggplot2::theme(legend.position = "bottom")
       p2 <- team_shot_chart(game_id, teams[2], heatmap=T) +
-        labs(caption="") +
-        theme(legend.position = "bottom")
+        ggplot2::labs(caption="") +
+        ggplot2::theme(legend.position = "bottom")
       p3 <- cowplot::plot_grid(p,p2)
       p1 <- cowplot::plot_grid(title, p3, ncol = 1, rel_heights = c(0.1, 1))
       return(p1)
@@ -74,23 +74,23 @@ game_shot_chart <- function(game_id, heatmap = F){
       )  +
         ggplot2::geom_point(
           data = shot_loc_df,
-          aes(
-            x = x,
-            y = y,
-            shape = outcome,
-            color = team_name
+         ggplot2::aes(
+            x = .data$x,
+            y = .data$y,
+            shape = .data$outcome,
+            color = .data$team_name
           ),
           size = 3
         ) +
         ggplot2::geom_point(alpha = 0.2, size = 1.5) +
-        ggplot2::scale_color_manual(values = color) +
+        ggplot2::scale_color_manual(values = .data$color) +
         ggplot2::theme(
           legend.position = "bottom",
           legend.direction = 'vertical',
-          plot.title = element_text(size = 16, hjust = 0.5),
-          plot.subtitle = element_text(size = 12, hjust = 0.5),
-          plot.caption = element_text(size = 8, hjust = 0),
-          plot.background = element_rect(fill = 'cornsilk')
+          plot.title = ggplot2::element_text(size = 16, hjust = 0.5),
+          plot.subtitle = ggplot2::element_text(size = 12, hjust = 0.5),
+          plot.caption = ggplot2::element_text(size = 8, hjust = 0),
+          plot.background =ggplot2::element_rect(fill = 'cornsilk')
         ) +
         ggplot2::labs(
           title = game_title,
