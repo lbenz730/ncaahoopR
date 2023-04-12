@@ -57,15 +57,3 @@
 #' data(ncaa_colors)
 #'
 "ncaa_colors"
-
-#' A data frame with NCAA court dimensions.
-#'
-#' @docType data
-#' @format A data frame with NCAA court dimensions
-#'
-#' @details use this dataframe with geom_polygon to draw a NCAA court.
-#'
-#' @examples
-#' data(court)
-#'
-"court"
