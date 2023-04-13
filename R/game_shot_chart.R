@@ -8,23 +8,23 @@
 #'
 #'
 game_shot_chart <- function(game_id, heatmap = F){
-
+  
   if(any(is.na(game_id))) {
     stop("game_id missing with no default")
   }
   if(length(game_id) > 1) {
     stop("game_shot_chart only takes in a single game_id")
   }
-
+  
   shot_loc_df <- get_shot_locs(game_id)
   if(!is.null(shot_loc_df)) {
     teams <- sort(unique(shot_loc_df$team_name))
     game_title <- paste0(teams[1]," vs. ", teams[2])
     color <- c(shot_loc_df$color[shot_loc_df$team_name == teams[1]][1],
                shot_loc_df$color[shot_loc_df$team_name == teams[2]][1])
-
+    
     date <- format(as.Date(shot_loc_df$date[1]), "%B %d, %Y")
-
+    
     if(heatmap){
       full_title <- paste0(game_title," \n ",date)
       title <- cowplot::ggdraw() +
@@ -39,7 +39,7 @@ game_shot_chart <- function(game_id, heatmap = F){
       p1 <- cowplot::plot_grid(title, p3, ncol = 1, rel_heights = c(0.1, 1))
       return(p1)
     }
-
+    
     p1 <- suppressMessages(
       sportyR::geom_basketball(
         league = "ncaa",
@@ -74,7 +74,7 @@ game_shot_chart <- function(game_id, heatmap = F){
       )  +
         ggplot2::geom_point(
           data = shot_loc_df,
-         ggplot2::aes(
+          ggplot2::aes(
             x = .data$x,
             y = .data$y,
             shape = .data$outcome,
@@ -83,7 +83,7 @@ game_shot_chart <- function(game_id, heatmap = F){
           size = 3
         ) +
         ggplot2::geom_point(alpha = 0.2, size = 1.5) +
-        ggplot2::scale_color_manual(values = .data$color) +
+        ggplot2::scale_color_manual(values = color) +
         ggplot2::theme(
           legend.position = "bottom",
           legend.direction = 'vertical',
