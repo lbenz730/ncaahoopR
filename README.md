@@ -299,4 +299,14 @@ Stand-alone shot location data frames contain the following variables.
 * `x`: x-coordinate of shot location
 * `y`: y-coordinate of shot location
 
-The court is 50 feet by 94 feet, with (0,0) always being placed in the bottom left corner of the shot chart. Any full-court shot chart rendered using `game_shot_chart()` preserves ESPN shot locations as they are found online, while halfcourt charts using `team_shot_chart()` convert all shot locations to to a 50 feet by 47 feet halfcourt. The perspective on the halfcourt shot charts is as if one is standing under the hoop, looking toward the opposition hoop. (0,0) again represents the bottom left corner and (50, 47) represents the top right corner. 
+#### Raw Shot Location Data
+
+The court is 94 feet long (baseline to baseline, interior) and 50 feet wide (sideline to sideline, interior). The court's origin is located at center court, with the court being displayed in a horizontal fashion (the baskets lie along the `x` axis). In this coordinate grid, `-x` corresponds to the left basket and `+x` to the right. `+y` corresponds to the upper sideline of the court, and `-y` to the lower.
+
+Following ESPN's convention, the home team's shot locations are on the `+x` basket, and the visiting team's on the `-y` basket. The center of each basket is at `(+/-41.75, 0)`.
+
+The data pulled via `get_shot_locs()` follows this orientation.
+
+#### Shot Chart Data
+
+For the shot chart functions, the `x` and `y` coordinates are "flipped" such that the court is oriented vertically, and each team would appear to be shooting on the same basket. That is, the home team and away team are both shooting on a basket centered at `(0, -41.75)`. This is done out of convenience and does not affect any underlying analyses

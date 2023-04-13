@@ -10,6 +10,7 @@ A data frame with ESPN team names to be used in the ncaahoopR package.
  \item{team}{the name of the team to be supplied to function in ncaahoopR package}
  \item{id}{team id; used in ESPN URLs}
  \item{link}{team URL link; used in ESPN URLs}
+ \item{espn_abbrv}{the abbreviation of the team's name on ESPN}
 }
 }
 \usage{

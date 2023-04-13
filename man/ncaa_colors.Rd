@@ -15,6 +15,9 @@ A data frame with team colors
  \item{color_4}{hexcode for team's 4th color, when available}
  \item{color_5}{hexcode for team's 5th color, when available}
  \item{color_6}{hexcode for team's 6th color, when available}
+ \item{logo_url}{the link to a the team's logo}
+ \item{color_3}{an alternate specification for a team's tertiary color, when available}
+ \item{conference}{the conference to which a team belongs}
 }
 }
 \usage{

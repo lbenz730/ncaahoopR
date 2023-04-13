@@ -13,9 +13,9 @@ game_excitement_index <- function(game_id, include_spread = T) {
     stop("game_id is missing with no default")
   }
 
-  data <- 
-    get_pbp_game(game_id, extra_parse = F) %>% 
-    filter(!wrong_time)
+  data <-
+    get_pbp_game(game_id, extra_parse = F) %>%
+    dplyr::filter(!wrong_time)
   if(is.null(data)) {
     return(NA)
   }

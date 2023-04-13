@@ -22,11 +22,11 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_label
   if(is.na(away_col)) {
     stop("away_col is missing with no default")
   }
-  
+
   ### Get Data
-  data <- 
-    get_pbp_game(game_id, extra_parse = F) %>% 
-    filter(!wrong_time)
+  data <-
+    get_pbp_game(game_id, extra_parse = F) %>%
+    dplyr::filter(!wrong_time)
   if(is.null(data)) {
     warning("PBP Data Not Available for Win Probability Chart")
     return(NULL)
@@ -43,12 +43,12 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_label
     ot_counter <- ot_counter + 1
   }
   date <- format(as.Date(data$date[1]), "%B %d, %Y")
-  
+
   ### Naive WP if Spread Not Included
   if(!include_spread) {
     data$win_prob <- data$naive_win_prob
   }
-  
+
   ### Get into Appropriate Format
   x <- rbind(
     dplyr::select(data, secs_remaining_absolute, win_prob) %>%
@@ -58,7 +58,7 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_label
                     team = "away")
   ) %>%
     dplyr::mutate("secs_elapsed" = max(secs_remaining_absolute) - secs_remaining_absolute)
-  
+
   ### Game Excitement Index
   data$wp_delta <- 0
   for(i in 2:nrow(data)) {
@@ -66,7 +66,7 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_label
   }
   gei <- sum(data$wp_delta, na.rm = T)
   gei <- paste("Game Excitement Index:", round(gei, 2))
-  
+
   ### Minimum Win Probability
   if(data$score_diff[nrow(data)] > 0) {
     min_prob <- min(data$win_prob)
@@ -79,11 +79,11 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_label
                        ifelse(100 * min_prob < 1, "< 1%",
                               paste0(round(100 * min_prob), "%")))
   }
-  
+
   home_score <- data$home_score[nrow(data)]
   away_score <- data$away_score[nrow(data)]
   st <- paste0(home_team, ": ", home_score, "  ", away_team, ": ", away_score, "\n", date)
-  
+
   p <- ggplot2::ggplot(x, aes(x = secs_elapsed/60, y = win_prob, group = team, col = team)) +
     ggplot2::geom_line(size = 1) +
     ggplot2::theme_bw() +
@@ -104,12 +104,12 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_label
     ggplot2::scale_y_continuous(labels = function(x) {paste(100 * x, "%")}) +
     ggplot2::scale_color_manual(values = c(away_col, home_col),
                                 labels = c(away_team, home_team))
-  
+
   if(show_labels) {
     p <- p +
       ggplot2::annotate("text", x = 5, y = 0.05, label = gei) +
       ggplot2::annotate("text", x = 5, y = 0.025, label = min_prob)
   }
-  
+
   p
 }

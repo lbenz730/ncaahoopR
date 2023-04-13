@@ -7,16 +7,16 @@
 #' @export
 get_shot_locs <- function(game_ids) {
   if(any(is.na(game_ids))) {
-    error("game_ids missing with no default")
+    stop("game_ids missing with no default")
   }
   n <- length(game_ids)
   for(i in 1:n) {
     message(paste("Getting Shots for Game", i, "of", n))
     url <- paste0('https://www.espn.com/mens-college-basketball/playbyplay?gameId=', game_ids[i])
-    
+
     ### Try and get PBP data
     txt <- try(RCurl::getURL(url), silent = T)
-    
+
     ### Check if PBP Data is Available
     if(class(txt) == "try-error") {
       message("No shot location data available for this game.")
@@ -28,41 +28,45 @@ get_shot_locs <- function(game_ids) {
         tmp <- jsonlite::fromJSON(gsub(',\"tms\":\\{.*', '', x))
       } else {
         message("No shot location data available for this game.")
-        next 
+        next
       }
     }
-    
+
     date <- gsub('^.*-\\s+', '', gsub('\\|.*$', '', strsplit(txt, 'Men&#x27;s College Basketball Play-By-Play')[[1]][2]))
     date <- as.Date(stripwhite(date), '%b %d, %Y')
-    
+
     info <- jsonlite::fromJSON(gsub(',"ntrlSte.*$', '', gsub('^.*,\"tms\":', '', txt)))
-    
-    total_df <- 
+
+    total_df <-
       data.frame('game_id' = game_ids[i],
                  'date' = date,
                  'shot_text' = tmp$text,
                  'x' = tmp$coordinate$x,
                  'y' = tmp$coordinate$y,
-                 stringsAsFactors = F) %>% 
+                 'shooting_team' = tmp$homeAway,
+                 stringsAsFactors = F) %>%
       dplyr::mutate("outcome" = ifelse(grepl("made", shot_text), "made", "missed"),
                     "shooter" = stripwhite(gsub("made.*", "", shot_text)),
                     "shooter" = stripwhite(gsub("missed.*", "", shooter)),
                     "assisted" = stripwhite(gsub(".{1}$", "", gsub(".*Assisted by", "", shot_text))),
                     "assisted" = stripwhite(ifelse(grepl("made", assisted) |
                                                      grepl("missed", assisted), NA, assisted)),
-                    "three_pt" = grepl("Three Point", shot_text)) %>% 
-      dplyr::mutate('x' = ifelse(tmp$homeAway == 'away', 50 - x, x),
-                    'y' = ifelse(tmp$homeAway == 'away', 94 - y, y)) %>% 
+                    "three_pt" = grepl("Three Point", shot_text)) %>%
+      dplyr::mutate('x_transformed' = y - 41.75,
+                    'y_transformed' = x - 25) %>%
+      dplyr::mutate('x' = ifelse(tmp$homeAway == 'away', x_transformed, -1 * x_transformed),
+                    'y' = ifelse(tmp$homeAway == 'away', y_transformed, -1 * y_transformed)) %>%
       dplyr::mutate('color' = paste0('#', ifelse(tmp$homeAway == 'away', info$away$teamColor, info$home$teamColor)),
-                    'team_name' = ifelse(tmp$homeAway == 'away', info$away$shortDisplayName, info$home$shortDisplayName))
-    
+                    'team_name' = ifelse(tmp$homeAway == 'away', info$away$shortDisplayName, info$home$shortDisplayName)) %>%
+      dplyr::select(-x_transformed, -y_transformed)
+
     if(!exists("total_df_all")) {
       total_df_all <- total_df
     }else{
       total_df_all <- rbind(total_df_all, total_df)
     }
   }
-  
+
   if(!exists("total_df_all")) {
     return(NULL)
   }

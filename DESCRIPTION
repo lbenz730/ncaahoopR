@@ -9,7 +9,8 @@ Authors@R: c(person("Luke", "Benz", email = "lukesbenz@gmail.com", role = c("aut
              person("Ty", "Walters", role = c("ctb")),
              person("Jack", "Lichtenstein", role = c("ctb")),
              person("Kurt", "Wirth", role = c("ctb")),
-             person("Jason", "Maddox", role = c("ctb")))
+             person("Jason", "Maddox", role = c("ctb")),
+             person("Ross", "Drucker", role = c("ctb")))
 Maintainer: Luke Benz <lukesbenz@gmail.com>            
 Description: An R package for working with NCAA Men's Basketball Play-by-Play Data.
     This package allows users to scrape play-by-play data into a tidy format, create
@@ -27,13 +28,16 @@ Imports:
          RCurl,
          cowplot,
          rjson,
+         jsonlite,
          lubridate,
          tidyr,
          rvest,
          readr,
          purrr,
          ggimage,
-         plyr
+         plyr,
+         sportyR,
+         gginnards
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
