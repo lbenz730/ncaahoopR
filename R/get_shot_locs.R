@@ -90,8 +90,14 @@ get_shot_locs <- function(game_ids) {
         "three_pt" = grepl("Three Point", .data$shot_text)
       ) %>%
       dplyr::mutate(
-        "x_transformed" = .data$y - 41.75,
-        "y_transformed" = .data$x - 25
+        "x_transformed" = dplyr::case_when(
+          stringr::str_detect(.data$shot_text, "Free Throw") == TRUE ~ 28,
+          TRUE ~ .data$y - 41.75
+        ),
+        "y_transformed" = dplyr::case_when(
+          stringr::str_detect(.data$shot_text, "Free Throw") == TRUE ~ 0,
+          TRUE ~ .data$x - 25
+        )
       ) %>%
       dplyr::mutate(
         "x" = ifelse(
