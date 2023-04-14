@@ -7,6 +7,7 @@
 #' @return A data frame with shot details (including location) for given
 #'   \code{game_ids}
 #'
+#' @importFrom rlang .data
 #' @export
 get_shot_locs <- function(game_ids) {
   if (any(is.na(game_ids))) {
@@ -69,39 +70,39 @@ get_shot_locs <- function(game_ids) {
 
     total_df <- total_df %>%
       dplyr::mutate(
-        "outcome" = ifelse(grepl("made", shot_text), "made", "missed"),
-        "shooter" = stripwhite(gsub("made.*", "", shot_text)),
-        "shooter" = stripwhite(gsub("missed.*", "", shooter)),
+        "outcome" = ifelse(grepl("made", .data$shot_text), "made", "missed"),
+        "shooter" = stripwhite(gsub("made.*", "", .data$shot_text)),
+        "shooter" = stripwhite(gsub("missed.*", "", .data$shooter)),
         "assisted" = stripwhite(
           gsub(
             ".{1}$",
             "",
-            gsub(".*Assisted by", "", shot_text)
+            gsub(".*Assisted by", "", .data$shot_text)
           )
         ),
         "assisted" = stripwhite(
           ifelse(
-            grepl("made", assisted) | grepl("missed", assisted),
+            grepl("made", .data$assisted) | grepl("missed", .data$assisted),
             NA,
-            assisted
+            .data$assisted
           )
         ),
-        "three_pt" = grepl("Three Point", shot_text)
+        "three_pt" = grepl("Three Point", .data$shot_text)
       ) %>%
       dplyr::mutate(
-        "x_transformed" = y - 41.75,
-        "y_transformed" = x - 25
+        "x_transformed" = .data$y - 41.75,
+        "y_transformed" = .data$x - 25
       ) %>%
       dplyr::mutate(
         "x" = ifelse(
           tmp$homeAway == "away",
-          x_transformed,
-          -1 * x_transformed
+          .data$x_transformed,
+          -1 * .data$x_transformed
         ),
         "y" = ifelse(
           tmp$homeAway == "away",
-          y_transformed,
-          -1 * y_transformed
+          .data$y_transformed,
+          -1 * .data$y_transformed
         )
       ) %>%
       dplyr::mutate(
