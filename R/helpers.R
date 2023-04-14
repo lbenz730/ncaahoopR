@@ -16,7 +16,7 @@ is.nit <- function(game_id) {
   url <- paste("http://www.espn.com/mens-college-basketball/playbyplay?gameId=", game_id, sep = "")
   y <- scan(url, what = "", sep = "\n", quiet = TRUE)
   if(any(grepl("NIT SEASON TIP-OFF", y))) {
-    return(F)
+    return(FALSE)
   }
   return(sum(grepl("NIT", y)) > 1)
 }
