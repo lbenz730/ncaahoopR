@@ -15,30 +15,32 @@ Maintainer: Luke Benz <lukesbenz@gmail.com>
 Description: An R package for working with NCAA Men's Basketball Play-by-Play Data.
     This package allows users to scrape play-by-play data into a tidy format, create
     assist networks games of their choosing, and examine in-game win probability charts.
-Depends: R (>= 3.5.0),
-         dplyr,
-         ggplot2
+Depends: R (>= 3.5.0)
 Imports: 
-         stringr,
-         xml2,
-         XML,
-         stringdist,
-         igraph,
-         circlize,
-         RCurl,
-         cowplot,
-         rjson,
-         jsonlite,
-         lubridate,
-         tidyr,
-         rvest,
-         readr,
-         purrr,
-         ggimage,
-         plyr,
-         sportyR,
-         gginnards
+    rlang,
+    dplyr,
+    ggplot2,
+    stringr,
+    xml2,
+    XML,
+    stringdist,
+    igraph,
+    circlize,
+    RCurl,
+    cowplot,
+    rjson,
+    jsonlite,
+    lubridate,
+    tidyr,
+    rvest,
+    readr,
+    purrr,
+    ggimage,
+    plyr,
+    sportyR,
+    gginnards,
+    magrittr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
