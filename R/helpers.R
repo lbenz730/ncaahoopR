@@ -3,8 +3,10 @@ stripwhite <- function(x) gsub("\\s*$", "", gsub("^\\s*", "", x))
 
 ### Make ids df (only if package not loaded in memory)
 create_ids_df <- function() {
-  ids <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops_Play_By_Play/master/ids.csv",
-                   as.is = T) 
+  ids <- read.csv(
+    "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops_Play_By_Play/master/ids.csv",
+    as.is = TRUE
+  )
 
   return(ids)
 }
@@ -12,31 +14,58 @@ create_ids_df <- function() {
 ################################# Checks if Game is in NIT #####################
 is.nit <- function(game_id) {
   url <- paste("http://www.espn.com/mens-college-basketball/playbyplay?gameId=", game_id, sep = "")
-  y <- scan(url, what = "", sep = "\n", quiet = T)
+  y <- scan(url, what = "", sep = "\n", quiet = TRUE)
   if(any(grepl("NIT SEASON TIP-OFF", y))) {
-    return(F)
+    return(FALSE)
   }
   return(sum(grepl("NIT", y)) > 1)
 }
 
 ######################## Loading for Win Prob + Related Charts #################
-history <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/History/history.csv", as.is = T)
+history <- read.csv(
+  "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/History/history.csv",
+  as.is = TRUE
+)
 games_2016 <-
-  read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2016-17/NCAA_Hoops_Results_2017_Final.csv", as.is = T) %>%
+  read.csv(
+    "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2016-17/NCAA_Hoops_Results_2017_Final.csv",
+    as.is = TRUE
+  ) %>%
   dplyr::rename("pred_score_diff" = predscorediff) %>%
   dplyr::mutate("date" = as.Date(paste(year, month, day, sep = "-")))
-games_2017 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2017-18/training.csv", as.is = T)
-games_2018 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2018-19/2019_Final.csv", as.is = T)
-games_2019 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/6a40b6c37c8b888f5d01add9b68b60747e1953c1/3.0_Files/Predictions/predictions.csv", as.is = T)
-games_2020 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/2ee90d21234392649cefd2bf9d23a4926aa9ed64/3.0_Files/Predictions/predictions.csv", as.is = T)
-games_2021 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/d7cf98801b93190a24e8528a70a1edb97a4df16e/3.0_Files/Predictions/predictions.csv", as.is = T)
-games_2022 <- read.csv("https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Predictions/predictions.csv", as.is = T)
-train <- rbind(select(games_2016, pred_score_diff, wins),
-               select(games_2017, pred_score_diff, wins))
+games_2017 <- read.csv(
+  "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2017-18/training.csv",
+  as.is = TRUE
+)
+games_2018 <- read.csv(
+  "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Results/2018-19/2019_Final.csv",
+  as.is = TRUE
+)
+games_2019 <- read.csv(
+  "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/6a40b6c37c8b888f5d01add9b68b60747e1953c1/3.0_Files/Predictions/predictions.csv",
+  as.is = TRUE
+)
+games_2020 <- read.csv(
+  "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/2ee90d21234392649cefd2bf9d23a4926aa9ed64/3.0_Files/Predictions/predictions.csv",
+  as.is = TRUE
+)
+games_2021 <- read.csv(
+  "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/d7cf98801b93190a24e8528a70a1edb97a4df16e/3.0_Files/Predictions/predictions.csv",
+  as.is = TRUE
+)
+games_2022 <- read.csv(
+  "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Predictions/predictions.csv",
+  as.is = TRUE
+)
+train <- rbind(dplyr::select(games_2016, pred_score_diff, wins),
+               dplyr::select(games_2017, pred_score_diff, wins))
 prior <- glm(wins ~ pred_score_diff, data = train, family = binomial)
 
 ### Set Coefficients to achieve deterministic relationship at max_time = 0
-coeffs <- read.csv("https://raw.githubusercontent.com/lbenz730/Senior-Thesis/master/model_coefficients/model_0_coeffs.csv", as.is = T)
+coeffs <- read.csv(
+  "https://raw.githubusercontent.com/lbenz730/Senior-Thesis/master/model_coefficients/model_0_coeffs.csv",
+  as.is = TRUE
+)
 coeffs$estimate[coeffs$max_time <= 2 & coeffs$coefficient == "favored_by"] <- 0
 
 ### Fit Loess Models to get smooth functions of coefficient estimate over time
@@ -218,19 +247,19 @@ get_line <- function(data) {
     game <- dplyr::filter(games_2019, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
-  
+
   ### Impute from 2020-21 Season
   if(game_date >= "2020-11-01" & game_date <= "2021-05-01") {
     game <- dplyr::filter(games_2020, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
-  
+
   ### Impute from 2021-22 Season
   if(game_date >= "2021-11-01" & game_date <= "2022-05-01") {
     game <- dplyr::filter(games_2021, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
-  
+
   ### Impute from 2022-23 Season
   if(game_date >= "2022-11-01" & game_date <= "2023-05-01") {
     game <- dplyr::filter(games_2022, team == home, opponent == away, date == game_date)
@@ -243,7 +272,7 @@ get_line <- function(data) {
 ### Get Date of Given Game
 get_date <- function(game_id) {
   url <- paste0("https://www.espn.com/mens-college-basketball/playbyplay?gameId=", game_id)
-  txt <- try(RCurl::getURL(url), silent = T)
+  txt <- try(RCurl::getURL(url), silent = TRUE)
   x <- strsplit(txt, 'Men&#x27;s College Basketball Play-By-Play')[[1]]
   date <- as.Date(stripwhite(gsub('^.*-\\s+', '', gsub('\\|.*$', '', x[2]))), '%b %d, %Y')
   return(date)
@@ -255,7 +284,7 @@ logit <- function(x) {
   case_when(
     tmp == Inf ~ 1,
     tmp == -Inf ~ 0,
-    T ~ tmp/(1 + tmp)
+    TRUE ~ tmp/(1 + tmp)
   )
 }
 
