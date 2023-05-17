@@ -35,8 +35,8 @@ clean <- function(data, half, OTs) {
 
 ### Function to extract full team names from PBP
 extract_teams <- function(html) {
-  html <- stripwhite(gsub('-\\s+$', '', gsub('^.*<title data-react-helmet="true">', '', html)))
-  teams <- stripwhite(unlist(strsplit(html, 'vs.')))
+  html <- stripwhite(gsub('\\(.*\\)\\s+.*$', '', gsub('^.*<title data-react-helmet="true">', '', html)))
+  teams <- stripwhite(unlist(strsplit(html, '\\d+-\\d+')))
   teams <- gsub('&#x27;', '\'', teams)
   teams <- gsub('&amp;', '&', teams)
   return(teams)

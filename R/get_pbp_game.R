@@ -70,7 +70,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     pbp$home <- extract_teams(x[1])[2]
 
     ### Game Info
-    game_info <- jsonlite::fromJSON(gsub('^.*"gmInfo":', '', gsub(',"sbpg".*$', '', txt)))
+    game_info <- jsonlite::fromJSON(gsub('^.*"gmInfo":', '', gsub(',"medialst".*$', '', txt)))
 
     pbp$arena_location <- ifelse(is.null(game_info$locAddr), NA, unlist(paste(game_info$locAddr, collapse = ', ')))
     pbp$arena <- ifelse(is.null(game_info$loc), NA, game_info$loc)
@@ -94,7 +94,7 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     pbp$home_favored_by <- line
     pbp$play_id <- 1:nrow(pbp)
     pbp$game_id <- game_ids[g]
-    pbp$date <- as.Date(stripwhite(gsub('^.*-\\s+', '', gsub('\\|.*$', '', x[2]))), '%b %d, %Y')
+    pbp$date <- as.Date(stripwhite(gsub('^.*\\(', '', gsub('\\).*$', '', gsub('^.*<title data-react-helmet="true">', '', x[1])))), '%b %d, %Y')
     pbp$score_diff <- pbp$home_score - pbp$away_score
 
     ### Win Probability by Play

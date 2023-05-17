@@ -281,7 +281,7 @@ get_date <- function(game_id) {
 ### Define Logit Function
 logit <- function(x) {
   tmp <- exp(x)
-  case_when(
+  dplyr::case_when(
     tmp == Inf ~ 1,
     tmp == -Inf ~ 0,
     TRUE ~ tmp/(1 + tmp)
