@@ -66,7 +66,7 @@ assist_net <- function(team, season, node_col, three_weights = T, threshold = 0,
       warning("Play-by-Play Data Not Available for Assist Network")
       return(NULL)
     }
-    date <- get_date(season[1])
+    date <- x$date[1]
     year <- lubridate::year(date)
     if(lubridate::month(date) <= 5) {
      year <- paste(year - 1, year - 2000, sep = "-")
