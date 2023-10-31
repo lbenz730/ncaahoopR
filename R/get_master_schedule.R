@@ -11,18 +11,18 @@ get_master_schedule <- function(date) {
   if(is.na(date)) {
     stop("date is missing with no default")
   }
-
+  
   tmp <- try(as.Date(date))
   if(class(tmp) == "try-error") {
     stop("Please enter valid date in the form YYYY-MM-DD")
   }
-
-
+  
+  
   date_ <- gsub("-", "", as.character(date))
   url <- paste0("https://www.espn.com/mens-college-basketball/schedule/_/date/", date_)
-
+  
   z <- XML::readHTMLTable(RCurl::getURL(url))
-
+  
   if(length(z) == 0) {
     cat("No games on", as.character(date), "\n")
     return(NULL)
@@ -41,23 +41,32 @@ get_master_schedule <- function(date) {
     names(completed) <- c("away", "home", "result")
     schedule <- NA
   }
-
+  
+  
+  ix_real <- 
+    which(completed$result != 'Forfeit' &
+            completed$result != "Canceled" & 
+            completed$result != "Postponed")
+  
   n_canceled <- sum(grepl("Canceled", completed$result))
   n_postponed <- sum(grepl("Postponed", completed$result))
-  completed <- dplyr::filter(completed, result != "Canceled", result != "Postponed")
+  n_forfeit <- sum(grepl("Forfeit", completed$result))
+  completed <- dplyr::filter(completed, result != 'Forfeit', result != "Canceled", result != "Postponed")
   n_completed <- nrow(completed)
-
+  
+  
   ### Extract Ranking
   ranking <- function(team) {
     rank <- gsub("[^0-9]", "", gsub("Men's Basketball.*$", '', team))
     return(ifelse(rank == "", NA, rank))
   }
-
+  
   ### Clean Team Name
   clean <- function(team) {
     team <- gsub('\\u00c2', '', team)
     team <- gsub('\\u00c3\\u00a9','\\u00e9', team)
     team <- gsub('@','', team)
+    team <- gsub('Â', '', team)
     team <- gsub("[#0-9]", "", team)
     # team <- gsub("\\s[A-Z]*-*[A-Z]*$", "", team)
     team <- gsub("TA&M", "", team)
@@ -67,7 +76,7 @@ get_master_schedule <- function(date) {
     team <- gsub('^[^[:alnum:]]*', '', team)
     return(team)
   }
-
+  
   if(any(!is.na(schedule[1]))) {
     schedule <- dplyr::mutate(schedule,
                               "away" = as.character(sapply(schedule$away, clean)),
@@ -77,42 +86,42 @@ get_master_schedule <- function(date) {
                               "away_score" = NA,
                               "home_score" = NA)
   }
-
+  
   x <- RCurl::getURL(url)
   in_progress <- strsplit(x, "/mens-college-basketball/game\\?gameId=")[[1]]
   if(date == Sys.Date()) {
     ix <- grepl('class=\"Schedule__liveLink ', in_progress) | grepl('^\\d+\">\\d+:\\d+\\s?PM', in_progress)
     ix_completed <- !ix
-
-
+    
+    
     in_progress <- in_progress[ix]
     in_progress <- suppressWarnings(as.numeric(unname(sapply(in_progress, function(y){ substring(y, 1, 9) }))))
     in_progress <- in_progress[!is.na(in_progress) & !duplicated(in_progress)]
-
+    
     x <- RCurl::getURL(url)
-    x<- strsplit(x, "/mens-college-basketball/game\\?gameId=")[[1]]
+    x <- strsplit(x, "/mens-college-basketball/game\\?gameId=")[[1]]
     x <- x[ix_completed]
     x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
     x <- x[!is.na(x) & !duplicated(x)]
   } else {
     ix <- -1
-
+    
     in_progress <- in_progress[ix]
     in_progress <- suppressWarnings(as.numeric(unname(sapply(in_progress, function(y){ substring(y, 1, 9) }))))
     in_progress <- in_progress[!is.na(in_progress) & !duplicated(in_progress)]
-
+    
     x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
     x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
     x <- x[-1]
-
+    
   }
   n_scheduled <- 0
   if(any(class(schedule) == 'data.frame')) {
     n_scheduled <- nrow(schedule)
   }
-
-
-
+  
+  
+  
   # x <- strsplit(x, "/mens-college-basketball/game/_/gameId/")
   # x <- suppressWarnings(as.numeric(unname(sapply(x, function(y){ substring(y, 1, 9) }))))
   # x <- x[-1]
@@ -121,8 +130,11 @@ get_master_schedule <- function(date) {
   # }
   x <- c(in_progress, x)
   x <- x[!is.na(x) & !duplicated(x)]
-  x <- x[1:(n_scheduled + n_completed - n_canceled - n_postponed)]
-
+  if(n_scheduled > 0) {
+    ix_real <- c(1:n_scheduled, ix_real)
+  }
+  x <- x[ix_real]
+  
   ### Add in Completed Games
   find_anchor <- function(team) {
     cleaned <- clean(team)
@@ -131,7 +143,7 @@ get_master_schedule <- function(date) {
     anchor <- unlist(strsplit(team, ""))[-c(1:(nchar(cleaned) + 1))]
     return(paste0(anchor, collapse = ""))
   }
-
+  
   completed <- dplyr::mutate(completed,
                              "away" = as.character(sapply(away, clean)),
                              "home" = as.character(sapply(home, clean)),
@@ -141,29 +153,30 @@ get_master_schedule <- function(date) {
                              "away_anchor" = sapply(completed$away, find_anchor),
                              "away_score" = NA,
                              "home_score" = NA)
-
+  
+  completed$result <- gsub('\\d+:\\d\\d (A|P)M', '', completed$result)
   winners <- unname(sapply(completed$result, function(y) { gsub("\\s[0-9]*.*", "", y) }))
   losers <-  unname(sapply(completed$result, function(y) { gsub('\\s*$', '', gsub('\\(OT\\)', '', gsub('[0-9]*', '', gsub(".*,\\s", "", y)))) }))
   scores <- as.numeric(gsub("[^0-9]", "", gsub("\\(.*\\)", "", unlist(strsplit(completed$result, ",")))))
   scores[completed$result == 'LIVE' | grepl('PM', completed$result)] <- NA
-
+  
   if(length(scores) > 0) {
     winning_scores <- scores[seq(1, length(scores) - 1, 2)]
     losing_scores <- scores[seq(2, length(scores), 2)]
-
+    
     # index <- sapply(completed$away_anchor, function(y) { y %in% winners })
     index <- c()
     for(i in 1:length(winning_scores)) {
       home_abbv <- ids$espn_abbrv[ids$team == completed$home[i] ]
       away_abbv <- ids$espn_abbrv[ids$team == completed$away[i] ]
-
+      
       if(length(home_abbv) == 0) {
         home_abbv <- '---'
       }
       if(length(away_abbv) == 0) {
         away_abbv <- '---'
       }
-
+      
       if(home_abbv == winners[i] | away_abbv == losers[i]) {
         index <- c(index, F)
       } else if(away_abbv == winners[i] | home_abbv == losers[i]) {
@@ -190,17 +203,17 @@ get_master_schedule <- function(date) {
     completed$away_score[!index] <- losing_scores[!index]
     completed$away_score[index] <- winning_scores[index]
   }
-
+  
   if(any(!is.na(schedule[1]))) {
     schedule <- rbind(schedule, dplyr::select(completed, -away_anchor, -result))
   }else{
     schedule <- completed
   }
-
+  
   schedule <- dplyr::filter(schedule, !is.na(home), !is.na(away))
   schedule <- dplyr::mutate(schedule, "game_id" = x[1:nrow(schedule)])
   schedule <- dplyr::select(schedule, game_id, away, home, away_rank, home_rank, away_score, home_score)
   schedule$date <- as.Date(date)
-
+  
   return(schedule)
 }
