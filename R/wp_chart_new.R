@@ -93,11 +93,11 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
     
     x <- 
       x %>% 
-      bind_rows(
-        tibble('secs_remaining_absolute' = msec,
-               'secs_elapsed' = 0,
-               'win_prob' = c(p0, 1-p0),
-               'team' = c('home', 'away'))
+      dplyr::bind_rows(
+        dplyr::tibble('secs_remaining_absolute' = msec,
+                      'secs_elapsed' = 0,
+                      'win_prob' = c(p0, 1-p0),
+                      'team' = c('home', 'away'))
       )
   }
   
@@ -167,14 +167,14 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
   }
   
   p <-
-    ggplot2::ggplot(x, aes(x = secs_elapsed/60, y = win_prob)) +
-    ggplot2::geom_line(size = 1, aes(col = favored, group = 1), lineend = 'round') +
+    ggplot2::ggplot(x, ggplot2::aes(x = secs_elapsed/60, y = win_prob)) +
+    ggplot2::geom_line(size = 1, ggplot2::aes(col = favored, group = 1), lineend = 'round') +
     ggplot2::geom_ribbon(ymin = 0.5,
-                         aes(ymax = winning_upper),
+                         ggplot2::aes(ymax = winning_upper),
                          fill = winning_col,
                          alpha = 0.2) + 
     ggplot2::geom_ribbon(ymax = 0.5,
-                         aes(ymin = losing_lower),
+                         ggplot2::aes(ymin = losing_lower),
                          fill = losing_col,
                          alpha = 0.2) + 
     ggplot2::theme_bw() +

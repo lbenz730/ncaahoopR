@@ -61,7 +61,7 @@ game_flow <- function(game_id, home_col, away_col) {
   max_score <- max(c(data$home_score, data$away_score))
 
   ### Make Plot
-  ggplot2::ggplot(x, aes(x = secs_elapsed/60, y = score, group = team, col = team)) +
+  ggplot2::ggplot(x, ggplot2::aes(x = secs_elapsed/60, y = score, group = team, col = team)) +
     ggplot2::geom_step(size = 1) +
     ggplot2::theme_bw() +
     ggplot2::geom_vline(xintercept = plot_lines/60, lty = 2, alpha = 0.5, size = 0.8) +

@@ -84,7 +84,7 @@ wp_chart <- function(game_id, home_col, away_col, include_spread = T, show_label
   away_score <- data$away_score[nrow(data)]
   st <- paste0(home_team, ": ", home_score, "  ", away_team, ": ", away_score, "\n", date)
 
-  p <- ggplot2::ggplot(x, aes(x = secs_elapsed/60, y = win_prob, group = team, col = team)) +
+  p <- ggplot2::ggplot(x, ggplot2::aes(x = secs_elapsed/60, y = win_prob, group = team, col = team)) +
     ggplot2::geom_line(size = 1) +
     ggplot2::theme_bw() +
     ggplot2::geom_vline(xintercept = plot_lines/60, lty = 2, alpha = 0.5, size = 0.8) +
