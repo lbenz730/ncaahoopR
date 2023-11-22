@@ -131,7 +131,7 @@ get_master_schedule <- function(date) {
   x <- c(in_progress, x)
   x <- x[!is.na(x) & !duplicated(x)]
   if(n_scheduled > 0) {
-    ix_real <- c(1:n_scheduled, ix_real)
+    ix_real <- c(1:n_scheduled, n_scheduled + ix_real)
   }
   x <- x[ix_real]
   
