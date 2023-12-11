@@ -66,8 +66,9 @@ get_pbp_game <- function(game_ids, extra_parse = T) {
     home_abv <- as.character(as.data.frame(tmp[[1]])[2,1])
 
     x <- strsplit(txt, 'Men&#x27;s College Basketball Play-By-Play')[[1]]
-    pbp$away <- extract_teams(x[1])[1]
-    pbp$home <- extract_teams(x[1])[2]
+    tms <- extract_teams(txt)
+    pbp$away <- tms[2]
+    pbp$home <- tms[1]
 
     ### Game Info
     game_info <- jsonlite::fromJSON(gsub('^.*"gmInfo":', '', gsub(',"medialst".*$', '', txt)))
