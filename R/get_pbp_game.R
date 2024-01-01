@@ -120,7 +120,7 @@ single_game_pbp <- function(game_id, extra_parse) {
   pbp$home_favored_by <- line
   pbp$play_id <- 1:nrow(pbp)
   pbp$game_id <- game_id
-  pbp$date <- as.Date(stripwhite(gsub('^.*\\(', '', gsub('\\).*$', '', gsub('^.*<title data-react-helmet="true">', '', x[1])))), '%b %d, %Y')
+  pbp$date <- as.Date(stripwhite(gsub('^.*\\(', '', gsub('\\).*$', '', gsub('\\(..\\)', '', gsub('^.*<title data-react-helmet="true">', '', x[1]))))), '%b %d, %Y')
   pbp$score_diff <- pbp$home_score - pbp$away_score
   
   ### Win Probability by Play
