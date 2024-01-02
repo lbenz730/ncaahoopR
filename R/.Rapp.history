@@ -1,0 +1,4 @@
+load("/Users/lukebenz/Documents/sports/ncaahoopR/R/sysdata.rda")
+ls
+library(ncaahoopR)
+sysdata

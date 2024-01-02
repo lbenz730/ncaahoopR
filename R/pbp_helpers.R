@@ -38,6 +38,7 @@ extract_teams <- function(html) {
   z <- gsub('.*"tms":', '', html)
   z <- gsub(',"isConferenceGame".*$', '', z)
   z <- gsub('},"meta".*$', '', z)
+  z <- gsub(',"ntrlSte":false.*$', '', z)
   z <- jsonlite::fromJSON(z)
   
   
