@@ -89,7 +89,7 @@ get_master_schedule <- function(date) {
   
   x <- RCurl::getURL(url)
   in_progress <- strsplit(x, "/mens-college-basketball/game\\?gameId=")[[1]]
-  if(date == Sys.Date()) {
+  if(date == Sys.Date() & length(in_progress) != 1) {
     ix <- grepl('class=\"Schedule__liveLink ', in_progress) | grepl('^\\d+\">\\d+:\\d+\\s?PM', in_progress)
     ix_completed <- !ix
     
