@@ -17,6 +17,7 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
     stop("game_id is missing with no default")
   }
   
+  
   ### Get Data
   data <- 
     get_pbp_game(game_id, extra_parse = F) %>% 
@@ -51,6 +52,7 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
                                                                                                              dict$ESPN == away_team |
                                                                                                              dict$ESPN_PBP == away_team | 
                                                                                                              dict$ESPN_PBP == gsub('State', 'St', away_team)][1] ]] 
+  
   
   plot_lines <- 1200
   msec <- plyr::round_any(max(data$secs_remaining_absolute), 300)
@@ -166,8 +168,8 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
     cols <- cols[2] 
   }
   
-  p <-
-    ggplot2::ggplot(x, ggplot2::aes(x = secs_elapsed/60, y = win_prob)) +
+  # p <-
+  ggplot2::ggplot(x, ggplot2::aes(x = secs_elapsed/60, y = win_prob)) +
     ggplot2::geom_line(size = 1, ggplot2::aes(col = favored, group = 1), lineend = 'round') +
     ggplot2::geom_ribbon(ymin = 0.5,
                          ggplot2::aes(ymax = winning_upper),
@@ -195,8 +197,12 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
     ggplot2::scale_x_continuous(breaks = seq(0, msec/60, 5)) +
     ggplot2::scale_y_continuous(limits = c(0,1), labels = function(x) {paste(100 * pmax(x, 1 - x), "%")}) +
     ggplot2::scale_color_manual(values = cols) + 
-    ggimage::geom_image(x = 5, y = 0.1, image = losing_url, asp = 16/9, size = 0.08) + 
-    ggimage::geom_image(x = 5, y = 0.9, image = winning_url, asp = 16/9, size = 0.08) + 
+    ggimage::geom_image(data = dplyr::tibble(x = 5, y = 0.1, image = losing_url),
+                        aes(x = x, y = y, image = image),
+                        asp = 16/9, size = 0.08) +
+    ggimage::geom_image(data = dplyr::tibble(x = 5, y = 0.9, image = winning_url),
+                        aes(x = x, y = y, image = image),
+                        asp = 16/9, size = 0.08) +
     ggplot2::scale_size_identity() 
   
   if(show_labels) {

@@ -7,7 +7,7 @@ create_ids_df <- function() {
     "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops_Play_By_Play/master/ids.csv",
     as.is = TRUE
   )
-
+  
   return(ids)
 }
 
@@ -53,10 +53,16 @@ games_2021 <- read.csv(
   "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/d7cf98801b93190a24e8528a70a1edb97a4df16e/3.0_Files/Predictions/predictions.csv",
   as.is = TRUE
 )
-games_2022 <- read.csv(
+game_2022 <- 
+  read.csv(
+    'https://github.com/lbenz730/NCAA_Hoops/raw/67cb4cacdb5d5fe214fa71be2dda0774d1fb1d09/3.0_Files/Predictions/predictions.csv',
+    as.is = TRUE
+  )
+games_2023 <- read.csv(
   "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Predictions/predictions.csv",
   as.is = TRUE
 )
+
 train <- rbind(dplyr::select(games_2016, pred_score_diff, wins),
                dplyr::select(games_2017, pred_score_diff, wins))
 prior <- glm(wins ~ pred_score_diff, data = train, family = binomial)
@@ -87,18 +93,18 @@ wp_compute <- function(x) {
   ### Get Coefficient Values for Current Game
   sc_diff <- predict(score_diff_smooth, newdata = x$secs_remaining_relative)
   fb <- predict(favored_by_smooth, newdata = x$secs_remaining_relative)
-
+  
   ### Capture Game Determinism
   index <- x$secs_remaining == 0 & (x$home_score != x$away_score)
   sc_diff[index] <- 20
   fb[index] <- predict(favored_by_smooth, newdata = 1)
-
+  
   ### Compute log odds of winning
   log_odds <-
     sc_diff * x$score_diff  +
     fb * x$home_favored_by
-
-
+  
+  
   return(logit(log_odds))
 }
 
@@ -158,7 +164,7 @@ secs_to_model <- function(sec, msec) {
       sec <- sec - 300
     }
   }
-
+  
   else if(offset == 1800) {
     if(sec > 1800) {
       sec <- sec - offset
@@ -179,7 +185,7 @@ secs_to_model <- function(sec, msec) {
       sec <- sec - 300
     }
   }
-
+  
   if(sec == 0) {
     m <- 1
   }
@@ -209,63 +215,68 @@ get_line <- function(data) {
   game_date <- data$date[1]
   away <- data$away[1]
   home <- data$home[1]
-
+  
   ### Convert to NCAA Names
   away <- dict$NCAA[which(dict$ESPN_PBP == away)]
   home <- dict$NCAA[which(dict$ESPN_PBP == home)]
-
+  
   ### Get Predicted Line
   if(length(home) == 0 | length(away) == 0) {
     return(NA)
   }
-
+  
   ### Don't have Imputed Lines Before 2016-17
   if(game_date < "2016-11-01") {
     return(NA)
   }
-
+  
   ### Impute from 2016-17 Season
   if(game_date >= "2016-11-01" & game_date <= "2017-05-01") {
     game <- dplyr::filter(games_2016, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
-
+  
   ### Impute from 2017-18 Season
   if(game_date >= "2017-11-01" & game_date <= "2018-05-01") {
     game <- dplyr::filter(games_2017, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
-
+  
   ### Impute from 2018-19 Season
   if(game_date >= "2018-11-01" & game_date <= "2019-05-01") {
     game <- dplyr::filter(games_2018, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
-
+  
   ### Impute from 2019-20 Season
   if(game_date >= "2019-11-01" & game_date <= "2020-05-01") {
     game <- dplyr::filter(games_2019, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
-
+  
   ### Impute from 2020-21 Season
   if(game_date >= "2020-11-01" & game_date <= "2021-05-01") {
     game <- dplyr::filter(games_2020, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
-
+  
   ### Impute from 2021-22 Season
   if(game_date >= "2021-11-01" & game_date <= "2022-05-01") {
     game <- dplyr::filter(games_2021, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
-
+  
   ### Impute from 2022-23 Season
   if(game_date >= "2022-11-01" & game_date <= "2023-05-01") {
     game <- dplyr::filter(games_2022, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
-
+  
+  if(game_date >= "2023-11-01" & game_date <= "2024-05-01") {
+    game <- dplyr::filter(games_2023, team == home, opponent == away, date == game_date)
+    return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
+  }
+  
   return(NA)
 }
 
