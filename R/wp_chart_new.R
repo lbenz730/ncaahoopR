@@ -168,8 +168,8 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
     cols <- cols[2] 
   }
   
-  # p <-
-  ggplot2::ggplot(x, ggplot2::aes(x = secs_elapsed/60, y = win_prob)) +
+  p <-
+    ggplot2::ggplot(x, ggplot2::aes(x = secs_elapsed/60, y = win_prob)) +
     ggplot2::geom_line(size = 1, ggplot2::aes(col = favored, group = 1), lineend = 'round') +
     ggplot2::geom_ribbon(ymin = 0.5,
                          ggplot2::aes(ymax = winning_upper),
