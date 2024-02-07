@@ -23,7 +23,9 @@ clean <- function(data, half, OTs) {
   cleaned$secs_remaining <- max(20 * (2 - half), 0) * 60 +
     5 * 60 * max((OTs * as.numeric(half <= 2)), ((OTs + 2 - half) * as.numeric(half > 2))) + 60 * mins + secs
   if(half == 1) {
-    cleaned[1, c("home_score", "away_score")] <- c(0,0)
+    if(is.na(cleaned$scoring_play[1]) & cleaned$scoring_play[1]) {
+      cleaned[1, c("home_score", "away_score")] <- c(0,0)
+    }
   }
   
   cleaned <- 
