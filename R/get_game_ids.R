@@ -47,7 +47,7 @@ get_game_ids <- function(team, season = current_season) {
                          'date' = c(played_dates, unplayed_dates)) 
   df_id <- dplyr::mutate(df_id, 'year' = ifelse(grepl('Nov|Dec', date), 
                                                 substring(season, 1, 4),
-                                                paste0('20', substring(season, 6, 7))))
+                                                paste0('20', as.numeric(substring(season, 1, 4)) + 1)))
   df_id <- dplyr::mutate(df_id, 'date' = as.Date(paste(year, date), '%Y %a, %b %d'))
   df_id <- dplyr::arrange(df_id, date)
   
