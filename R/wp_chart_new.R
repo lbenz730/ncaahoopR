@@ -100,7 +100,8 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
                       'secs_elapsed' = 0,
                       'win_prob' = c(p0, 1-p0),
                       'team' = c('home', 'away'))
-      )
+      ) %>% 
+      dplyr::arrange(secs_elapsed)
   }
   
   ### Game Excitement Index
