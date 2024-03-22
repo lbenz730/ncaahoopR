@@ -5,13 +5,20 @@
 #' @param game_id ESPN game_id for which to render chart
 #' @param home_col Color of home team for chart. Defaults to primary color if NULL
 #' @param away_col Color of away team for chart. Defaults to primary color if NULL
+#' @param home_team Home team. Defaults to ESPN PBP Name
+#' @param away_team Away team. Defaults to ESPN PBP Name
 #' @param include_spread Logical, whether to include pre-game spread in Win Probability
 #' calculations. Default = True.
 #' @param show_labels Logical whether Game Exictement Index and Minimum
 #' Win Probability metrics should be displayed on the plot. Default = TRUE.
 #' @export
 #'
-wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spread = T, show_labels = T) {
+wp_chart_new <- function(game_id, 
+                         home_col = NULL, 
+                         away_col = NULL, 
+                         home_team = NULL,
+                         away_team = NULL,
+                         include_spread = T, show_labels = T) {
   ### Error Testing
   if(is.na(game_id)) {
     stop("game_id is missing with no default")
@@ -28,8 +35,15 @@ wp_chart_new <- function(game_id, home_col = NULL, away_col = NULL, include_spre
     return(NULL)
   }
   
-  home_team <- data$home[1]
-  away_team <- data$away[1]
+  if(is.null(home_team)) {
+    home_team <- data$home[1]
+  }
+  
+  if(is.null(away_team)) {
+    away_team <- data$away[1]
+  }
+  
+  
   
   if(is.null(home_col)) {
     home_col <- ncaa_colors$primary_color[ gsub('State', 'St', ncaa_colors$espn_name) == gsub('State', 'St', dict$ESPN[dict$NCAA == home_team | 

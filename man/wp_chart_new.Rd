@@ -8,6 +8,8 @@ wp_chart_new(
   game_id,
   home_col = NULL,
   away_col = NULL,
+  home_team = NULL,
+  away_team = NULL,
   include_spread = T,
   show_labels = T
 )
@@ -18,6 +20,10 @@ wp_chart_new(
 \item{home_col}{Color of home team for chart. Defaults to primary color if NULL}
 
 \item{away_col}{Color of away team for chart. Defaults to primary color if NULL}
+
+\item{home_team}{Home team. Defaults to ESPN PBP Name}
+
+\item{away_team}{Away team. Defaults to ESPN PBP Name}
 
 \item{include_spread}{Logical, whether to include pre-game spread in Win Probability
 calculations. Default = True.}
