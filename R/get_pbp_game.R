@@ -96,7 +96,7 @@ single_game_pbp <- function(game_id, extra_parse) {
   pbp$home <- tms[1]
   
   ### Game Info
-  game_info <- jsonlite::fromJSON(gsub('^.*"gmInfo":', '', gsub(',"medialst".*$', '', txt)))
+  game_info <- jsonlite::fromJSON(gsub(',"links":.*$', '', gsub('^.*"gmInfo":', '', gsub(',"medialst".*$', '', txt))))
   
   pbp$arena_location <- ifelse(is.null(game_info$locAddr), NA, unlist(paste(game_info$locAddr, collapse = ', ')))
   pbp$arena <- ifelse(is.null(game_info$loc), NA, game_info$loc)
