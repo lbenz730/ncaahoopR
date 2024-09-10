@@ -300,7 +300,7 @@ logit <- function(x) {
 }
 
 ### Current Season Constant
-current_season <- "2023-24"
+current_season <- "2024-25"
 
 ### Recreate ggplot2 colors
 ### Copied from https://stackoverflow.com/questions/8197559/emulate-ggplot2-default-color-palette

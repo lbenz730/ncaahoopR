@@ -21,11 +21,7 @@ get_schedule <- function(team, season = current_season) {
   
   ### Scrape Team Schedule
   base_url <- "https://www.espn.com/mens-college-basketball/team/schedule/_/id/"
-  if(season == current_season) {
-    url <- paste0(base_url, ids$id[ids$team == team], "/", ids$link[ids$team == team])
-  } else {
-    url <- paste0(base_url, ids$id[ids$team == team], "/season/", as.numeric(substring(season, 1, 4)) + 1)
-  }
+  url <- paste0(base_url, ids$id[ids$team == team], "/season/", as.numeric(substring(season, 1, 4)) + 1)
   schedule <-  XML::readHTMLTable( RCurl::getURL(url), header = F)
   
   if(length(schedule) == 0) {
