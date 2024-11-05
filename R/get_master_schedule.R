@@ -160,7 +160,7 @@ get_master_schedule <- function(date) {
   scores <- as.numeric(gsub("[^0-9]", "", gsub("\\(.*\\)", "", unlist(strsplit(completed$result, ",")))))
   scores[completed$result == 'LIVE' | grepl('PM', completed$result)] <- NA
   
-  if(length(scores) > 0) {
+  if(length(scores) > 0 & !all(is.na(scores))) {
     winning_scores <- scores[seq(1, length(scores) - 1, 2)]
     losing_scores <- scores[seq(2, length(scores), 2)]
     

@@ -40,7 +40,7 @@ get_boxscore <- function(game_id) {
     dplyr::bind_rows() %>% 
     dplyr::select('player_id' = athlt.id,
                   'player' = athlt.shrtNm,
-                  'position' = athlt.pos,
+                  # 'position' = athlt.pos,
                   'stat_values' = stats) %>% 
     tidyr::unnest(cols = 'stat_values') %>% 
     dplyr::mutate('stat_category' = rep(away_labs, n()/length(away_labs))) %>% 
@@ -64,7 +64,7 @@ get_boxscore <- function(game_id) {
     dplyr::mutate('starter' = ifelse(1:n() <= 5, T, F)) %>% 
     dplyr::select('player_id' = athlt.id,
                   'player' = athlt.shrtNm,
-                  'position' = athlt.pos,
+                  # 'position' = athlt.pos,
                   'stat_values' = stats) %>% 
     tidyr::unnest(cols = 'stat_values') %>% 
     dplyr::mutate('stat_category' = rep(home_labs, n()/length(home_labs))) %>% 
