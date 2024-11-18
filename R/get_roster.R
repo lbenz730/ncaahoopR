@@ -15,6 +15,7 @@ get_roster <- function(team, season = current_season) {
   if(!"ncaahoopR" %in% .packages()) {
     ids <- create_ids_df()
   }
+  
   if(!team %in% ids$team) {
     stop("Invalid team. Please consult the ids data frame for a list of valid teams, using data(ids).")
   }

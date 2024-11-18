@@ -3,11 +3,7 @@ stripwhite <- function(x) gsub("\\s*$", "", gsub("^\\s*", "", x))
 
 ### Make ids df (only if package not loaded in memory)
 create_ids_df <- function() {
-  ids <- read.csv(
-    "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops_Play_By_Play/master/ids.csv",
-    as.is = TRUE
-  )
-  
+  ids <- ncaahoopR::ids
   return(ids)
 }
 
@@ -58,7 +54,7 @@ game_2022 <-
     'https://github.com/lbenz730/NCAA_Hoops/raw/67cb4cacdb5d5fe214fa71be2dda0774d1fb1d09/3.0_Files/Predictions/predictions.csv',
     as.is = TRUE
   )
-games_2023 <- read.csv(
+games_2024 <- read.csv(
   "https://raw.githubusercontent.com/lbenz730/NCAA_Hoops/master/3.0_Files/Predictions/predictions.csv",
   as.is = TRUE
 )
@@ -273,6 +269,11 @@ get_line <- function(data) {
   }
   
   if(game_date >= "2023-11-01" & game_date <= "2024-05-01") {
+    game <- dplyr::filter(games_2023, team == home, opponent == away, date == game_date)
+    return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
+  }
+  
+  if(game_date >= "2024-11-01" & game_date <= "2024-05-01") {
     game <- dplyr::filter(games_2023, team == home, opponent == away, date == game_date)
     return(ifelse(nrow(game) > 0, game$pred_score_diff[1], NA))
   }
