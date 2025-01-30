@@ -23,8 +23,8 @@ get_game_ids <- function(team, season = current_season) {
   x <- strsplit(x, 'gameId')[[1]]
   
   game_ids <- gsub('[^0-9]*', '', gsub('\".*', '', x))[-1]
-  dates <- stringr::str_extract_all(x, '<span>(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s+[A-z]+\\s+\\d+')
-  dates <- purrr::map(dates, ~gsub('[<>]', '', gsub('\\<span\\>', '', .x)))
+  dates <- stringr::str_extract_all(x, '<span data-testid="date">(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s+[A-z]+\\s+\\d+')
+  dates <- purrr::map(dates, ~stripwhite(gsub('data-testid=\"date\"', '', gsub('[<>]', '', gsub('\\<span\\>', '', .x)))))
   game_ids <- game_ids[!duplicated(game_ids)]
   
   played_dates <- purrr::map_chr(dates, dplyr::last)
