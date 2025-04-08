@@ -133,7 +133,11 @@ get_master_schedule <- function(date) {
   if(n_scheduled > 0) {
     ix_real <- c(1:n_scheduled, n_scheduled + ix_real)
   }
-  x <- x[ix_real]
+  if(max(ix_real) <= length(x)) {
+    x <- x[ix_real]
+  } else {
+    x <- x[1:length(ix_real)] 
+  }
   
   ### Add in Completed Games
   find_anchor <- function(team) {
