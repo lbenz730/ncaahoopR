@@ -12,8 +12,8 @@ get_boxscore <- function(game_id) {
   txt <- RCurl::getURL(url)
   
   x <- strsplit(txt, 'bxscr')[[1]]
-  x <- x[3]
-  x <- gsub(',"meta":.*$', '', gsub('^\":', '', x))
+  x <- x[2]
+  x <- gsub(',"config":.*$', '', gsub('^\":', '', x))
   stats <- jsonlite::fromJSON(x, flatten = T)
   
   info <- 
