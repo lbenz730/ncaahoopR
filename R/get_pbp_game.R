@@ -279,8 +279,8 @@ single_game_pbp <- function(game_id, extra_parse) {
       }
       
       ### Free Throws
-      made_shots <- grepl("Made|made", pbp$description) & grepl("Free Throw", pbp$description)
-      missed_shots <- grepl("Missed|missed", pbp$description) & grepl("Free Throw", pbp$description)
+      made_shots <- grepl("Made|made|makes", pbp$description) & grepl("Free Throw", pbp$description)
+      missed_shots <- grepl("Missed|missed|misses", pbp$description) & grepl("Free Throw", pbp$description)
       pbp$shot_outcome[made_shots] <- "made"
       pbp$shot_outcome[missed_shots] <- "missed"
       pbp$shooter[made_shots]  <- gsub(" made.*", "", pbp$description[made_shots])
@@ -296,8 +296,8 @@ single_game_pbp <- function(game_id, extra_parse) {
       }
       
     } else { ### Manually Annotate what we can
-      made_shots <- grepl("Made|made", pbp$description)
-      missed_shots <- grepl("Missed|missed", pbp$description)
+      made_shots <- grepl("Made|made|makes", pbp$description)
+      missed_shots <- grepl("Missed|missed|misses", pbp$description)
       pbp$shot_outcome[made_shots] <- "made"
       pbp$shot_outcome[missed_shots] <- "missed"
       pbp$three_pt[made_shots | missed_shots] <-
@@ -587,6 +587,7 @@ single_game_pbp <- function(game_id, extra_parse) {
   pbp$wrong_time <-
     pbp$score_diff != dplyr::lag(pbp$score_diff) &
     !grepl("made", pbp$description) &
+    !grepl("makes", pbp$description) &
     pbp$secs_remaining_absolute > 0
   pbp$wrong_time[1] <- F
   
