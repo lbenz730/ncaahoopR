@@ -29,7 +29,7 @@ get_shot_locs <- function(game_ids) {
       message("No shot location data available for this game.")
       next
     } else {
-      x <- strsplit(txt, '\"shtChrt\":\\{\"plays\":')[[1]]
+      x <- strsplit(txt, '\\"plays\":')[[1]]
       if (length(x) > 1) {
         x <- x[2]
         tmp <- jsonlite::fromJSON(gsub(',\"tms\":\\{.*', "", x))
