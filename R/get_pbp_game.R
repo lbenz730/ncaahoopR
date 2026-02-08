@@ -59,7 +59,7 @@ single_game_pbp <- function(game_id, extra_parse) {
     message("Play-by-Play Data Not Available")
     next
   } else {
-    x <- strsplit(txt, '"pbp":\\{"playGrps"')[[1]]
+    x <- strsplit(txt, '"plays"')[[1]]
     if(length(x) > 1) {
       x <- x[2]
       x <- gsub(',\"tms\":.*$', '', x)
@@ -80,7 +80,8 @@ single_game_pbp <- function(game_id, extra_parse) {
   }
   
   ### Clean PBP
-  pbp <- purrr::map2_dfr(tmp, 1:n, ~clean(.x, .y, n-2))
+  # pbp <- purrr::map2_dfr(tmp, 1:n, ~clean(.x, .y, n-2))
+  pbp <- clean(tmp)
   these <- grep(T, is.na(pbp$home_score))
   pbp[these, c("home_score", "away_score")] <- pbp[these - 1 , c("home_score", "away_score")]
   
@@ -97,12 +98,9 @@ single_game_pbp <- function(game_id, extra_parse) {
   
   ### Game Info
   game_info <- jsonlite::fromJSON(gsub(',"links":.*$', '', gsub('^.*"gmInfo":', '', gsub(',"medialst".*$', '', txt))))
-  
   pbp$arena_location <- ifelse(is.null(game_info$locAddr), NA, unlist(paste(game_info$locAddr, collapse = ', ')))
   pbp$arena <- ifelse(is.null(game_info$loc), NA, game_info$loc)
-  pbp$capacity <- ifelse(is.null(game_info$cpcty), NA, game_info$cpcty)
   pbp$attendance <- ifelse(is.null(game_info$attnd), NA, game_info$attnd)
-  pbp$total_line <- ifelse(is.null(game_info$ovUnd), NA, game_info$ovUnd)
   pbp$referees <- paste(game_info$refs$dspNm, collapse = "/")
   
   ### Get Game Line
@@ -561,10 +559,10 @@ single_game_pbp <- function(game_id, extra_parse) {
     pbp <- dplyr::select(pbp, -pre_game_prob)
     pbp <- dplyr::select(pbp, game_id, date, home, away, play_id, half, time_remaining_half,
                          secs_remaining_relative, secs_remaining, description, action_team,
-                         home_score, away_score, score_diff, play_length, scoring_play, foul,
+                         home_score, away_score, score_diff, play_length, scoring_play,
                          win_prob, naive_win_prob, home_time_out_remaining,
-                         away_time_out_remaining, home_favored_by, total_line, referees,
-                         arena_location, arena, capacity, attendance, shot_x,
+                         away_time_out_remaining, home_favored_by, referees,
+                         arena_location, arena, attendance, shot_x,
                          shot_y, shot_team, shot_outcome, shooter, assist,
                          three_pt, free_throw, possession_before, possession_after) %>%
       dplyr::rename("secs_remaining_absolute" = secs_remaining,
@@ -576,8 +574,8 @@ single_game_pbp <- function(game_id, extra_parse) {
                          secs_remaining_relative, secs_remaining, description,
                          home_score, away_score, score_diff, play_length,
                          win_prob, naive_win_prob, home_time_out_remaining,
-                         away_time_out_remaining, home_favored_by, total_line, referees,
-                         arena_location, arena, capacity, attendance) %>%
+                         away_time_out_remaining, home_favored_by, referees,
+                         arena_location, arena, attendance) %>%
       dplyr::rename("secs_remaining_absolute" = secs_remaining,
                     "secs_remaining" = secs_remaining_relative)
     
